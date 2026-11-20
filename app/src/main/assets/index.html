@@ -904,7 +904,8 @@ const CK_HIDE=new Set([0,1,2,5,6]);
 const CK_ORDER=[3,4];
 CK_HIDE.add(7);
 const VAR_F=[["vmarque","Marque","Danfoss, Schneider, ABB…","varMarques"],["vtype","Type / modèle","VLT AQUA Drive FC 202…",""],["vpuiss","Puissance (kW)","11",""],["vfiltre","Filtre","",""]];
-const STEPS=[{n:"Chantier"},{n:"Sous tension",gi:3},{n:"Variateur",vf:true},{n:"Démarrage",gi:4},{n:"Relevés"},{n:"Rapport"}];
+const POMPE_F=[["pmarque","Marque","Grundfos, KSB, Caprari…","pompeMarques"],["ptype","Type / modèle","SP 46-8…",""],["ppuiss","Puissance (kW)","11",""]];
+const STEPS=[{n:"Chantier"},{n:"Sous tension",gi:3},{n:"Installation",vf:true},{n:"Démarrage",gi:4},{n:"Relevés"},{n:"Rapport"}];
 const STAT=["À prévoir","Commandé","Reçu"];
 
 /* ---------- Stockage ---------- */
@@ -1076,13 +1077,16 @@ function alerts(){const In=num(cur.r.in),a=[];
  if(In&&num(cur.r.th)>In*1.05)a.push('Réglage thermique supérieur à l\'intensité plaque');
  if(cur.r.iso&&num(cur.r.iso)<1)a.push('Isolement faible (< 1 MΩ) : ne pas démarrer');return a}
 function drawStepper(){
- $('#stepper').innerHTML=STEPS.map((s,i)=>{const done=s.vf?!!(cur.r.vmarque||cur.r.vtype||cur.r.vpuiss):s.gi!=null?gDone(s.gi):i===0?!!cur.h.client:i===STEPS.length-2?RELF.some(([k])=>cur.r[k]):false;
+ $('#stepper').innerHTML=STEPS.map((s,i)=>{const done=s.vf?[...VAR_F,...POMPE_F].some(([k])=>cur.r[k]):s.gi!=null?gDone(s.gi):i===0?!!cur.h.client:i===STEPS.length-2?RELF.some(([k])=>cur.r[k]):false;
   return `<button data-st="${i}" class="${i===step?'cur':''} ${done?'done':''}">${done?'✓ ':''}${esc(s.n)}</button>`}).join('');
  const {ok,tot}=count();$('#progBar').style.width=(ok/tot*100)+'%';$('#progTxt').textContent=ok+' / '+tot;
  const c=$('#stepper .cur');if(c)c.scrollIntoView({block:'nearest',inline:'center'})}
 function drawStep(){if(!(step>=0&&step<STEPS.length))step=0;const s=STEPS[step];let h='';
  if(step===0)h=`<h3 style="font-size:23px;margin-bottom:14px">Informations chantier</h3><div class="grid">${HEAD.map(([k,l,t])=>`<label>${l}<input data-h="${k}" type="${t||'text'}" value="${esc(cur.h[k])}"></label>`).join('')}</div>`;
- else if(s.vf)h=`<h3 style="font-size:23px;margin-bottom:14px">Variateur</h3><div class="grid">${VAR_F.map(([k,l,ph,dl])=>k==='vfiltre'?`<label>${l}<select data-r="vfiltre"><option value="">— Choisir —</option>${['Avec','Sans'].map(o=>`<option${cur.r.vfiltre===o?' selected':''}>${o}</option>`).join('')}</select></label>`:`<label>${l}<input data-r="${k}" ${k==='vpuiss'?'inputmode="decimal"':''} ${dl?`list="${dl}"`:''} placeholder="${ph}" value="${esc(cur.r[k])}"></label>`).join('')}</div><datalist id="varMarques"><option value="Danfoss"><option value="Schneider Electric (Altivar)"><option value="ABB"><option value="Grundfos"><option value="Siemens"><option value="Wilo"><option value="Lowara"><option value="WEG"></datalist>`;
+ else if(s.vf){const fld=(F)=>F.map(([k,l,ph,dl])=>k==='vfiltre'?`<label>${l}<select data-r="vfiltre"><option value="">— Choisir —</option>${['Avec','Sans'].map(o=>`<option${cur.r.vfiltre===o?' selected':''}>${o}</option>`).join('')}</select></label>`:`<label>${l}<input data-r="${k}" ${/puiss/.test(k)?'inputmode="decimal"':''} ${dl?`list="${dl}"`:''} placeholder="${ph}" value="${esc(cur.r[k])}"></label>`).join('');
+  h=`<h3 style="font-size:23px;margin-bottom:6px">Installation</h3><div class="rgroup">Variateur</div><div class="grid">${fld(VAR_F)}</div><div class="rgroup" style="margin-top:18px">Pompe</div><div class="grid">${fld(POMPE_F)}</div>
+  <datalist id="varMarques"><option value="Danfoss"><option value="Schneider Electric (Altivar)"><option value="ABB"><option value="Grundfos"><option value="Siemens"><option value="Wilo"><option value="Lowara"><option value="WEG"></datalist>
+  <datalist id="pompeMarques"><option value="Grundfos"><option value="KSB"><option value="Caprari"><option value="Lowara"><option value="Wilo"><option value="Ebara"><option value="Pedrollo"><option value="Xylem / Flygt"></datalist>`}
  else if(s.gi!=null){const [g,it]=CK[s.gi];h=`<h3 style="font-size:23px;margin-bottom:6px">${esc(g)}</h3><div class="ckl">${it.map((x,ii)=>`<label><input type="checkbox" data-k="${s.gi}-${ii}"${cur.ck[s.gi+'-'+ii]?' checked':''}><span>${esc(x)}</span></label>`).join('')}</div><button class="ghost ckAll" data-all="${s.gi}">${ic('check')}Tout cocher</button>`}
  else if(s.n==='Relevés')h=`<h3 style="font-size:23px;margin-bottom:14px">Relevés</h3>${REL.map(([g,f])=>`<div class="rgroup">${g}</div><div class="grid">${f.map(([k,l,u])=>`<label>${l}<span class="unit"><input data-r="${k}" inputmode="decimal" value="${esc(cur.r[k])}"><em>${u}</em></span></label>`).join('')}</div>`).join('')}<div id="relAlert"></div>`;
  else h=`<h3 style="font-size:23px;margin-bottom:14px">Observations et rapport</h3><label>Observations<textarea id="mesObs" placeholder="Réserves, travaux à prévoir, remarques client…">${esc(cur.obs)}</textarea></label><div id="relAlert"></div><div class="tools"><button id="mesSave">${ic('check')}Enregistrer l'intervention</button><button class="ghost" id="mesCopy">${ic('copy')}Copier le rapport</button></div>`;
@@ -1103,7 +1107,7 @@ $('#stepBody').addEventListener('click',async e=>{
 $('#mesNew').addEventListener('click',()=>{cur=blank();step=0;drawStep();toast('Nouvelle fiche')});
 function report(m){const L=['MISE EN SERVICE STATION DE POMPAGE'];HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
  CK_ORDER.forEach(gi=>{const [g,it]=CK[gi];L.push('','— '+g);it.forEach((x,ii)=>L.push((m.ck[gi+'-'+ii]?'[x] ':'[ ] ')+x))});
- if(VAR_F.some(([k])=>m.r[k])){L.push('','— Variateur');VAR_F.forEach(([k,l])=>m.r[k]&&L.push(l+' : '+m.r[k]))}
+ if([...VAR_F,...POMPE_F].some(([k])=>m.r[k])){L.push('','— Installation');[['Variateur',VAR_F],['Pompe',POMPE_F]].forEach(([t,F])=>{if(F.some(([k])=>m.r[k]))L.push(t+' : '+F.filter(([k])=>m.r[k]).map(([k,l])=>l.toLowerCase()+' '+m.r[k]).join(', '))})}
  const r=RELF.filter(([k])=>m.r[k]);if(r.length){L.push('','— Relevés');r.forEach(([k,l,u])=>L.push(l+' : '+m.r[k]+' '+u))}
  if(m.obs)L.push('','— Observations',m.obs);return L.join('\n')}
 function drawMesList(){const l=[...S.mes].sort((a,b)=>b.t-a.t);
