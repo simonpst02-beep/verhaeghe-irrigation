@@ -896,14 +896,15 @@ const CK=[
 ["Variateur Danfoss",["Données plaque moteur : 1-20 puissance, 1-22 tension, 1-23 fréquence, 1-24 courant, 1-25 vitesse nominale","AMA lancée et terminée : 1-29 = [1] AMA activée compl.","Limites de vitesse : 4-12 vitesse mini [Hz] et 4-14 vitesse maxi [Hz]","Rampes : 3-41 temps d'accélération et 3-42 temps de décélération","Capteur de pression sur l'entrée 54 mis à l'échelle (6-24 / 6-25) et unité réglée (20-12)","Consigne de pression : 20-21 Consigne 1","Régulation PID : 20-93 gain proportionnel et 20-94 temps intégral, pression stable à différents débits","Mode veille réglé (groupe 22-4* : 22-40, 22-41, 22-44)","Protection marche à sec activée : 22-26 (détection faible puissance 22-21)","Paramètres notés ou copiés dans le panneau (LCP)"]]
 ];
 const REL=[["Électrique",[["u12","U L1-L2","V"],["u23","U L2-L3","V"],["u31","U L3-L1","V"],["iso","Isolement","MΩ"],["in","In plaque","A"],["th","Réglage thermique","A"],["i1","I L1","A"],["i2","I L2","A"],["i3","I L3","A"]]],
-["Variateur Danfoss",[["vfmin","4-12 Vitesse mini","Hz"],["vfmax","4-14 Vitesse maxi","Hz"],["vcons","20-21 Consigne","bar"],["vacc","3-41 Rampe accél.","s"],["vdec","3-42 Rampe décél.","s"],["vimot","Courant moteur affiché (0-21)","A"]]],
 ["Hydraulique",[["pr","P refoulement","bar"],["pon","P enclenchement","bar"],["poff","P déclenchement","bar"],["pg","Pré-gonflage ballon","bar"],["deb","Débit","m³/h"],["h","Compteur horaire","h"]]]];
 const RELF=REL.flatMap(g=>g[1]);
 // Étapes masquées (gardées pour les anciennes fiches) : Sécurité, Hydraulique, Électrique, Essais des sécurités, Clôture
 const CK_HIDE=new Set([0,1,2,5,6]);
-// Ordre affiché : Sous tension, Variateur Danfoss, Démarrage
-const CK_ORDER=[3,7,4];
-const STEPS=[{n:"Chantier"},...CK_ORDER.map(gi=>({n:CK[gi][0],gi})),{n:"Relevés"},{n:"Rapport"}];
+// Ordre affiché : Sous tension, Variateur (fiche simple), Démarrage — la liste Danfoss (gi 7) est masquée
+const CK_ORDER=[3,4];
+CK_HIDE.add(7);
+const VAR_F=[["vmarque","Marque","Danfoss, Schneider, ABB…","varMarques"],["vtype","Type / modèle","VLT AQUA Drive FC 202…",""],["vpuiss","Puissance (kW)","11",""]];
+const STEPS=[{n:"Chantier"},{n:"Sous tension",gi:3},{n:"Variateur",vf:true},{n:"Démarrage",gi:4},{n:"Relevés"},{n:"Rapport"}];
 const STAT=["À prévoir","Commandé","Reçu"];
 
 /* ---------- Stockage ---------- */
@@ -1075,13 +1076,14 @@ function alerts(){const In=num(cur.r.in),a=[];
  if(In&&num(cur.r.th)>In*1.05)a.push('Réglage thermique supérieur à l\'intensité plaque');
  if(cur.r.iso&&num(cur.r.iso)<1)a.push('Isolement faible (< 1 MΩ) : ne pas démarrer');return a}
 function drawStepper(){
- $('#stepper').innerHTML=STEPS.map((s,i)=>{const done=s.gi!=null?gDone(s.gi):i===0?!!cur.h.client:i===STEPS.length-2?RELF.some(([k])=>cur.r[k]):false;
+ $('#stepper').innerHTML=STEPS.map((s,i)=>{const done=s.vf?!!(cur.r.vmarque||cur.r.vtype||cur.r.vpuiss):s.gi!=null?gDone(s.gi):i===0?!!cur.h.client:i===STEPS.length-2?RELF.some(([k])=>cur.r[k]):false;
   return `<button data-st="${i}" class="${i===step?'cur':''} ${done?'done':''}">${done?'✓ ':''}${esc(s.n)}</button>`}).join('');
  const {ok,tot}=count();$('#progBar').style.width=(ok/tot*100)+'%';$('#progTxt').textContent=ok+' / '+tot;
  const c=$('#stepper .cur');if(c)c.scrollIntoView({block:'nearest',inline:'center'})}
 function drawStep(){if(!(step>=0&&step<STEPS.length))step=0;const s=STEPS[step];let h='';
  if(step===0)h=`<h3 style="font-size:23px;margin-bottom:14px">Informations chantier</h3><div class="grid">${HEAD.map(([k,l,t])=>`<label>${l}<input data-h="${k}" type="${t||'text'}" value="${esc(cur.h[k])}"></label>`).join('')}</div>`;
- else if(s.gi!=null){const [g,it]=CK[s.gi];h=`<h3 style="font-size:23px;margin-bottom:6px">${esc(g)}</h3>${s.gi===7?'<p class="tag" style="margin:0 0 8px">Numéros de paramètres du Danfoss VLT AQUA Drive FC 202. Vérifiez-les dans la notice si votre modèle est différent.</p>':''}<div class="ckl">${it.map((x,ii)=>`<label><input type="checkbox" data-k="${s.gi}-${ii}"${cur.ck[s.gi+'-'+ii]?' checked':''}><span>${esc(x)}</span></label>`).join('')}</div><button class="ghost ckAll" data-all="${s.gi}">${ic('check')}Tout cocher</button>`}
+ else if(s.vf)h=`<h3 style="font-size:23px;margin-bottom:14px">Variateur</h3><div class="grid">${VAR_F.map(([k,l,ph,dl])=>`<label>${l}<input data-r="${k}" ${k==='vpuiss'?'inputmode="decimal"':''} ${dl?`list="${dl}"`:''} placeholder="${ph}" value="${esc(cur.r[k])}"></label>`).join('')}</div><datalist id="varMarques"><option value="Danfoss"><option value="Schneider Electric (Altivar)"><option value="ABB"><option value="Grundfos"><option value="Siemens"><option value="Wilo"><option value="Lowara"><option value="WEG"></datalist>`;
+ else if(s.gi!=null){const [g,it]=CK[s.gi];h=`<h3 style="font-size:23px;margin-bottom:6px">${esc(g)}</h3><div class="ckl">${it.map((x,ii)=>`<label><input type="checkbox" data-k="${s.gi}-${ii}"${cur.ck[s.gi+'-'+ii]?' checked':''}><span>${esc(x)}</span></label>`).join('')}</div><button class="ghost ckAll" data-all="${s.gi}">${ic('check')}Tout cocher</button>`}
  else if(s.n==='Relevés')h=`<h3 style="font-size:23px;margin-bottom:14px">Relevés</h3>${REL.map(([g,f])=>`<div class="rgroup">${g}</div><div class="grid">${f.map(([k,l,u])=>`<label>${l}<span class="unit"><input data-r="${k}" inputmode="decimal" value="${esc(cur.r[k])}"><em>${u}</em></span></label>`).join('')}</div>`).join('')}<div id="relAlert"></div>`;
  else h=`<h3 style="font-size:23px;margin-bottom:14px">Observations et rapport</h3><label>Observations<textarea id="mesObs" placeholder="Réserves, travaux à prévoir, remarques client…">${esc(cur.obs)}</textarea></label><div id="relAlert"></div><div class="tools"><button id="mesSave">${ic('check')}Enregistrer l'intervention</button><button class="ghost" id="mesCopy">${ic('copy')}Copier le rapport</button></div>`;
  $('#stepBody').innerHTML=h;$('#prev').disabled=step===0;$('#next').style.visibility=step===STEPS.length-1?'hidden':'visible';
@@ -1101,6 +1103,7 @@ $('#stepBody').addEventListener('click',async e=>{
 $('#mesNew').addEventListener('click',()=>{cur=blank();step=0;drawStep();toast('Nouvelle fiche')});
 function report(m){const L=['MISE EN SERVICE STATION DE POMPAGE'];HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
  CK_ORDER.forEach(gi=>{const [g,it]=CK[gi];L.push('','— '+g);it.forEach((x,ii)=>L.push((m.ck[gi+'-'+ii]?'[x] ':'[ ] ')+x))});
+ if(VAR_F.some(([k])=>m.r[k])){L.push('','— Variateur');VAR_F.forEach(([k,l])=>m.r[k]&&L.push(l+' : '+m.r[k]))}
  const r=RELF.filter(([k])=>m.r[k]);if(r.length){L.push('','— Relevés');r.forEach(([k,l,u])=>L.push(l+' : '+m.r[k]+' '+u))}
  if(m.obs)L.push('','— Observations',m.obs);return L.join('\n')}
 function drawMesList(){const l=[...S.mes].sort((a,b)=>b.t-a.t);
