@@ -897,7 +897,9 @@ const CK=[
 const REL=[["Électrique",[["u12","U L1-L2","V"],["u23","U L2-L3","V"],["u31","U L3-L1","V"],["iso","Isolement","MΩ"],["in","In plaque","A"],["th","Réglage thermique","A"],["i1","I L1","A"],["i2","I L2","A"],["i3","I L3","A"]]],
 ["Hydraulique",[["pr","P refoulement","bar"],["pon","P enclenchement","bar"],["poff","P déclenchement","bar"],["pg","Pré-gonflage ballon","bar"],["deb","Débit","m³/h"],["h","Compteur horaire","h"]]]];
 const RELF=REL.flatMap(g=>g[1]);
-const STEPS=[{n:"Chantier"},...CK.map(([n],gi)=>({n,gi})),{n:"Relevés"},{n:"Rapport"}];
+// Étapes masquées (gardées pour les anciennes fiches) : Sécurité, Hydraulique, Électrique, Essais des sécurités, Clôture
+const CK_HIDE=new Set([0,1,2,5,6]);
+const STEPS=[{n:"Chantier"},...CK.map(([n],gi)=>({n,gi})).filter(s=>!CK_HIDE.has(s.gi)),{n:"Relevés"},{n:"Rapport"}];
 const STAT=["À prévoir","Commandé","Reçu"];
 
 /* ---------- Stockage ---------- */
@@ -1061,7 +1063,7 @@ const blank=()=>({id:uid(),h:{date:new Date().toISOString().slice(0,10)},ck:{},r
 try{cur=JSON.parse(localStorage.getItem('dep_draft'))}catch(e){}if(!cur||!cur.id)cur=blank();
 try{step=+localStorage.getItem('dep_step')||0}catch(e){}
 const saveDraft=()=>{try{localStorage.setItem('dep_draft',JSON.stringify(cur));localStorage.setItem('dep_step',step)}catch(e){}};
-function count(){let ok=0,tot=0;CK.forEach(([,it],gi)=>it.forEach((_,ii)=>{tot++;if(cur.ck[gi+'-'+ii])ok++}));return{ok,tot}}
+function count(){let ok=0,tot=0;CK.forEach(([,it],gi)=>{if(CK_HIDE.has(gi))return;it.forEach((_,ii)=>{tot++;if(cur.ck[gi+'-'+ii])ok++})});return{ok,tot}}
 const gDone=gi=>CK[gi][1].every((_,ii)=>cur.ck[gi+'-'+ii]);
 const num=v=>parseFloat(String(v||'').replace(',','.'));
 function alerts(){const In=num(cur.r.in),a=[];
@@ -1073,7 +1075,7 @@ function drawStepper(){
   return `<button data-st="${i}" class="${i===step?'cur':''} ${done?'done':''}">${done?'✓ ':''}${esc(s.n)}</button>`}).join('');
  const {ok,tot}=count();$('#progBar').style.width=(ok/tot*100)+'%';$('#progTxt').textContent=ok+' / '+tot;
  const c=$('#stepper .cur');if(c)c.scrollIntoView({block:'nearest',inline:'center'})}
-function drawStep(){const s=STEPS[step];let h='';
+function drawStep(){if(!(step>=0&&step<STEPS.length))step=0;const s=STEPS[step];let h='';
  if(step===0)h=`<h3 style="font-size:23px;margin-bottom:14px">Informations chantier</h3><div class="grid">${HEAD.map(([k,l,t])=>`<label>${l}<input data-h="${k}" type="${t||'text'}" value="${esc(cur.h[k])}"></label>`).join('')}</div>`;
  else if(s.gi!=null){const [g,it]=CK[s.gi];h=`<h3 style="font-size:23px;margin-bottom:6px">${esc(g)}</h3><div class="ckl">${it.map((x,ii)=>`<label><input type="checkbox" data-k="${s.gi}-${ii}"${cur.ck[s.gi+'-'+ii]?' checked':''}><span>${esc(x)}</span></label>`).join('')}</div><button class="ghost ckAll" data-all="${s.gi}">${ic('check')}Tout cocher</button>`}
  else if(s.n==='Relevés')h=`<h3 style="font-size:23px;margin-bottom:14px">Relevés</h3>${REL.map(([g,f])=>`<div class="rgroup">${g}</div><div class="grid">${f.map(([k,l,u])=>`<label>${l}<span class="unit"><input data-r="${k}" inputmode="decimal" value="${esc(cur.r[k])}"><em>${u}</em></span></label>`).join('')}</div>`).join('')}<div id="relAlert"></div>`;
@@ -1094,7 +1096,7 @@ $('#stepBody').addEventListener('click',async e=>{
  if(e.target.closest('#mesCopy'))copy(report(cur))});
 $('#mesNew').addEventListener('click',()=>{cur=blank();step=0;drawStep();toast('Nouvelle fiche')});
 function report(m){const L=['MISE EN SERVICE STATION DE POMPAGE'];HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
- CK.forEach(([g,it],gi)=>{L.push('','— '+g);it.forEach((x,ii)=>L.push((m.ck[gi+'-'+ii]?'[x] ':'[ ] ')+x))});
+ CK.forEach(([g,it],gi)=>{if(CK_HIDE.has(gi))return;L.push('','— '+g);it.forEach((x,ii)=>L.push((m.ck[gi+'-'+ii]?'[x] ':'[ ] ')+x))});
  const r=RELF.filter(([k])=>m.r[k]);if(r.length){L.push('','— Relevés');r.forEach(([k,l,u])=>L.push(l+' : '+m.r[k]+' '+u))}
  if(m.obs)L.push('','— Observations',m.obs);return L.join('\n')}
 function drawMesList(){const l=[...S.mes].sort((a,b)=>b.t-a.t);
@@ -1191,7 +1193,7 @@ function drawPtHome(){if(!$('#ptHome'))return;const o=totals(dKey(Date.now())),n
 function drawTb(){const F=S.forages||[],num=v=>parseFloat(String(v||'').replace(',','.'));
  const prof=F.map(f=>num(f.prof)).filter(isFinite),deb=F.map(f=>num(f.q)).filter(isFinite);
  const pm=memoOf('p'),todo=pm.filter(x=>!x.s).length,cmd=pm.filter(x=>x.s===1).length;
- const mesOk=S.mes.filter(m=>CK.every(([,it],gi)=>it.every((_,ii)=>m.ck&&m.ck[gi+'-'+ii]))).length;
+ const mesOk=S.mes.filter(m=>CK.every(([,it],gi)=>CK_HIDE.has(gi)||it.every((_,ii)=>m.ck&&m.ck[gi+'-'+ii]))).length;
  const k=(go,l,v,sm)=>`<button class="kpi" data-goto="${go}"><span>${l}</span><b>${v}</b><small>${sm}</small></button>`;
  $('#tbKpi').innerHTML=k('for','Forages',F.length,F.length?new Set(F.map(f=>(f.c||'').toLowerCase()).filter(Boolean)).size+' client(s)':'Aucun enregistré')
   +k('for','Profondeur moy.',prof.length?Math.round(prof.reduce((a,b)=>a+b,0)/prof.length)+' m':'–',prof.length?'max '+Math.max(...prof)+' m':'non renseignée')
