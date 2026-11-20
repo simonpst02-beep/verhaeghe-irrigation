@@ -1,5 +1,5 @@
 {
-  "version": "1.9",
-  "code": 10,
-  "notes": "Version bêta : option « Recevoir les versions bêta » dans Paramètres."
+  "version": "2.0",
+  "code": 12,
+  "notes": "Version bêta : la recherche de mise à jour voit les nouvelles versions immédiatement (plus d'attente de 5 minutes)."
 }
