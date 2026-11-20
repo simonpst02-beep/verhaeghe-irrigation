@@ -227,6 +227,15 @@ public class MainActivity extends Activity {
     }
 
     class Bridge {
+        /** Identifiant propre à ce téléphone et à cette appli (reste le même après réinstallation). */
+        @JavascriptInterface
+        public String deviceId() {
+            try { return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID); } catch (Exception e) { return ""; }
+        }
+
+        @JavascriptInterface
+        public String deviceModel() { return Build.MANUFACTURER + " " + Build.MODEL; }
+
         @JavascriptInterface
         public void copy(String text) {
             runOnUiThread(() -> {
