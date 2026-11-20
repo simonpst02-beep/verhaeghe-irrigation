@@ -408,6 +408,7 @@ nav a.nmag{flex:1}
  <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h11l-2 4 2 4H5"/></symbol>
  <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11.5a7 7 0 0114 0C19 14.7 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
  <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+ <symbol id="i-cog" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></symbol>
  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h6"/></symbol>
  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v6H4V6h6"/></symbol>
  <symbol id="i-pipe" viewBox="0 0 24 24"><path d="M3 9h7v6H3zM14 9h7v6h-7z"/><path d="M10 12h4"/></symbol>
@@ -415,7 +416,7 @@ nav a.nmag{flex:1}
 
 <header class="hero">
  <div class="in">
-  <div class="row"><div class="brand"><b><svg class="i"><use href="#i-drop"/></svg></b><div class="bn"><span>Verhaeghe Irrigation</span><small>Assistant technique terrain</small></div></div><div class="hr"><span class="sync" id="sync"><i></i><span>Sur cet appareil</span></span><div class="theme" role="group" aria-label="Thème"><button data-th="light" aria-label="Mode clair" title="Mode clair"><svg class="i"><use href="#i-sun"/></svg></button><button data-th="dark" aria-label="Mode sombre" title="Mode sombre"><svg class="i"><use href="#i-moon"/></svg></button></div><a href="#parametres" class="gearb" aria-label="Paramètres" title="Paramètres"><svg class="i"><use href="#i-gear"/></svg><i class="updot" id="upDot" hidden></i></a></div></div>
+  <div class="row"><div class="brand"><b><svg class="i"><use href="#i-drop"/></svg></b><div class="bn"><span>Verhaeghe Irrigation</span><small>Assistant technique terrain</small></div></div><div class="hr"><span class="sync" id="sync"><i></i><span>Sur cet appareil</span></span><div class="theme" role="group" aria-label="Thème"><button data-th="light" aria-label="Mode clair" title="Mode clair"><svg class="i"><use href="#i-sun"/></svg></button><button data-th="dark" aria-label="Mode sombre" title="Mode sombre"><svg class="i"><use href="#i-moon"/></svg></button></div><a href="#parametres" class="gearb" aria-label="Paramètres" title="Paramètres"><svg class="i"><use href="#i-cog"/></svg><i class="updot" id="upDot" hidden></i></a></div></div>
   <nav id="nav">
    <a href="#accueil" data-v="accueil"><svg class="i"><use href="#i-home"/></svg>Accueil</a>
    <a href="#enrouleurs" data-v="enrouleurs"><svg class="i"><use href="#i-reel"/></svg>Enrouleurs</a>
@@ -592,7 +593,7 @@ nav a.nmag{flex:1}
 </section>
 
 <section id="v-parametres">
- <div class="head"><div><h2>Paramètres</h2><p>Mise à jour, affichage, données de l'appli.</p></div></div>
+ <div class="head"><div><h2 style="display:flex;align-items:center;gap:10px"><svg class="i" style="width:30px;height:30px;color:var(--blue)"><use href="#i-cog"/></svg>Paramètres</h2><p>Mise à jour, affichage, données de l'appli.</p></div></div>
  <div class="card prm" id="prmUp">
   <div class="ptlh"><h3>Mise à jour</h3><span class="vtag" id="upVer"></span></div>
   <p class="tag" id="upTxt" style="margin:0 0 12px"></p>
