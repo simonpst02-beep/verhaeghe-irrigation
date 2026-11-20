@@ -1483,7 +1483,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.1 bêta',APP_CODE=13,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.2 bêta',APP_CODE=14,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
@@ -1618,12 +1618,16 @@ function drawPhotos(){
  $('#phList').innerHTML=l.length?l.map(p=>`<figure data-ph="${esc(p.id)}"><img src="${esc(src(p))}" alt="${esc(p.l||p.cat)}" loading="lazy"><figcaption><b>${esc(p.l||p.cat)}</b><br><span class="tag">${esc(p.c||'')} ${new Date(p.t).toLocaleDateString('fr-FR')}</span></figcaption></figure>`).join(''):`<p class="empty" style="grid-column:1/-1">Pas encore de photo.</p>`;
  chantiers()}
 function shrink(file,max,q){return new Promise((ok,ko)=>{const img=new Image();img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(img.src);c.toBlob(b=>b?ok({b,c}):ko(),'image/jpeg',q)};img.onerror=ko;img.src=URL.createObjectURL(file)})}
-$('#pFile').addEventListener('change',async e=>{const files=[...e.target.files];if(!files.length)return;$('#pInfo').textContent='Envoi en cours…';let n=0;
+{const F=['pCat','pC','pL'];try{const v=JSON.parse(localStorage.getItem('dep_pform')||'{}');F.forEach(k=>{if(v[k])$('#'+k).value=v[k]})}catch(e){}
+ const sv=()=>{try{localStorage.setItem('dep_pform',JSON.stringify(Object.fromEntries(F.map(k=>[k,$('#'+k).value]))))}catch(e){}};F.forEach(k=>{$('#'+k).addEventListener('input',sv);$('#'+k).addEventListener('change',sv)})}
+window.__camPhoto=async d=>{try{const b=await (await fetch(d)).blob();location.hash='photos';await addPhotos([new File([b],'photo.jpg',{type:'image/jpeg'})])}catch(e){toast('Photo non récupérée')}};
+$('#pFile').addEventListener('change',async e=>{const files=[...e.target.files];e.target.value='';await addPhotos(files)});
+async function addPhotos(files){if(!files.length)return;$('#pInfo').textContent='Envoi en cours…';let n=0;
  for(const f of files){try{const meta={id:uid(),cat:$('#pCat').value,c:$('#pC').value.trim(),l:$('#pL').value.trim(),t:Date.now()};
   if(assets){const {b}=await shrink(f,1800,.82);const r=await assets.upload(b,{type:'image/jpeg'});meta.a=r.id}
   else{const {c}=await shrink(f,900,.7);meta.u=c.toDataURL('image/jpeg',.7)}
-  await put('photos',meta);n++}catch(err){toast('Photo non enregistrée'+(err&&err.code?' ('+err.code+')':''))}}
- e.target.value='';$('#pL').value='';$('#pInfo').textContent=n?n+' photo(s) ajoutée(s)':''});
+  await put('photos',meta);n++}catch(err){toast('Photo non enregistrée'+(err&&(err.code||err.message)?' ('+(err.code||err.message)+')':''))}}
+ $('#pL').value='';try{const v=JSON.parse(localStorage.getItem('dep_pform')||'{}');v.pL='';localStorage.setItem('dep_pform',JSON.stringify(v))}catch(e){}$('#pInfo').textContent=n?n+' photo(s) ajoutée(s)':'Aucune photo ajoutée'}
 $('#pChips').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(b){pf=b.dataset.c;drawPhotos()}});
 let open=null;
 $('#phList').addEventListener('click',e=>{const f=e.target.closest('[data-ph]');if(!f)return;open=S.photos.find(p=>p.id===f.dataset.ph);if(!open)return;

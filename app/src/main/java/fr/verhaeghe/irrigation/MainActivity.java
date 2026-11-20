@@ -32,17 +32,53 @@ import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.content.pm.Signature;
 import java.util.Arrays;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
+import android.media.ExifInterface;
+import java.io.ByteArrayOutputStream;
 
 public class MainActivity extends Activity {
     private WebView web;
     private ValueCallback<Uri[]> fileCallback;
     private File photoFile;
     private Uri photoUri;
+    private boolean pageReady = false;
+    private String pendingPhotoJs = null;
     private static final int PICK_FILE = 42;
     private static final int INSTALL_PERM = 43;
     private File pendingApk;
 
     private void js(String code) { runOnUiThread(() -> web.evaluateJavascript(code, null)); }
+
+    /** Réduit la photo (1600 px, JPEG 82 %) et la renvoie en data URL, en tenant compte de l'orientation. */
+    private String photoDataUrl(File f) {
+        try {
+            BitmapFactory.Options o = new BitmapFactory.Options(); o.inJustDecodeBounds = true;
+            BitmapFactory.decodeFile(f.getPath(), o);
+            int s = 1; while (Math.max(o.outWidth, o.outHeight) / (s * 2) >= 1600) s *= 2;
+            BitmapFactory.Options o2 = new BitmapFactory.Options(); o2.inSampleSize = s;
+            Bitmap b = BitmapFactory.decodeFile(f.getPath(), o2);
+            if (b == null) return null;
+            int rot = 0;
+            try { int or = new ExifInterface(f.getPath()).getAttributeInt(ExifInterface.TAG_ORIENTATION, 1);
+                rot = or == 6 ? 90 : or == 3 ? 180 : or == 8 ? 270 : 0; } catch (Exception ignored) {}
+            float k = Math.min(1f, 1600f / Math.max(b.getWidth(), b.getHeight()));
+            Matrix m = new Matrix(); m.postScale(k, k); if (rot != 0) m.postRotate(rot);
+            Bitmap r = Bitmap.createBitmap(b, 0, 0, b.getWidth(), b.getHeight(), m, true);
+            ByteArrayOutputStream bo = new ByteArrayOutputStream();
+            r.compress(Bitmap.CompressFormat.JPEG, 82, bo);
+            return "data:image/jpeg;base64," + Base64.encodeToString(bo.toByteArray(), Base64.NO_WRAP);
+        } catch (Throwable e) { return null; }
+    }
+
+    /** Photo de l'appareil photo reçue alors que la page avait été rechargée : on la transmet à la page. */
+    private void sendPhotoToPage(File f) {
+        String d = photoDataUrl(f);
+        if (d == null) return;
+        String code = "window.__camPhoto&&window.__camPhoto('" + d + "')";
+        if (pageReady) js(code); else pendingPhotoJs = code;
+    }
 
     private String[] sigs(PackageInfo pi) {
         if (pi == null) return null;
@@ -102,6 +138,11 @@ public class MainActivity extends Activity {
         web.addJavascriptInterface(new Bridge(), "AndroidApp");
         web.setWebViewClient(new WebViewClient() {
             @Override
+            public void onPageFinished(WebView v, String url) {
+                pageReady = true;
+                if (pendingPhotoJs != null) { String c = pendingPhotoJs; pendingPhotoJs = null; v.evaluateJavascript(c, null); }
+            }
+            @Override
             public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest req) {
                 Uri u = req.getUrl();
                 String sc = u.getScheme();
@@ -139,6 +180,7 @@ public class MainActivity extends Activity {
                 return true;
             }
         });
+        if (state != null && state.getString("photoFile") != null) { photoFile = new File(state.getString("photoFile")); photoUri = state.getParcelable("photoUri"); }
         if (state != null) web.restoreState(state);
         else web.loadUrl("file:///android_asset/index.html");
     }
@@ -148,6 +190,12 @@ public class MainActivity extends Activity {
         if (req == INSTALL_PERM) {
             if (pendingApk != null && (Build.VERSION.SDK_INT < 26 || getPackageManager().canRequestPackageInstalls())) installApk(pendingApk);
             else js("window.__upState&&window.__upState('denied')");
+            return;
+        }
+        if (req == PICK_FILE && fileCallback == null) {
+            // L'appli a été relancée pendant la prise de vue : on récupère quand même la photo
+            if (res == RESULT_OK && photoFile != null && photoFile.length() > 0) { File f = photoFile; new Thread(() -> sendPhotoToPage(f)).start(); }
+            photoFile = null;
             return;
         }
         if (req == PICK_FILE && fileCallback != null) {
@@ -168,7 +216,10 @@ public class MainActivity extends Activity {
         super.onActivityResult(req, res, data);
     }
 
-    @Override protected void onSaveInstanceState(Bundle b) { super.onSaveInstanceState(b); web.saveState(b); }
+    @Override protected void onSaveInstanceState(Bundle b) {
+        super.onSaveInstanceState(b); web.saveState(b);
+        if (photoFile != null) { b.putString("photoFile", photoFile.getPath()); b.putParcelable("photoUri", photoUri); }
+    }
 
     @Override
     public void onBackPressed() {
