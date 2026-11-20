@@ -1,15 +1,36 @@
 plugins { id 'com.android.application' }
+
+// Signature fixe : la clé est fournie par les secrets GitHub (SIGNING_KEY / SIGNING_PASSWORD).
+// Sans secrets, la version release retombe sur la clé de test (comme avant).
+def ksFile = file(System.getenv('KEYSTORE_FILE') ?: 'none.jks')
+def ksPass = System.getenv('SIGNING_PASSWORD')
+
 android {
     namespace 'fr.verhaeghe.irrigation'
-    compileSdk 34
+    compileSdk 35
     defaultConfig {
         applicationId 'fr.verhaeghe.irrigation'
         minSdk 24
-        targetSdk 34
+        targetSdk 35
         versionCode 6
         versionName '1.5'
     }
-    buildTypes { release { minifyEnabled false } }
+    signingConfigs {
+        release {
+            if (ksFile.exists() && ksPass) {
+                storeFile ksFile
+                storePassword ksPass
+                keyAlias 'verhaeghe'
+                keyPassword ksPass
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            signingConfig (ksFile.exists() && ksPass) ? signingConfigs.release : signingConfigs.debug
+        }
+    }
     compileOptions { sourceCompatibility JavaVersion.VERSION_17; targetCompatibility JavaVersion.VERSION_17 }
 }
 dependencies { implementation 'androidx.core:core:1.13.1' }

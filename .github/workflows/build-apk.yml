@@ -2,7 +2,7 @@ name: Construire l'APK
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, preparation ]
   workflow_dispatch:
 
 permissions:
@@ -21,21 +21,42 @@ jobs:
 
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: '8.7'
+          gradle-version: '8.10.2'
 
-      - name: Compiler l'APK
-        run: gradle assembleDebug --no-daemon
+      - name: Clé de signature (secrets GitHub)
+        env:
+          SIGNING_KEY: ${{ secrets.SIGNING_KEY }}
+        run: |
+          if [ -n "$SIGNING_KEY" ]; then
+            echo "$SIGNING_KEY" | base64 -d > "$RUNNER_TEMP/verhaeghe-release.jks"
+            echo "KEYSTORE_FILE=$RUNNER_TEMP/verhaeghe-release.jks" >> "$GITHUB_ENV"
+            echo "Signature : clé fixe Verhaeghe"
+          else
+            echo "::warning::Secrets SIGNING_KEY / SIGNING_PASSWORD absents : APK signé avec une clé de test"
+          fi
+
+      - name: Compiler l'APK et le bundle Play Store
+        env:
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: gradle assembleRelease bundleRelease --no-daemon
 
       - name: Renommer
-        run: cp app/build/outputs/apk/debug/app-debug.apk Verhaeghe-Irrigation.apk
+        run: |
+          cp app/build/outputs/apk/release/app-release.apk Verhaeghe-Irrigation.apk
+          cp app/build/outputs/bundle/release/app-release.aab Verhaeghe-Irrigation.aab
+          sha256sum Verhaeghe-Irrigation.apk | tee Verhaeghe-Irrigation.apk.sha256
 
-      - name: Garder l'APK (onglet Actions)
+      - name: Garder les fichiers (onglet Actions)
         uses: actions/upload-artifact@v4
         with:
-          name: Verhaeghe-Irrigation-apk
-          path: Verhaeghe-Irrigation.apk
+          name: Verhaeghe-Irrigation-${{ github.ref_name }}
+          path: |
+            Verhaeghe-Irrigation.apk
+            Verhaeghe-Irrigation.aab
+            Verhaeghe-Irrigation.apk.sha256
 
-      - name: Publier dans la release « derniere-version »
+      - name: Publier la version (branche main)
+        if: github.ref_name == 'main'
         uses: softprops/action-gh-release@v2
         with:
           tag_name: derniere-version
@@ -43,5 +64,23 @@ jobs:
           body: |
             APK construit automatiquement depuis le commit ${{ github.sha }}.
             Téléchargez Verhaeghe-Irrigation.apk sur le téléphone Android puis ouvrez-le pour l'installer.
-          files: Verhaeghe-Irrigation.apk
+          files: |
+            Verhaeghe-Irrigation.apk
+            Verhaeghe-Irrigation.aab
           make_latest: true
+
+      - name: Version de test (branche preparation, non publiée aux téléphones)
+        if: github.ref_name == 'preparation'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: preparation
+          name: Version de test (non publiée)
+          prerelease: true
+          make_latest: false
+          body: |
+            Version de test construite depuis la branche preparation (${{ github.sha }}).
+            Elle n'est pas proposée en mise à jour dans l'appli.
+          files: |
+            Verhaeghe-Irrigation.apk
+            Verhaeghe-Irrigation.aab
+            Verhaeghe-Irrigation.apk.sha256
