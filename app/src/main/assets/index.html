@@ -354,6 +354,7 @@ nav a.nmag{flex:1}
 .prmth button{font-size:15px}
 .about{display:grid;grid-template-columns:7em minmax(0,1fr);gap:6px 12px;margin:0;font-size:15px}.about dt{color:var(--mute)}.about dd{margin:0;font-weight:600}
 @media(max-width:420px){.hr{gap:5px}.gearb{width:38px;height:38px}}
+.fosel{display:flex;align-items:center;gap:10px;background:var(--bg);border-radius:14px;padding:10px;margin:-2px 0 14px;flex-wrap:wrap}.fosel>div{flex:1 1 150px}.fosel .pinb{width:38px;height:38px;border-radius:12px;background:light-dark(#dff6f3,#123a37);color:var(--teal);display:grid;place-items:center;flex:none}.fosel .shb{min-height:40px;padding:6px 12px;font-size:14px}
 .ptlh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}.ptlh h3{font-size:21px}
 .seg2{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto auto;grid-template-areas:'ty st en du rm' 'cc cc cc cc cc';gap:8px;align-items:center;padding:10px 0 10px 12px;border-top:1px solid var(--line);border-left:5px solid var(--line)}
 .seg2.k-trajet{border-left-color:var(--blue)}.seg2.k-inter{border-left-color:var(--teal)}.seg2.k-pause{border-left-color:var(--mute)}
@@ -1082,7 +1083,11 @@ function drawStepper(){
  const {ok,tot}=count();$('#progBar').style.width=(ok/tot*100)+'%';$('#progTxt').textContent=ok+' / '+tot;
  const c=$('#stepper .cur');if(c)c.scrollIntoView({block:'nearest',inline:'center'})}
 function drawStep(){if(!(step>=0&&step<STEPS.length))step=0;const s=STEPS[step];let h='';
- if(step===0)h=`<h3 style="font-size:23px;margin-bottom:14px">Informations chantier</h3><div class="grid">${HEAD.map(([k,l,t])=>`<label>${l}<input data-h="${k}" type="${t||'text'}" value="${esc(cur.h[k])}"></label>`).join('')}</div>`;
+ if(step===0){const F=[...(S.forages||[])].sort((a,b)=>(a.c||'').localeCompare(b.c||'','fr')||(a.n||'').localeCompare(b.n||'','fr'));const fo=F.find(f=>f.id===cur.h.forage);
+  h=`<h3 style="font-size:23px;margin-bottom:14px">Informations chantier</h3>
+  <label style="margin-bottom:12px">Forage<select id="mesFo"><option value="">${F.length?'— Choisir un forage —':'Aucun forage enregistré (Pompage → Forages)'}</option>${F.map(f=>`<option value="${esc(f.id)}"${f.id===cur.h.forage?' selected':''}>${esc([f.n||'Forage',f.c,f.v].filter(Boolean).join(' – '))}</option>`).join('')}</select></label>
+  ${fo?`<div class="fosel"><span class="pinb">${ic('pin')}</span><div><b>${esc(fo.n||'Forage')}</b><div class="tag">${fo.lat}, ${fo.lon}${fo.prof?' · '+esc(fo.prof)+' m':''}${fo.q?' · '+esc(fo.q)+' m³/h':''}${fo.pompe?' · '+esc(fo.pompe):''}</div></div><a class="shb" href="https://www.google.com/maps/dir/?api=1&destination=${fo.lat},${fo.lon}" target="_blank" rel="noopener">${ic('car')}Itinéraire</a></div>`:''}
+  <div class="grid">${HEAD.map(([k,l,t])=>`<label>${l}<input data-h="${k}" type="${t||'text'}" value="${esc(cur.h[k])}"></label>`).join('')}</div>`}
  else if(s.vf){const fld=(F)=>F.map(([k,l,ph,dl])=>k==='vfiltre'?`<label>${l}<select data-r="vfiltre"><option value="">— Choisir —</option>${['Avec','Sans'].map(o=>`<option${cur.r.vfiltre===o?' selected':''}>${o}</option>`).join('')}</select></label>`:`<label>${l}<input data-r="${k}" ${/puiss/.test(k)?'inputmode="decimal"':''} ${dl?`list="${dl}"`:''} placeholder="${ph}" value="${esc(cur.r[k])}"></label>`).join('');
   h=`<h3 style="font-size:23px;margin-bottom:6px">Installation</h3><div class="rgroup">Variateur</div><div class="grid">${fld(VAR_F)}</div><div class="rgroup" style="margin-top:18px">Pompe</div><div class="grid">${fld(POMPE_F)}</div>
   <datalist id="varMarques"><option value="Danfoss"><option value="Schneider Electric (Altivar)"><option value="ABB"><option value="Grundfos"><option value="Siemens"><option value="Wilo"><option value="Lowara"><option value="WEG"></datalist>
@@ -1099,13 +1104,13 @@ $('#next').addEventListener('click',()=>{if(step<STEPS.length-1){step++;drawStep
 $('#stepBody').addEventListener('input',e=>{const t=e.target;
  if(t.dataset.h)cur.h[t.dataset.h]=t.value;else if(t.dataset.r){cur.r[t.dataset.r]=t.value;drawAlert()}else if(t.id==='mesObs')cur.obs=t.value;else return;
  saveDraft();drawStepper()});
-$('#stepBody').addEventListener('change',e=>{const t=e.target;if(t.dataset.k){cur.ck[t.dataset.k]=t.checked;saveDraft();drawStepper()}else if(t.tagName==='SELECT'&&t.dataset.r){cur.r[t.dataset.r]=t.value;saveDraft();drawStepper()}});
+$('#stepBody').addEventListener('change',e=>{const t=e.target;if(t.dataset.k){cur.ck[t.dataset.k]=t.checked;saveDraft();drawStepper()}else if(t.tagName==='SELECT'&&t.dataset.r){cur.r[t.dataset.r]=t.value;saveDraft();drawStepper()}else if(t.id==='mesFo'){cur.h.forage=t.value;const f=(S.forages||[]).find(x=>x.id===t.value);if(f){if(!cur.h.client&&f.c)cur.h.client=f.c;if(!cur.h.site&&(f.v||f.n))cur.h.site=[f.n,f.v].filter(Boolean).join(', ')}saveDraft();drawStep()}});
 $('#stepBody').addEventListener('click',async e=>{
  const a=e.target.closest('[data-all]');if(a){const gi=+a.dataset.all;CK[gi][1].forEach((_,ii)=>cur.ck[gi+'-'+ii]=true);drawStep();return}
  if(e.target.closest('#mesSave')){cur.t=Date.now();await put('mes',JSON.parse(JSON.stringify(cur)));toast('Intervention enregistrée')}
  if(e.target.closest('#mesCopy'))copy(report(cur))});
 $('#mesNew').addEventListener('click',()=>{cur=blank();step=0;drawStep();toast('Nouvelle fiche')});
-function report(m){const L=['MISE EN SERVICE STATION DE POMPAGE'];HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
+function report(m){const L=['MISE EN SERVICE STATION DE POMPAGE'];{const f=(S.forages||[]).find(x=>x.id===m.h.forage);if(f)L.push('Forage : '+(f.n||'Forage')+(f.c?' ('+f.c+')':'')+' – GPS '+f.lat+', '+f.lon)}HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
  CK_ORDER.forEach(gi=>{const [g,it]=CK[gi];L.push('','— '+g);it.forEach((x,ii)=>L.push((m.ck[gi+'-'+ii]?'[x] ':'[ ] ')+x))});
  if([...VAR_F,...POMPE_F].some(([k])=>m.r[k])){L.push('','— Installation');[['Variateur',VAR_F],['Pompe',POMPE_F]].forEach(([t,F])=>{if(F.some(([k])=>m.r[k]))L.push(t+' : '+F.filter(([k])=>m.r[k]).map(([k,l])=>l.toLowerCase()+' '+m.r[k]).join(', '))})}
  const r=RELF.filter(([k])=>m.r[k]);if(r.length){L.push('','— Relevés');r.forEach(([k,l,u])=>L.push(l+' : '+m.r[k]+' '+u))}
