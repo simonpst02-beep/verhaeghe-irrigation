@@ -36,6 +36,8 @@ import java.util.Arrays;
 public class MainActivity extends Activity {
     private WebView web;
     private ValueCallback<Uri[]> fileCallback;
+    private File photoFile;
+    private Uri photoUri;
     private static final int PICK_FILE = 42;
     private static final int INSTALL_PERM = 43;
     private File pendingApk;
@@ -117,7 +119,22 @@ public class MainActivity extends Activity {
                 try {
                     Intent i = p.createIntent();
                     i.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, p.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE);
-                    startActivityForResult(Intent.createChooser(i, "Choisir"), PICK_FILE);
+                    boolean image = false;
+                    for (String a : p.getAcceptTypes()) if (a != null && a.startsWith("image")) image = true;
+                    Intent chooser = Intent.createChooser(i, image ? "Prendre ou choisir une photo" : "Choisir");
+                    photoFile = null;
+                    if (image) {
+                        // Appareil photo : la photo est écrite dans le cache de l'appli puis renvoyée à la page
+                        File dir = new File(getCacheDir(), "photos");
+                        dir.mkdirs();
+                        photoFile = new File(dir, "photo-" + System.currentTimeMillis() + ".jpg");
+                        photoUri = FileProvider.getUriForFile(MainActivity.this, "fr.verhaeghe.irrigation.files", photoFile);
+                        Intent cam = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
+                        cam.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, photoUri);
+                        cam.addFlags(Intent.FLAG_GRANT_WRITE_URI_PERMISSION | Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        chooser.putExtra(Intent.EXTRA_INITIAL_INTENTS, new Intent[]{cam});
+                    }
+                    startActivityForResult(chooser, PICK_FILE);
                 } catch (Exception e) { fileCallback = null; return false; }
                 return true;
             }
@@ -142,6 +159,8 @@ public class MainActivity extends Activity {
                     for (int k = 0; k < n; k++) out[k] = data.getClipData().getItemAt(k).getUri();
                 } else if (data.getData() != null) out = new Uri[]{data.getData()};
             }
+            if (res == RESULT_OK && out == null && photoFile != null && photoFile.length() > 0) out = new Uri[]{photoUri};
+            photoFile = null;
             fileCallback.onReceiveValue(out);
             fileCallback = null;
             return;
