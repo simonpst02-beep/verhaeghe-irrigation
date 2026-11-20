@@ -1,7 +1,7 @@
 plugins { id 'com.android.application' }
 
 // Signature fixe : la clé est fournie par les secrets GitHub (SIGNING_KEY / SIGNING_PASSWORD).
-// Sans secrets, la version release retombe sur la clé de test (comme avant).
+// Sans secrets, la clé fixe du dossier signature/ est utilisée : toutes les versions ont la même signature.
 def ksFile = file(System.getenv('KEYSTORE_FILE') ?: 'none.jks')
 def ksPass = System.getenv('SIGNING_PASSWORD')
 

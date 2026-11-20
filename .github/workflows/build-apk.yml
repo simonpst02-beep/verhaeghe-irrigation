@@ -32,12 +32,13 @@ jobs:
             echo "KEYSTORE_FILE=$RUNNER_TEMP/verhaeghe-release.jks" >> "$GITHUB_ENV"
             echo "Signature : clé fixe Verhaeghe"
           else
-            echo "::warning::Secrets SIGNING_KEY / SIGNING_PASSWORD absents : APK signé avec une clé de test"
+            echo "KEYSTORE_FILE=$GITHUB_WORKSPACE/signature/verhaeghe-release.jks" >> "$GITHUB_ENV"
+            echo "Signature : clé fixe Verhaeghe (fichier du dépôt)"
           fi
 
       - name: Compiler l'APK et le bundle Play Store
         env:
-          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD || 'bWx625uvClOv0PIN6mbXPEri' }}
         run: gradle assembleRelease bundleRelease --no-daemon
 
       - name: Renommer
