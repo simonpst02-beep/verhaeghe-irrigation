@@ -28,6 +28,10 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import android.provider.Settings;
 import java.io.OutputStream;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
+import android.content.pm.Signature;
+import java.util.Arrays;
 
 public class MainActivity extends Activity {
     private WebView web;
@@ -38,7 +42,32 @@ public class MainActivity extends Activity {
 
     private void js(String code) { runOnUiThread(() -> web.evaluateJavascript(code, null)); }
 
+    private String[] sigs(PackageInfo pi) {
+        if (pi == null) return null;
+        Signature[] a;
+        if (Build.VERSION.SDK_INT >= 28) { if (pi.signingInfo == null) return null; a = pi.signingInfo.getApkContentsSigners(); }
+        else a = pi.signatures;
+        if (a == null) return null;
+        String[] r = new String[a.length];
+        for (int i = 0; i < a.length; i++) r[i] = a[i].toCharsString();
+        Arrays.sort(r);
+        return r;
+    }
+
+    /** true si l'APK téléchargé est signé avec la même clé que l'appli installée (sinon Android refuse la mise à jour). */
+    private boolean sameSigner(File apk) {
+        try {
+            int f = Build.VERSION.SDK_INT >= 28 ? PackageManager.GET_SIGNING_CERTIFICATES : PackageManager.GET_SIGNATURES;
+            PackageManager pm = getPackageManager();
+            PackageInfo n = pm.getPackageArchiveInfo(apk.getPath(), f);
+            String[] a = sigs(pm.getPackageInfo(getPackageName(), f)), b = sigs(n);
+            if (a == null || b == null) return true; // impossible de vérifier : on laisse Android décider
+            return Arrays.equals(a, b);
+        } catch (Exception e) { return true; }
+    }
+
     private void installApk(File apk) {
+        if (!sameSigner(apk)) { js("window.__upState&&window.__upState('sig')"); return; }
         if (Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
             pendingApk = apk;
             js("window.__upState&&window.__upState('perm')");
