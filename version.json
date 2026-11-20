@@ -1,5 +1,5 @@
 {
-  "version": "1.8",
-  "code": 9,
-  "notes": "Signature définitive Verhaeghe : les prochaines mises à jour s'installeront directement depuis l'appli."
+  "version": "1.9",
+  "code": 11,
+  "notes": "Nouvelle option dans Paramètres : « Recevoir les versions bêta » pour tester les nouveautés avant leur sortie officielle."
 }
