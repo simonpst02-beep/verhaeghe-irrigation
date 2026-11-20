@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Verhaeghe Irrigation</title>
+<script>try{if(window.AndroidApp&&!localStorage.getItem('vi_licence'))document.documentElement.classList.add('lockd')}catch(e){}</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
@@ -442,6 +443,19 @@ nav a.nmag{flex:1}
  .toast{bottom:84px;font-size:14px}
 }
 @media(max-width:340px){.bn small{display:none}.tile span{display:none}.brands button small{display:none}}
+
+/* Licence (appli Android) */
+html.lockd body>*:not(#lic):not(.toast){visibility:hidden}
+#lic{position:fixed;inset:0;z-index:9999;display:none;align-items:center;justify-content:center;padding:22px;background:linear-gradient(160deg,#2f7de1,#1fb5a8)}
+html.lockd #lic{display:flex}
+#lic .lbox{background:var(--card);color:var(--ink,inherit);border-radius:24px;padding:24px 20px;width:100%;max-width:400px;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+#lic .lhd{display:flex;align-items:center;gap:12px;margin-bottom:14px}
+#lic .lhd b{width:48px;height:48px;border-radius:14px;background:#e6f0fd;color:#2f7de1;display:grid;place-items:center}
+#lic .lhd b svg{width:28px;height:28px}
+#lic h2{margin:0;font-size:21px}#lic small{color:var(--mute,#66768a)}
+#lic input{width:100%;font-size:17px;letter-spacing:1px;text-transform:uppercase;text-align:center;margin:12px 0}
+#lic button{width:100%;justify-content:center}
+#lic .lerr{color:#c0392b;font-weight:700;margin:10px 0 0;min-height:1em}
 </style>
 </head>
 <body>
@@ -500,6 +514,13 @@ nav a.nmag{flex:1}
  <svg class="wave" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C200 10 400 70 600 40 S1000 10 1200 40 V70 H0z" fill="rgba(255,255,255,.06)"/><path d="M0 52 C250 30 450 72 700 50 S1050 30 1200 52 V70 H0z" fill="rgba(255,255,255,.07)"/></svg>
 </header>
 
+<div id="lic"><form class="lbox" id="licForm" autocomplete="off">
+ <div class="lhd"><b><svg class="i"><use href="#i-drop"/></svg></b><div><h2>Verhaeghe Irrigation</h2><small>Application réservée aux membres Verhaeghe</small></div></div>
+ <p id="licMsg" style="margin:0">Entrez votre code d'activation personnel (il vous a été remis par Verhaeghe Irrigation). Il n'est demandé qu'une seule fois sur ce téléphone.</p>
+ <input id="licCode" placeholder="VHG-XXXX-XXXX-XXXX" autocapitalize="characters" spellcheck="false">
+ <button id="licBtn" type="submit">Activer l'application</button>
+ <p class="lerr" id="licErr"></p>
+</form></div>
 <main>
 <section id="v-accueil">
  <div class="hello"><div class="hrow"><h2 id="hi">Bonjour</h2><div class="clock" aria-live="off"><span id="clk">--:--</span><small id="clkS"></small></div></div><div class="dl"><p id="today"></p><a class="wx" id="wx" target="_blank" rel="noopener"><span id="wxIco"><svg class="i"><use href="#i-cloud"/></svg></span><span id="wxTxt">Météo</span><svg class="i" style="width:16px;height:16px;opacity:.6"><use href="#i-ext"/></svg></a><button class="ghost wxe" id="wxEdit" aria-label="Changer la commune" title="Changer la commune"><svg class="i" style="width:18px;height:18px"><use href="#i-pen"/></svg></button></div>
@@ -686,7 +707,7 @@ nav a.nmag{flex:1}
  </div>
  <div class="card prm">
   <h3>À propos</h3>
-  <dl class="about"><dt>Application</dt><dd>Verhaeghe Irrigation – Assistant technique terrain</dd><dt>Version</dt><dd id="abVer"></dd><dt>Type</dt><dd id="abType"></dd><dt>Données</dt><dd id="abData"></dd></dl>
+  <dl class="about"><dt>Application</dt><dd>Verhaeghe Irrigation – Assistant technique terrain</dd><dt>Version</dt><dd id="abVer"></dd><dt>Type</dt><dd id="abType"></dd><dt>Données</dt><dd id="abData"></dd><dt>Licence</dt><dd id="abLic">—</dd></dl>
  </div>
 </section>
 
@@ -714,6 +735,53 @@ nav a.nmag{flex:1}
 </div>
 <div class="toast" id="toast"></div>
 
+<script>
+/* ---------- Licence : code d'activation personnel (appli Android uniquement) ---------- */
+(function(){
+ if(!window.AndroidApp)return;
+ const KEY='vi_licence',REPO='simonpst02-beep/verhaeghe-irrigation',RECHECK=6*36e5,MAXOFF=30*864e5;
+ const H=document.documentElement,$=s=>document.querySelector(s);
+ // SHA-256 (sans dépendance)
+ function sha256(bytes){const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
+  const l=bytes.length,n=((l+9+63)>>6)<<6,m=new Uint8Array(n);m.set(bytes);m[l]=0x80;const bl=l*8;for(let i=0;i<4;i++)m[n-1-i]=(bl>>>(8*i))&255;
+  let a0=0x6a09e667,b0=0xbb67ae85,c0=0x3c6ef372,d0=0xa54ff53a,e0=0x510e527f,f0=0x9b05688c,g0=0x1f83d9ab,h0=0x5be0cd19;const w=new Uint32Array(64);const r=(x,k)=>(x>>>k)|(x<<(32-k));
+  for(let o=0;o<n;o+=64){for(let i=0;i<16;i++)w[i]=(m[o+4*i]<<24)|(m[o+4*i+1]<<16)|(m[o+4*i+2]<<8)|m[o+4*i+3];
+   for(let i=16;i<64;i++){const s0=r(w[i-15],7)^r(w[i-15],18)^(w[i-15]>>>3),s1=r(w[i-2],17)^r(w[i-2],19)^(w[i-2]>>>10);w[i]=(w[i-16]+s0+w[i-7]+s1)|0}
+   let a=a0,b=b0,c=c0,d=d0,e=e0,f=f0,g=g0,h=h0;
+   for(let i=0;i<64;i++){const S1=r(e,6)^r(e,11)^r(e,25),ch=(e&f)^(~e&g),t1=(h+S1+ch+K[i]+w[i])|0,S0=r(a,2)^r(a,13)^r(a,22),mj=(a&b)^(a&c)^(b&c),t2=(S0+mj)|0;h=g;g=f;f=e;e=(d+t1)|0;d=c;c=b;b=a;a=(t1+t2)|0}
+   a0=(a0+a)|0;b0=(b0+b)|0;c0=(c0+c)|0;d0=(d0+d)|0;e0=(e0+e)|0;f0=(f0+f)|0;g0=(g0+g)|0;h0=(h0+h)|0}
+  const out=new Uint8Array(32);[a0,b0,c0,d0,e0,f0,g0,h0].forEach((v,i)=>{out[4*i]=v>>>24;out[4*i+1]=(v>>>16)&255;out[4*i+2]=(v>>>8)&255;out[4*i+3]=v&255});return out}
+ const norm=c=>String(c||'').toUpperCase().replace(/[^A-Z0-9]/g,'');
+ function hashCode(c){let x=sha256(new TextEncoder().encode('verhaeghe-licence:'+norm(c)));for(let i=0;i<20000;i++)x=sha256(x);return [...x].map(b=>b.toString(16).padStart(2,'0')).join('')}
+ window.__licHash=hashCode;
+ async function list(){
+  try{const r=await fetch(`https://api.github.com/repos/${REPO}/contents/licences.json?ref=main&t=${Date.now()}`,{cache:'no-store',headers:{Accept:'application/vnd.github.raw+json'}});if(r.ok)return await r.json()}catch(e){}
+  const r=await fetch(`https://raw.githubusercontent.com/${REPO}/main/licences.json?t=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw new Error('liste');return r.json()}
+ const get=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}};
+ const save=v=>{try{v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY)}catch(e){}};
+ const showLic=(msg,err)=>{H.classList.add('lockd');if(msg)$('#licMsg').innerHTML=msg;$('#licErr').textContent=err||''};
+ const about=l=>{const d=$('#abLic');if(d)d.textContent=l?('Activée – '+(l.n||'membre Verhaeghe')):'—'};
+ let lic=get();
+ if(!lic)showLic();
+ else if(Date.now()-(lic.chk||0)>MAXOFF)showLic('Cela fait plus de 30 jours que la licence n\'a pas pu être vérifiée. <b>Connectez-vous à internet</b> puis entrez à nouveau votre code.');
+ document.addEventListener('DOMContentLoaded',()=>{about(lic);
+  $('#licForm').addEventListener('submit',async e=>{e.preventDefault();const c=$('#licCode').value;if(norm(c).length<8)return showLic(null,'Code incomplet.');
+   const b=$('#licBtn');b.disabled=true;b.textContent='Vérification…';$('#licErr').textContent='';
+   try{await new Promise(r=>setTimeout(r,30));const h=hashCode(c),L=await list(),f=(L.codes||[]).find(x=>x.h===h);
+    if(!f)showLic(null,'Code inconnu. Vérifiez-le ou demandez votre code à Verhaeghe Irrigation.');
+    else if(f.actif===false)showLic(null,'Ce code a été désactivé.');
+    else{lic={h,n:f.n||'',t:Date.now(),chk:Date.now()};save(lic);about(lic);H.classList.remove('lockd');$('#licCode').value='';try{window.toast&&toast('Application activée'+(f.n?' – '+f.n:''))}catch(x){}}}
+   catch(x){showLic(null,'Pas de connexion internet : l\'activation nécessite internet (une seule fois).')}
+   finally{b.disabled=false;b.textContent='Activer l\'application'}});
+  // contrôle en arrière-plan (code désactivé à distance)
+  const check=async()=>{lic=get();if(!lic||Date.now()-(lic.chk||0)<RECHECK)return;
+   try{const L=await list(),f=(L.codes||[]).find(x=>x.h===lic.h);
+    if(!f||f.actif===false){save(null);lic=null;about(null);showLic('<b>Votre accès a été désactivé.</b> Contactez Verhaeghe Irrigation pour obtenir un nouveau code.')}
+    else{lic.chk=Date.now();lic.n=f.n||lic.n;save(lic);about(lic);if(H.classList.contains('lockd')&&!$('#licErr').textContent)H.classList.remove('lockd')}}catch(e){}};
+  check();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
+ });
+})();
+</script>
 <script>
 {
 const domOf=x=>x.dom||(x.m==='Pompage'?'pmp':'enr');
@@ -1483,7 +1551,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.2 bêta',APP_CODE=14,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.3 bêta',APP_CODE=15,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;

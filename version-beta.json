@@ -1,5 +1,5 @@
 {
-  "version": "2.2",
-  "code": 14,
-  "notes": "Version bêta : photos de l'appareil photo récupérées même si Android relance l'appli pendant la prise de vue ; catégorie, chantier et légende des photos conservés."
+  "version": "2.3",
+  "code": 15,
+  "notes": "Version bêta : code d'activation personnel demandé une seule fois au premier lancement (application réservée aux membres Verhaeghe)."
 }
