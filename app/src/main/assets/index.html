@@ -669,6 +669,8 @@ nav a.nmag{flex:1}
   <div class="tools"><button id="upCheck"><svg class="i"><use href="#i-search"/></svg>Rechercher une mise à jour</button><a class="shb" id="upDl" hidden target="_blank" rel="noopener"><svg class="i"><use href="#i-file"/></svg>Télécharger la nouvelle version</a><button class="or" id="upInst" hidden><svg class="i"><use href="#i-file"/></svg>Installer la mise à jour</button></div>
   <div class="upprog" id="upProg" hidden><div><b id="upFill"></b></div><span id="upPct">0 %</span></div>
   <label class="allb" id="upAutoW" style="margin-top:12px"><input type="checkbox" id="upAuto" checked> Vérifier automatiquement au démarrage</label>
+  <label class="allb" id="upBetaW" style="margin-top:8px"><input type="checkbox" id="upBeta"> Recevoir les versions bêta (test)</label>
+  <p class="tag" id="upBetaTxt" style="margin:4px 0 0" hidden>Vous recevrez aussi les versions de test, avant leur publication officielle. Elles peuvent contenir des erreurs. Décochez pour revenir aux versions officielles à la prochaine mise à jour.</p>
   <div class="upnotes" id="upNotes" hidden></div>
  </div>
  <div class="card prm">
@@ -1481,22 +1483,28 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='1.8',APP_CODE=9,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='1.9 bêta',APP_CODE=10,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
+const BETA_URL=`https://raw.githubusercontent.com/${REPO}/refs/heads/preparation/version-beta.json`,BETA_APK=`https://github.com/${REPO}/releases/download/preparation/Verhaeghe-Irrigation.apk`;
+let upUrl=APK_URL;
 {const set=(t)=>$('#upTxt').innerHTML=t;
  $('#upVer').textContent='v'+APP_VERSION;$('#abVer').textContent=APP_VERSION+' (code '+APP_CODE+')';
  $('#abType').textContent=IS_APK?'Application Android (APK)':'Version web (Claude)';
  $('#abData').textContent=IS_APK?'Enregistrées sur ce téléphone':'Synchronisées en ligne quand c\'est possible, sinon sur cet appareil';
  let auto=true;try{auto=localStorage.getItem('dep_upauto')!=='0'}catch(e){}$('#upAuto').checked=auto;
  $('#upAuto').addEventListener('change',e=>{try{localStorage.setItem('dep_upauto',e.target.checked?'1':'0')}catch(x){}});
+ let beta=false;try{beta=localStorage.getItem('dep_beta')==='1'}catch(e){}$('#upBeta').checked=beta;$('#upBetaTxt').hidden=!beta;
+ $('#upBeta').addEventListener('change',e=>{beta=e.target.checked;try{localStorage.setItem('dep_beta',beta?'1':'0');localStorage.removeItem('dep_upknown')}catch(x){}$('#upBetaTxt').hidden=!beta;check(false)});
+ if(!IS_APK){$('#upBetaW').hidden=true}
  if(!IS_APK){set('La version web se met à jour toute seule : vous avez toujours la dernière version. Pour le téléphone Android, l\'APK le plus récent se télécharge ici.');$('#upCheck').hidden=true;$('#upAutoW').hidden=true;const d=$('#upDl');d.hidden=false;d.href=APK_URL;d.lastChild.textContent='Télécharger l\'APK Android'}
  else set('Version installée : '+APP_VERSION+'. Touchez « Rechercher » pour vérifier s\'il existe une nouvelle version.');
  async function check(silent){if(!IS_APK)return;if(!silent)set('Recherche en cours…');
-  try{const r=await fetch(VER_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();
+  try{const r=await fetch(VER_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;let v=await r.json();upUrl=APK_URL;
+   if(beta){try{const rb=await fetch(BETA_URL+'?t='+Date.now(),{cache:'no-store'});if(rb.ok){const b=await rb.json();if((+b.code||0)>(+v.code||0)){v={...b,version:b.version+' (bêta)'};upUrl=BETA_APK}}}catch(x){}}
    try{localStorage.setItem('dep_upknown',JSON.stringify(v))}catch(x){}
-   if((+v.code||0)>APP_CODE){showUp(v);const canIn=!!(window.AndroidApp&&AndroidApp.downloadUpdate);const d=$('#upDl');d.hidden=canIn;d.href=APK_URL;$('#upInst').hidden=!canIn;
+   if((+v.code||0)>APP_CODE){showUp(v);const canIn=!!(window.AndroidApp&&AndroidApp.downloadUpdate);const d=$('#upDl');d.hidden=canIn;d.href=upUrl;$('#upInst').hidden=!canIn;
     set(`<b style="color:var(--ok)">Nouvelle version ${esc(v.version)} disponible</b> (vous avez ${APP_VERSION}). ${canIn?'Touchez « Installer la mise à jour » : le téléchargement se fait dans l\'appli, puis Android propose l\'installation.':'Téléchargez-la puis ouvrez le fichier pour l\'installer par-dessus.'} Vos données sont conservées.`);
     if(v.notes){const n=$('#upNotes');n.hidden=false;n.innerHTML='<b>Nouveautés</b><br>'+esc(v.notes).replace(/\n/g,'<br>')}
     if(silent)toast('Mise à jour '+v.version+' disponible : voir Paramètres')}
@@ -1506,7 +1514,7 @@ const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
 }
  if(IS_APK){try{const k=JSON.parse(localStorage.getItem('dep_upknown')||'null');if(k&&(+k.code||0)>APP_CODE)showUp(k)}catch(x){}}
  $('#upCheck').addEventListener('click',()=>check(false));
- $('#upInst').addEventListener('click',()=>{if(!(window.AndroidApp&&AndroidApp.downloadUpdate))return;$('#upInst').disabled=true;$('#upProg').hidden=false;$("#upFill").style.width='0';$('#upPct').textContent='0 %';set('Téléchargement de la mise à jour…');AndroidApp.downloadUpdate(APK_URL)});
+ $('#upInst').addEventListener('click',()=>{if(!(window.AndroidApp&&AndroidApp.downloadUpdate))return;$('#upInst').disabled=true;$('#upProg').hidden=false;$("#upFill").style.width='0';$('#upPct').textContent='0 %';set('Téléchargement de la mise à jour…');AndroidApp.downloadUpdate(upUrl)});
  window.__upProgress=(pct,got)=>{if(pct>=0){$("#upFill").style.width=pct+'%';$('#upPct').textContent=pct+' %'}else{$('#upPct').textContent=(got/1048576).toFixed(1).replace('.',',')+' Mo'}};
  window.__upState=(s,m)=>{const M={downloaded:'Téléchargement terminé.',perm:'Autorisez « Installer des applis inconnues » pour Verhaeghe Irrigation, puis revenez dans l\'appli.',install:'<b style="color:var(--ok)">Android ouvre l\'installation : touchez « Mettre à jour ».</b> Vos données sont conservées.',denied:'<b style="color:var(--bad)">Autorisation refusée.</b> Touchez à nouveau « Installer la mise à jour » et autorisez l\'installation.',error:'<b style="color:var(--bad)">Téléchargement impossible</b> ('+esc(m||'')+'). Vérifiez la connexion et réessayez.',sig:'<b style="color:var(--bad)">Cette version est signée avec une autre clé que l\'appli installée : Android refuserait la mise à jour.</b> Faites d\'abord « Exporter une sauvegarde » (plus bas), désinstallez l\'appli, installez la nouvelle version depuis GitHub puis « Importer une sauvegarde ». Ce n\'est à faire qu\'une seule fois.'};
   set(M[s]||s);if(s==='downloaded'){$("#upFill").style.width='100%';$('#upPct').textContent='100 %'}if(s!=='downloaded')$('#upInst').disabled=false};
