@@ -1,0 +1,47 @@
+name: Construire l'APK
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apk:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: '8.7'
+
+      - name: Compiler l'APK
+        run: gradle assembleDebug --no-daemon
+
+      - name: Renommer
+        run: cp app/build/outputs/apk/debug/app-debug.apk Verhaeghe-Irrigation.apk
+
+      - name: Garder l'APK (onglet Actions)
+        uses: actions/upload-artifact@v4
+        with:
+          name: Verhaeghe-Irrigation-apk
+          path: Verhaeghe-Irrigation.apk
+
+      - name: Publier dans la release « derniere-version »
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: derniere-version
+          name: Verhaeghe Irrigation – dernière version
+          body: |
+            APK construit automatiquement depuis le commit ${{ github.sha }}.
+            Téléchargez Verhaeghe-Irrigation.apk sur le téléphone Android puis ouvrez-le pour l'installer.
+          files: Verhaeghe-Irrigation.apk
+          make_latest: true

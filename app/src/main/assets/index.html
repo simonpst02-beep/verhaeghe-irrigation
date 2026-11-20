@@ -1,0 +1,1412 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Verhaeghe Irrigation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/* VOICE: outil de terrain sûr de lui, lisible en plein soleil, gros boutons pour les doigts
+   IDEA: le tableau de bord d'un véhicule d'intervention : tuiles, compteurs, étapes
+   PICTURE: bandeau bleu profond avec une onde d'eau, tuiles d'accès aux 4 métiers de l'appli
+   COLOUR and TYPE: bleu eau profond #0b4f7c, bleu vif #1479c0, orange signal #f06a1d ; Nunito Condensed / Nunito
+   LAYOUT: une colonne de 900px, barre d'onglets à icônes en bas sur téléphone, en haut sur ordinateur */
+:root{color-scheme:light dark;
+--bg:light-dark(#f3f7fb,#0f1720);--card:light-dark(#ffffff,#18232e);--line:light-dark(#e2e9f1,#2a3a4a);
+--ink:light-dark(#1e2a36,#eef3f7);--mute:light-dark(#66768a,#9fb0c0);
+--deep:light-dark(#2563c9,#2d6cc9);--blue:light-dark(#2f7de1,#6aa8f5);--blueSoft:light-dark(#e6f0fd,#1b3352);
+--btn:light-dark(#2f7de1,#2d6cc9);--teal:light-dark(#14a39a,#3fd0c4);
+--or:#f28c28;--orSoft:light-dark(#fff0e0,#3d2a14);--ok:light-dark(#17804a,#4ccb87);--okSoft:light-dark(#dcf3e6,#123722);--bad:light-dark(#c0271b,#ff7d6e);
+--sh:0 1px 3px rgba(40,70,110,.06),0 8px 22px rgba(40,70,110,.07)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+body.is-light{color-scheme:light!important}body.is-dark{color-scheme:dark!important}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:16.5px/1.55 Nunito,system-ui,sans-serif;overflow-x:clip;-webkit-tap-highlight-color:transparent}
+h1,h2,h3{font-family:Nunito,system-ui,sans-serif;font-weight:800;letter-spacing:-.01em;line-height:1.12;margin:0;text-wrap:balance}
+svg.i{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;flex:none}
+button{font:600 16px Nunito,sans-serif;min-height:48px;padding:10px 18px;border-radius:12px;border:0;background:var(--btn);color:#fff;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+button:active{transform:scale(.98)}
+button.ghost{background:var(--card);color:var(--blue);border:1.5px solid var(--line)}
+button.or{background:var(--or)}
+button.ico{min-height:44px;width:44px;padding:0;background:transparent;color:var(--mute)}
+button:disabled{opacity:.4}
+:focus-visible{outline:3px solid var(--or);outline-offset:2px}
+input,select,textarea{font:16px Nunito,sans-serif;color:var(--ink);background:var(--card);border:1.5px solid var(--line);border-radius:12px;padding:11px 13px;min-height:48px;width:100%}
+textarea{min-height:110px;resize:vertical}
+label{font-size:14px;font-weight:500;color:var(--mute);display:block}
+label>input,label>select,label>textarea{margin-top:4px}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,190px),1fr));gap:12px}
+
+/* bandeau */
+.hero{background:linear-gradient(120deg,light-dark(#2f7de1,#173c6b) 0%,light-dark(#2a93d8,#16507a) 45%,light-dark(#19b3a6,#0e5f5a) 100%);color:#fff;position:relative;overflow:hidden;padding:18px max(4vw,16px) 0}
+.hero .in{max-width:900px;margin:auto;position:relative;z-index:1}
+.hero .row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.brand{display:flex;align-items:center;gap:10px;font:700 22px Nunito,system-ui,sans-serif}
+.brand b{width:40px;height:40px;border-radius:14px;background:#fff;color:#2f7de1;display:grid;place-items:center}
+.bn{display:flex;flex-direction:column;line-height:1.1}.bn span{font:800 21px Nunito,system-ui,sans-serif;letter-spacing:-.01em}.bn small{font:600 13px Nunito,system-ui,sans-serif;opacity:.88;margin-top:3px;letter-spacing:.01em}
+@media(max-width:420px){.bn span{font-size:18px}.bn small{font-size:12px}.sync span{display:none}.sync{padding:8px}}
+.hr{display:flex;align-items:center;gap:8px}
+.theme{display:flex;background:rgba(255,255,255,.16);border-radius:22px;padding:3px}
+.theme button{min-height:38px;width:42px;padding:0;border-radius:19px;background:transparent;color:#fff}
+.theme button svg{width:20px;height:20px}
+.theme button.cur{background:#fff;color:light-dark(#2f7de1,#173c6b)}
+.sync{font-size:13px;display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.12);padding:5px 11px;border-radius:20px}
+.sync i{width:8px;height:8px;border-radius:50%;background:#ffd24a}.sync.on i{background:#6fe3a0}
+.hero svg.wave{position:absolute;left:0;right:0;bottom:0;width:100%;height:70px}
+nav{display:flex;gap:4px;margin-top:16px;position:relative;z-index:2}
+nav a{flex:1;display:flex;flex-direction:column;align-items:center;gap:3px;color:rgba(255,255,255,.75);text-decoration:none;font:600 14px Nunito,system-ui,sans-serif;padding:10px 4px 12px;border-radius:14px 14px 0 0;min-height:48px}
+nav a.cur{background:var(--bg);color:var(--blue)}
+main{max-width:900px;margin:auto;padding:22px max(4vw,16px) 130px}
+section{display:none;animation:in .25s ease}section.cur{display:block}
+@keyframes in{from{opacity:0;transform:translateY(6px)}}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:16px}
+.head h2{font-size:31px}.head p{margin:4px 0 0;color:var(--mute)}
+.card{background:var(--card);border-radius:22px;box-shadow:var(--sh);padding:18px}
+.warn{display:flex;gap:10px;align-items:flex-start;background:var(--orSoft);border-radius:14px;padding:12px 14px;margin-bottom:16px;font-weight:500}
+.warn svg{color:var(--or)}
+.empty{color:var(--mute);text-align:center;padding:34px 12px;border:2px dashed var(--line);border-radius:18px}
+.tag{font-size:13px;color:var(--mute)}
+
+/* accueil */
+.hrow{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.clock{text-align:right;line-height:1;flex:none}.clock span{display:block;font-weight:800;font-size:clamp(34px,7vw,48px);letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--ink)}.clock small{display:block;font-size:13px;color:var(--mute);margin-top:4px;font-weight:600}
+.dl{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:6px 0 20px}.dl p{margin:0!important}
+.wx{display:inline-flex;align-items:center;gap:7px;min-height:40px;padding:6px 14px;border-radius:22px;background:var(--card);box-shadow:var(--sh);color:var(--ink);text-decoration:none;font-weight:700}
+.wx svg:first-child{color:var(--or)}
+.wxi{width:30px;height:30px;flex:none;display:block}
+.wx b{font-size:20px;font-weight:800}.wx small{font-weight:600;color:var(--mute);font-size:13px}
+.wx{min-height:46px}
+.wxe{min-height:40px;width:40px;padding:0;font-size:14px;border-radius:22px}
+.wxf{display:flex;gap:8px;margin:-8px 0 18px;max-width:420px}.wxf[hidden]{display:none}.wxf button{flex:none}
+.hello h2{font-size:clamp(32px,6vw,46px)}.hello p{color:var(--mute);margin:6px 0 20px}
+.tiles{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.tile{text-decoration:none;color:var(--ink);background:var(--card);border-radius:24px;box-shadow:var(--sh);padding:18px;display:flex;flex-direction:column;gap:14px;min-height:150px;position:relative;overflow:hidden}
+.tile .ic{width:54px;height:54px;border-radius:18px;display:grid;place-items:center}
+.tile .ic svg{width:28px;height:28px}
+.tile h3{font-size:23px}.tile span{font-size:14px;color:var(--mute)}
+.tile .n{position:absolute;top:16px;right:18px;font:700 34px Nunito,system-ui,sans-serif;color:var(--line)}
+.c1{background:var(--blueSoft);color:var(--blue)}.c2{background:light-dark(#dff6f3,#123a37);color:var(--teal)}.c3{background:var(--orSoft);color:var(--or)}.c4{background:light-dark(#efeafd,#2a2448);color:light-dark(#7c5ce0,#ab97f5)}
+.resume{margin-top:16px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.resume .t{flex:1 1 220px}
+.ring{width:64px;height:64px;flex:none}
+.todo{margin-top:16px}.todo h3{font-size:21px;margin-bottom:8px}
+.todo li{display:flex;justify-content:space-between;gap:10px;padding:10px 0;border-top:1px solid var(--line)}
+.todo ul{list-style:none;margin:0;padding:0}
+
+/* enrouleurs */
+.search{position:relative;margin-bottom:14px}.search svg{position:absolute;left:14px;top:12px;color:var(--mute)}.search input{padding-left:46px}
+.sym{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,250px),1fr));gap:12px}
+.sym button{background:var(--card);color:var(--ink);box-shadow:var(--sh);justify-content:flex-start;text-align:left;padding:16px;border-radius:18px;min-height:84px;font-size:17px;gap:14px}
+.sym button .ic{width:44px;height:44px;border-radius:13px;background:var(--blueSoft);color:var(--blue);display:grid;place-items:center;flex:none}
+.sym button small{display:block;font-weight:400;font-size:13px;color:var(--mute);margin-top:2px}
+.brands{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.brands button{flex-direction:column;gap:2px;justify-content:flex-start;padding-top:10px!important;background:var(--card);color:var(--ink);border:2px solid var(--line);box-shadow:var(--sh);min-height:64px;padding:8px 4px;border-radius:16px;font:700 18px Nunito,system-ui,sans-serif}
+.brands svg.enr{width:42px;height:35px;fill:none;stroke:var(--bc);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;margin-bottom:2px}.brands button.cur svg.enr{stroke:#fff}
+.brands button small{font:500 12px Nunito,system-ui,sans-serif;color:var(--mute)}
+.brands button.cur{border-color:var(--bc);background:var(--bc);color:#fff}.brands button.cur small{color:rgba(255,255,255,.85)}
+.enrl{display:flex;flex-wrap:wrap;gap:6px;margin-top:5px}.enrl span{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:700;background:var(--blueSoft);color:var(--ink);border-radius:8px;padding:2px 8px}.enrl svg{width:14px;height:14px;color:var(--bc)}
+.autof{border-color:var(--ok)!important;background:var(--okSoft)!important;transition:background .3s}
+[hidden]{display:none!important}
+.share{margin-top:16px;padding:14px 16px}.share .sh{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px}.share .sh b{display:inline-flex;align-items:center;gap:8px;font-size:16px}.share .sh svg{color:var(--blue);width:18px;height:18px}
+.share .tools{margin-top:10px}.shb{display:inline-flex;align-items:center;gap:8px;min-height:48px;padding:10px 16px;border-radius:12px;background:var(--card);border:1.5px solid var(--line);color:var(--blue);text-decoration:none;font-weight:700}
+.pdfst{margin-top:10px;padding:10px 12px;border-radius:12px;background:var(--bg);font-size:14.5px;display:flex;flex-wrap:wrap;gap:8px;align-items:center}.pdfst .small{min-height:36px;padding:4px 12px;font-size:13.5px}
+.shb.wa{background:#1f9d55;border-color:#1f9d55;color:#fff}.pdfb{background:#d93a2b}
+.allb{display:flex;align-items:center;gap:10px;font-size:15px;color:var(--ink);margin:-2px 0 12px;cursor:pointer}.allb input{width:22px;height:22px;min-height:0;margin:0;accent-color:var(--blue)}
+.btabs button,.ptabs button{padding:6px 8px}
+@media(max-width:480px){.ptabs button{font-size:13.5px!important;padding:6px 4px;flex:1 1 auto}.btabs button{font-size:14.5px!important}}
+.ptabs{flex-wrap:wrap}.ptabs button{font-size:16px;min-height:46px}.ptabs button.cur{background:light-dark(#11968e,#14857e)}
+.btabs button{font-size:16px;min-height:46px}.btabs button.cur{background:var(--bc)}
+.doc{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:12px 8px 12px 14px;margin-bottom:8px}
+.doc .pdf{width:46px;height:54px;border-radius:8px;background:#d93a2b;color:#fff;display:grid;place-items:end center;padding-bottom:7px;font:700 12px Nunito,system-ui,sans-serif;flex:none;clip-path:polygon(0 0,72% 0,100% 22%,100% 100%,0 100%)}
+.doc .t{flex:1}.doc b{font-size:16px;overflow-wrap:anywhere}
+.doc a.open{display:inline-flex;align-items:center;gap:6px;min-height:44px;padding:8px 14px;border-radius:12px;background:var(--btn);color:#fff;text-decoration:none;font-weight:600;white-space:nowrap}
+.linkh{font:700 18px Nunito,system-ui,sans-serif;color:var(--mute);margin:20px 0 8px}
+.binfo{margin-bottom:16px;border-top:5px solid var(--bc)}
+.binfo h3{font-size:22px;margin-bottom:8px}.binfo summary{cursor:pointer;list-style:none;display:flex;justify-content:space-between;align-items:center;min-height:32px}.binfo summary::-webkit-details-marker{display:none}.binfo summary::after{content:'+';font:700 26px/1 Nunito,system-ui,sans-serif;color:var(--bc)}.binfo details[open] summary::after{content:'–'}
+.binfo dl{display:grid;grid-template-columns:8.5em minmax(0,1fr);gap:6px 12px;margin:0;font-size:15px}
+.binfo dt{color:var(--mute)}.binfo dd{margin:0}
+.bspec{border-left:5px solid var(--bc)}
+.bspec ul{margin:0;padding-left:20px}.bspec li{margin:5px 0}
+@media(max-width:480px){.binfo dl{grid-template-columns:minmax(0,1fr)}.binfo dd{margin-bottom:6px}}
+.back{background:transparent;color:var(--blue);padding:0 4px;margin-bottom:6px}
+.det h2{font-size:32px;margin-bottom:14px}
+.blk{margin-bottom:14px}.blk h3{font-size:20px;margin-bottom:10px;display:flex;align-items:center;gap:8px}
+.causes{margin:0;padding-left:20px}.causes li{margin:5px 0}
+.steps{list-style:none;margin:0;padding:0;counter-reset:s}
+.steps label{display:flex;gap:14px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--line);color:var(--ink);font-size:16px;font-weight:400;cursor:pointer}
+.steps li:first-child label{border-top:0}
+.steps input{position:absolute;opacity:0;width:1px;height:1px}
+.num{width:32px;height:32px;border-radius:50%;border:2px solid var(--blue);color:var(--blue);display:grid;place-items:center;font-weight:700;flex:none;font-size:15px}
+.steps input:checked+.num{background:var(--ok);border-color:var(--ok);color:#fff}
+.steps input:checked+.num+span{color:var(--mute);text-decoration:line-through}
+.steps input:focus-visible+.num{outline:3px solid var(--or);outline-offset:2px}
+.pick{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px}
+.pick label{display:inline-flex;align-items:center;gap:8px;padding:9px 14px;border-radius:24px;border:1.5px solid var(--line);color:var(--ink);font-size:15px;cursor:pointer;min-height:44px}
+.pick input{width:18px;height:18px;min-height:0;margin:0;accent-color:var(--blue)}
+.pick label:has(input:checked){border-color:var(--blue);background:var(--blueSoft)}
+
+/* pompage */
+.stepper{display:flex;gap:8px;overflow-x:auto;padding:2px 2px 10px;margin:0 -2px 6px;scrollbar-width:none}
+.stepper button{flex:none;min-height:40px;padding:6px 14px;border-radius:22px;background:var(--card);color:var(--ink);border:1.5px solid var(--line);font-size:14px;font-weight:600}
+.stepper button.cur{background:var(--deep);color:#fff;border-color:var(--deep)}
+.stepper button.done{border-color:var(--ok);color:var(--ok)}
+.stepper button.done.cur{background:var(--ok);color:#fff}
+.pbar{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:14px;color:var(--mute)}
+.pbar div{flex:1;height:8px;background:var(--line);border-radius:6px;overflow:hidden}.pbar b{display:block;height:100%;background:var(--ok);transition:width .3s}
+.ckl label{display:flex;gap:14px;align-items:center;padding:14px 4px;border-top:1px solid var(--line);color:var(--ink);font-size:17px;font-weight:400;cursor:pointer}
+.ckl label:first-of-type{border-top:0}
+.ckl input{width:28px;height:28px;min-height:0;margin:0;flex:none;accent-color:var(--ok)}
+.ckl label:has(input:checked) span{color:var(--mute)}
+.ckAll{margin-top:10px}
+.stepnav{position:sticky;bottom:84px;display:flex;gap:10px;margin-top:16px;z-index:5}
+.stepnav button{flex:1;box-shadow:var(--sh)}
+.alert{display:flex;gap:8px;color:var(--bad);font-weight:600;font-size:15px;margin-top:12px}
+.unit{position:relative}.unit input{padding-right:52px}.unit em{position:absolute;right:12px;bottom:13px;font-style:normal;color:var(--mute);font-size:14px}
+.rgroup{font:700 15px Nunito,system-ui,sans-serif;color:var(--blue);margin:16px 0 8px}.rgroup:first-child{margin-top:0}
+.saved{margin-top:20px}.saved h3{font-size:21px;margin-bottom:10px}
+.saved button{width:100%;justify-content:space-between;margin-bottom:8px;background:var(--card);color:var(--ink);box-shadow:var(--sh);font-weight:500}
+
+/* mémo */
+.seg{display:flex;background:var(--card);border-radius:14px;padding:4px;box-shadow:var(--sh);margin-bottom:14px;overflow-x:auto}
+.seg{gap:4px}.seg button{flex:1 0 auto;min-height:42px;background:transparent;color:var(--mute);font-size:14px;padding:6px 10px;border-radius:10px;white-space:nowrap}
+.seg button.cur{background:var(--deep);color:#fff}
+.seg b{font-weight:700;opacity:.8}
+.addf{margin-bottom:16px}.addf[hidden]{display:none}
+.grp{font:700 18px Nunito,system-ui,sans-serif;color:var(--mute);margin:18px 0 8px;display:flex;align-items:center;gap:8px}
+.it{display:flex;align-items:center;gap:12px;background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:12px 8px 12px 14px;margin-bottom:8px;border-left:5px solid var(--or)}
+.it[data-s="1"]{border-left-color:var(--blue)}.it[data-s="2"]{border-left-color:var(--ok);opacity:.75}
+.it .t{flex:1}.it b{font-size:17px}
+.qty{font:700 20px Nunito,system-ui,sans-serif;min-width:38px;text-align:center;color:var(--deep)}
+:root:not([data-theme=light]) .qty{color:light-dark(var(--deep),#8fcaf2)}
+.st{min-height:36px;padding:4px 12px;border-radius:20px;font-size:13px;white-space:nowrap}
+.st[data-s="0"]{background:var(--orSoft);color:var(--ink)}.st[data-s="1"]{background:var(--blueSoft);color:var(--ink)}.st[data-s="2"]{background:var(--okSoft);color:var(--ink)}
+.tools{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+
+/* photos */
+.shoot{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.shoot label.big{flex:1 1 220px;display:flex;align-items:center;justify-content:center;gap:10px;background:var(--or);color:#fff;font:600 17px Nunito,system-ui,sans-serif;border-radius:14px;min-height:56px;cursor:pointer}
+.shoot input[type=file]{position:absolute;opacity:0;width:1px;height:1px}
+.shoot label.big:has(input:focus-visible){outline:3px solid var(--blue);outline-offset:2px}
+.chips{display:flex;gap:8px;overflow-x:auto;margin:16px 0 12px;scrollbar-width:none}
+.chips button{flex:none;min-height:38px;padding:6px 14px;border-radius:20px;background:var(--card);color:var(--ink);border:1.5px solid var(--line);font-size:14px}
+.chips button.cur{background:var(--deep);border-color:var(--deep);color:#fff}
+.ph{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(46%,170px),1fr));gap:10px}
+.ph figure{margin:0;border-radius:16px;overflow:hidden;background:var(--card);box-shadow:var(--sh);cursor:pointer}
+.ph img{width:100%;aspect-ratio:1;object-fit:cover;display:block}
+.ph figcaption{padding:8px 10px;font-size:14px;line-height:1.3}
+.lb{position:fixed;inset:0;background:rgba(3,12,18,.92);display:none;flex-direction:column;align-items:center;justify-content:center;padding:16px;z-index:40;gap:12px;color:#fff}
+.lb.on{display:flex}.lb img{max-width:100%;max-height:70vh;border-radius:12px}
+.lb button.ghost{background:transparent;color:#fff;border-color:rgba(255,255,255,.4)}
+.lb button.del{background:var(--bad)}
+.toast{position:fixed;left:50%;bottom:100px;transform:translate(-50%,10px);background:#0f1a22;color:#fff;padding:12px 20px;border-radius:26px;opacity:0;pointer-events:none;transition:.2s;z-index:50;font-weight:500;box-shadow:0 6px 20px rgba(0,0,0,.25)}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+.fine{font-size:13px;color:var(--mute);margin-top:28px;text-align:center}
+
+/* pointage */
+.daynav{display:flex;gap:8px;align-items:center;margin-bottom:14px;flex-wrap:wrap}.daynav input{width:auto;flex:1 1 150px}
+.ico2{width:48px;padding:0}
+.ptnow{border-top:6px solid var(--line)}.ptnow.on-trajet{border-top-color:var(--blue)}.ptnow.on-inter{border-top-color:var(--teal)}.ptnow.on-pause{border-top-color:var(--mute)}
+.ptstat{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--mute)}
+.pdot{width:12px;height:12px;border-radius:50%;background:var(--line)}
+.on-trajet .pdot{background:var(--blue)}.on-inter .pdot{background:var(--teal)}.on-pause .pdot{background:var(--mute)}
+.ptnow:not(.on-) .pdot{animation:pulse 1.4s infinite}@keyframes pulse{50%{opacity:.35}}
+.ptimer{font-weight:800;font-size:clamp(46px,12vw,64px);letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1;margin:6px 0 12px}
+.ptbtns{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:14px}
+.pb{min-height:60px;font-size:17px;border-radius:16px}
+.pb.tr{background:var(--btn)}.pb.in{background:light-dark(#11968e,#14857e)}.pb.pa{background:light-dark(#6b7a8c,#56657a)}.pb.st{background:var(--card);color:var(--bad);border:2px solid var(--line)}
+.pb.act{box-shadow:0 0 0 4px var(--bg),0 0 0 7px currentColor;outline:0}.pb.tr.act,.pb.in.act,.pb.pa.act{box-shadow:0 0 0 3px var(--bg),0 0 0 6px var(--ink)}
+.pttot{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:14px}
+.pttot div{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:12px;border-top:5px solid var(--line)}
+.pttot b{display:block;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}.pttot span{font-size:13px;color:var(--mute);font-weight:600}
+.pttot .k-trajet{border-top-color:var(--blue)}.pttot .k-inter{border-top-color:var(--teal)}.pttot .k-pause{border-top-color:var(--mute)}.pttot .k-tot{border-top-color:var(--or)}
+.ptbar{display:flex;height:12px;border-radius:8px;overflow:hidden;margin-top:12px;background:var(--line)}.ptbar i{display:block;height:100%}
+
+.route{list-style:none;margin:0;padding:0;position:relative}
+.route li{display:flex;gap:12px;align-items:flex-start;position:relative;padding:4px 0 4px}
+.route .ri{width:40px;height:40px;border-radius:13px;display:grid;place-items:center;flex:none;position:relative;z-index:1}
+.route li:not(:last-child)::before{content:"";position:absolute;left:19px;top:40px;bottom:-6px;width:2px;background:var(--line)}
+.route .k-trajet .ri{background:var(--blueSoft);color:var(--blue)}.route .k-inter .ri{background:light-dark(#dff6f3,#123a37);color:var(--teal)}.route .k-gap .ri{background:var(--orSoft);color:var(--or)}.route .k-start .ri{background:var(--line);color:var(--mute)}
+.route .rb{flex:1;padding-top:2px}.route .rb b{font-size:16px}.route .rb small{display:block;color:var(--mute);font-size:13px}
+.route .rv{font-weight:800;white-space:nowrap;padding-top:8px;font-variant-numeric:tabular-nums}
+.route .k-trajet .rv{color:var(--blue)}.route .k-gap .rv{color:var(--or)}
+
+.fo{background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:16px;margin-bottom:12px;border-left:6px solid var(--teal)}
+.fo .top{display:flex;gap:12px;align-items:flex-start}.fo .pinb{width:44px;height:44px;border-radius:14px;background:light-dark(#dff6f3,#123a37);color:var(--teal);display:grid;place-items:center;flex:none}
+.fo h3{font-size:20px}.fo .gps{font-weight:800;font-variant-numeric:tabular-nums;font-size:17px;margin-top:2px;overflow-wrap:anywhere}
+.fo .dms{font-size:13px;color:var(--mute)}
+.fo dl{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,140px),1fr));gap:8px 14px;margin:12px 0 0}
+.fo dt{font-size:12px;color:var(--mute);font-weight:700}.fo dd{margin:0;font-weight:700;font-variant-numeric:tabular-nums}
+.fo .rq{margin:10px 0 0;font-size:15px;white-space:pre-wrap}
+.fo .tools a{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:8px 14px;border-radius:12px;background:var(--btn);color:#fff;text-decoration:none;font-weight:700}
+.fo .tools a.alt{background:light-dark(#11968e,#14857e)}
+.ptype{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.ptype input{position:absolute;opacity:0;width:1px;height:1px}
+.ptype span{display:flex;flex-direction:column;align-items:center;gap:4px;padding:10px 4px;border-radius:14px;border:2px solid var(--line);font-weight:700;font-size:15px;color:var(--ink);cursor:pointer;min-height:64px;justify-content:center}
+.ptype .k-trajet input:checked+span{border-color:var(--blue);background:var(--blueSoft);color:var(--blue)}
+.ptype .k-inter input:checked+span{border-color:var(--teal);background:light-dark(#dff6f3,#123a37);color:var(--teal)}
+.ptype .k-pause input:checked+span{border-color:var(--mute);background:var(--line)}
+.ptype input:focus-visible+span{outline:3px solid var(--or);outline-offset:2px}
+.ptimes{grid-template-columns:repeat(3,minmax(0,1fr))}@media(max-width:480px){.ptimes{grid-template-columns:repeat(2,minmax(0,1fr))}.ptimes label:last-child{grid-column:1/-1}}.ptimes input{padding:10px 8px}#ptDur{font-weight:800;background:var(--bg)}
+
+/* tableau de bord */
+:root{--cTr:light-dark(#2f7de1,#4f93ec);--cIn:#14a39a}
+.dash{margin-bottom:22px}.qh{font-size:20px;margin:0 0 10px;color:var(--mute)}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-bottom:12px}
+.kpi{font:inherit;text-align:left;cursor:pointer;border:0;background:var(--card);border-radius:20px;box-shadow:var(--sh);padding:14px;text-decoration:none;color:var(--ink);display:block}
+.kpi span{font-size:13px;color:var(--mute);font-weight:700;display:block}
+.kpi b{display:block;font-size:clamp(26px,6vw,34px);font-weight:800;line-height:1.1;margin:4px 0 2px;font-variant-numeric:tabular-nums;white-space:nowrap}
+.kpi small{font-size:13px;color:var(--mute);display:block}
+.kpi .up{color:var(--ok);font-weight:700}.kpi .warn2{color:var(--or);font-weight:700}
+.lg{display:flex;gap:12px;font-size:13px;color:var(--mute);font-weight:700}.lg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}.lg .tr{background:var(--cTr)}.lg .in{background:var(--cIn)}
+.bars{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;align-items:end;height:190px;margin-top:10px;position:relative;border-bottom:1px solid var(--line)}
+.bars .gl{position:absolute;left:0;right:0;border-top:1px dashed var(--line);font-size:11px;color:var(--mute);pointer-events:none}.bars .gl span{position:absolute;right:0;top:-15px}
+.bcol{display:flex;flex-direction:column;justify-content:flex-end;align-items:stretch;height:100%;cursor:pointer;background:none;padding:0 2px;min-height:0;border-radius:0;position:relative;z-index:1}
+.bcol .v{font-size:12px;font-weight:800;color:var(--ink);text-align:center;margin-bottom:3px;white-space:nowrap;font-variant-numeric:tabular-nums}
+.bcol .sg{display:block;width:100%;max-width:34px;margin:0 auto}
+.bcol .sg.tr{background:var(--cTr);border-radius:0 0 4px 4px}.bcol .sg.in{background:var(--cIn);border-radius:4px 4px 0 0;margin-bottom:2px}
+.bcol .sg.only{border-radius:4px 4px 0 0;margin-bottom:0}
+.bcol.cur .v{color:var(--blue)}.bcol:hover .sg,.bcol:focus-visible .sg{filter:brightness(1.1)}
+.dl2{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:8px;margin-top:6px;font-size:12px;color:var(--mute);text-align:center;font-weight:700}.dl2 .cur{color:var(--blue)}
+.mini{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px;margin-top:12px}
+.mini a{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:12px;text-decoration:none;color:var(--ink);display:flex;flex-direction:column;gap:2px}
+.mini a svg{color:var(--blue);width:22px;height:22px}.mini b{font-size:22px;font-weight:800}.mini span{font-size:12.5px;color:var(--mute);font-weight:700}
+.act{list-style:none;margin:0;padding:0}.act li{display:flex;gap:10px;align-items:center;padding:9px 0;border-top:1px solid var(--line);font-size:15px}.act li:first-child{border-top:0}
+.act .ai{width:34px;height:34px;border-radius:11px;background:var(--blueSoft);color:var(--blue);display:grid;place-items:center;flex:none}.act .ai svg{width:18px;height:18px}
+.act .at{flex:1}.act small{color:var(--mute);white-space:nowrap;font-size:13px}
+@media(max-width:600px){.kpis,.mini{grid-template-columns:repeat(2,minmax(0,1fr))}.bars{height:160px;gap:5px}.dl2{gap:5px}}
+
+.nsep{flex:0 0 18px}
+nav a.nmag{flex:1}
+@media(min-width:641px){.nsep{flex:0 0 40px;align-self:center;height:28px;border-left:2px solid rgba(255,255,255,.35)}}
+@media(max-width:640px){.nsep{flex:0 0 10px;align-self:center;height:30px;border-left:2px solid var(--line);margin-left:4px}}
+.mgtabs{margin-bottom:14px}.mgtabs button{font-size:16px;min-height:46px}
+.qlook{position:relative;margin-top:10px;max-width:380px}
+.qin{display:flex;align-items:center;gap:6px;padding:0 10px;background:var(--card);border:1.5px solid var(--line);border-radius:12px}.qin svg{color:var(--mute);width:17px;height:17px}.qin input{border:0;background:transparent;min-height:38px;padding:4px 2px;font-size:14.5px}
+.qin input:focus{outline:0}.qin:focus-within{border-color:var(--blue)}
+.qres:empty{display:none}.qres{position:absolute;left:0;right:0;top:calc(100% + 4px);z-index:8;max-height:260px;overflow:auto;background:var(--card);border-radius:12px;box-shadow:0 8px 24px rgba(20,40,70,.18);padding:4px 6px;border:1.5px solid var(--line)}
+.qr{display:flex;align-items:center;gap:10px;padding:8px 6px;border-radius:10px}.qr+.qr{border-top:1px solid var(--line)}
+.qr .d{flex:1;font-size:14px}.qr .d small{display:block;color:var(--mute);font-size:12px}
+.qr .r{font-weight:800;color:var(--blue);font-variant-numeric:tabular-nums;white-space:nowrap}
+.qr button{min-height:32px;width:32px;padding:0;background:var(--blueSoft);color:var(--blue);border-radius:10px}.qr button svg{width:18px;height:18px}
+.qr mark{background:light-dark(#fff1c2,#4a3d10);color:inherit;border-radius:3px}
+.mgform{border-top:6px solid var(--blue)}.mgform.sta{border-top-color:var(--teal)}
+.mgfh{display:flex;gap:12px;align-items:center;margin-bottom:14px}.mgfh h3{font-size:21px}
+.mgfi{width:46px;height:46px;border-radius:14px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);flex:none}.mgform.sta .mgfi{background:light-dark(#dff6f3,#123a37);color:var(--teal)}
+.mgform .lbl{font-size:14px;font-weight:600;color:var(--mute);margin:14px 0 6px}
+.mgform.sta #mgSave{background:light-dark(#11968e,#14857e)}
+.mgform .pick{margin-bottom:10px}.mgform .pick input{accent-color:var(--blue)}.mgform.sta .pick input{accent-color:var(--teal)}
+.mgform.sta .pick label:has(input:checked){border-color:var(--teal);background:light-dark(#dff6f3,#123a37)}
+#mgNew.sta{background:light-dark(#11968e,#14857e)}
+.mg2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.more{margin-top:12px}.more summary{cursor:pointer;color:var(--blue);font-weight:700;min-height:40px;display:flex;align-items:center}
+.mgh{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:10px;padding:0 14px 6px 19px;font-size:12.5px;font-weight:800;color:var(--mute)}
+.mgr{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) auto;gap:4px 10px;align-items:center;background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:12px 10px 12px 14px;margin-bottom:8px;border-left:5px solid var(--blue)}
+.mgr.sta{border-left-color:var(--teal)}.mgr.low{border-left-color:var(--or)}.mgr.out{border-left-color:var(--bad)}
+.mgr .des{font-weight:700;overflow-wrap:anywhere}.mgr .ref{font-weight:800;font-variant-numeric:tabular-nums;overflow-wrap:anywhere;color:var(--blue)}
+.mgr .meta{grid-column:1/3;font-size:12.5px;color:var(--mute)}
+.mgr .stk{display:flex;align-items:center;gap:4px;grid-row:1/3;grid-column:3}
+.mgr .stk b{min-width:30px;text-align:center;font-size:19px;font-weight:800;font-variant-numeric:tabular-nums}
+.mgr .stk button{width:36px;min-height:36px;padding:0;border-radius:10px;background:var(--blueSoft);color:var(--blue);font-size:20px}
+.mgr .lw{font-weight:800;color:var(--or)}.mgr.out .lw{color:var(--bad)}
+.mgr .tools{grid-column:1/-1;margin-top:2px;gap:6px}.mgr .tools button{min-height:36px;padding:4px 10px;font-size:13.5px}
+.mg{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:6px 12px;background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:14px;margin-bottom:10px;border-left:5px solid var(--blue)}
+.mg.low{border-left-color:var(--or)}.mg.out{border-left-color:var(--bad)}
+.mg .ref{font-weight:800;font-size:17px;letter-spacing:.01em;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}
+.mg .des{font-weight:600}.mg .meta{font-size:13px;color:var(--mute)}
+.mg .stk{display:flex;align-items:center;gap:6px;grid-row:1/3;grid-column:2}
+.mg .stk b{min-width:44px;text-align:center;font-size:22px;font-weight:800;font-variant-numeric:tabular-nums}
+.mg .stk button{width:40px;min-height:40px;padding:0;border-radius:12px;background:var(--blueSoft);color:var(--blue);font-size:22px}
+.mg .lw{font-size:12.5px;font-weight:800;color:var(--or)}.mg.out .lw{color:var(--bad)}
+.mg .tools{grid-column:1/-1;margin-top:4px}.mg .tools button{min-height:40px;padding:6px 12px;font-size:14px}
+
+/* assistant */
+.botfab{position:fixed;left:16px;bottom:20px;z-index:35;width:58px;height:58px;min-height:0;padding:0;border-radius:50%;background:linear-gradient(135deg,#2f7de1,#19b3a6);color:#fff;box-shadow:0 8px 22px rgba(20,60,110,.35)}
+.botfab svg{width:28px;height:28px;fill:none;stroke:currentColor;stroke-width:2;stroke-linejoin:round}
+.bot{position:fixed;left:16px;bottom:20px;z-index:45;width:min(390px,calc(100vw - 24px));height:min(600px,calc(100vh - 140px));background:var(--card);border-radius:22px;box-shadow:0 18px 50px rgba(10,30,60,.35);display:flex;flex-direction:column;overflow:hidden;border:1px solid var(--line)}
+.bot[hidden],.botfab[hidden]{display:none}
+.bothd{display:flex;align-items:center;gap:10px;padding:12px 10px 12px 14px;background:linear-gradient(120deg,#2f7de1,#19b3a6);color:#fff}
+.bothd div{flex:1;line-height:1.2}.bothd small{display:block;opacity:.85;font-size:12.5px}.bothd .ico{color:#fff;width:40px;min-height:40px}
+.botav{width:36px;height:36px;border-radius:12px;background:#fff;color:#2f7de1;display:grid;place-items:center;flex:none}.botav svg{width:20px;height:20px}
+.botmsgs{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:var(--bg)}
+.bm{max-width:88%;padding:10px 13px;border-radius:16px;font-size:15px;line-height:1.45;overflow-wrap:anywhere}
+.bm.u{align-self:flex-end;background:var(--btn);color:#fff;border-bottom-right-radius:5px}
+.bm.a{align-self:flex-start;background:var(--card);border:1px solid var(--line);border-bottom-left-radius:5px}
+.bm.a ul{margin:4px 0;padding-left:18px}.bm.a p{margin:0 0 6px}.bm.a p:last-child{margin:0}
+.bm.think{color:var(--mute);font-style:italic}.bm.err{border-color:var(--bad);color:var(--bad)}
+.bm .tool{display:block;font-size:12px;color:var(--mute);margin-top:4px}
+.botsug{display:flex;flex-wrap:wrap;gap:6px}.botsug button{min-height:36px;padding:6px 12px;font-size:13.5px;border-radius:18px;background:var(--card);color:var(--blue);border:1.5px solid var(--line);font-weight:600}
+.botin{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line);background:var(--card)}
+.botin textarea{min-height:44px;max-height:120px;resize:none;padding:10px 12px;border-radius:14px}
+.botin button{width:46px;min-height:46px;padding:0;border-radius:14px;flex:none}.botin button.stop{background:var(--bad)}
+@media(max-width:640px){.botfab{bottom:96px;left:12px;width:54px;height:54px}.bot{left:8px;right:8px;width:auto;bottom:88px;height:calc(100vh - 190px)}}
+.ptlh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}.ptlh h3{font-size:21px}
+.seg2{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto auto;grid-template-areas:'ty st en du rm' 'cc cc cc cc cc';gap:8px;align-items:center;padding:10px 0 10px 12px;border-top:1px solid var(--line);border-left:5px solid var(--line)}
+.seg2.k-trajet{border-left-color:var(--blue)}.seg2.k-inter{border-left-color:var(--teal)}.seg2.k-pause{border-left-color:var(--mute)}
+.seg2 select{min-height:40px;padding:6px 8px;font-weight:700;width:auto}
+.seg2 input[type=time]{width:auto;min-height:40px;padding:6px 8px;font-variant-numeric:tabular-nums}
+.seg2 .du{font-weight:800;white-space:nowrap;min-width:60px;text-align:right;font-variant-numeric:tabular-nums}
+.seg2 select{grid-area:ty}.seg2 [data-f=start]{grid-area:st}.seg2 [data-f=end]{grid-area:en}.seg2 .du,.seg2 .run{grid-area:du}.seg2 [data-pdel]{grid-area:rm}
+.seg2 .cc{grid-area:cc;min-height:40px;padding:6px 10px;font-size:15px}
+.seg2 .run{color:var(--ok);font-weight:700;font-size:14px;white-space:nowrap}
+.wk{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}.wk th,.wk td{padding:9px 6px;border-bottom:1px solid var(--line);text-align:right;white-space:nowrap}.wk th:first-child,.wk td:first-child{text-align:left}
+.wk th{font-size:13px;color:var(--mute);font-weight:700}.wk tr.cur td{font-weight:800;color:var(--blue)}.wk tfoot td{font-weight:800;border-bottom:0}
+.wk button{background:none;color:inherit;font:inherit;padding:0;min-height:0}
+.pth{margin-top:16px;display:flex;flex-wrap:wrap;align-items:center;gap:12px}.pth .t{flex:1 1 200px}.pth h3{font-size:21px}
+.pth .q{display:flex;gap:8px;flex-wrap:wrap}.pth .q button{min-height:44px;padding:8px 14px}
+@media(max-width:600px){.pttot{grid-template-columns:repeat(2,minmax(0,1fr))}.seg2{grid-template-columns:minmax(0,1fr) minmax(0,1fr) auto;grid-template-areas:'ty du rm' 'st en en' 'cc cc cc'}.seg2 select{width:100%}.seg2 input[type=time]{width:100%}.seg2 .du,.seg2 .run{text-align:right}}
+@media(max-width:640px){
+ .hero{padding-bottom:22px}
+ nav{position:fixed;left:0;right:0;bottom:0;margin:0;background:var(--card);box-shadow:0 -2px 14px rgba(0,0,0,.08);padding:6px 4px max(8px,env(safe-area-inset-bottom));z-index:30}
+ nav a{color:var(--mute);border-radius:12px;font-size:12px;padding:6px 2px}
+ nav a.cur{background:var(--blueSoft);color:var(--blue)}
+ .stepnav{bottom:88px}
+ .head h2{font-size:27px}
+ .tile{min-height:132px;padding:15px}.tile h3{font-size:20px}
+}
+@media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+ <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-7 9 7"/><path d="M5 10v10h14V10"/><path d="M10 20v-6h4v6"/></symbol>
+ <symbol id="i-reel" viewBox="0 0 24 24"><circle cx="12" cy="11" r="8"/><circle cx="12" cy="11" r="4.5"/><circle cx="12" cy="11" r="1.2"/><path d="M5 21h14"/><path d="M8 18l-1 3M16 18l1 3"/></symbol>
+ <symbol id="i-pump" viewBox="0 0 24 24"><circle cx="10" cy="13" r="6"/><circle cx="10" cy="13" r="2"/><path d="M16 13h5M4 13H2"/><path d="M10 7V3h6"/></symbol>
+ <symbol id="i-list" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="2"/><path d="M9 3v2h6V3"/><path d="M9 10h6M9 14h6M9 18h3"/></symbol>
+ <symbol id="i-cam" viewBox="0 0 24 24"><path d="M3 8h4l2-3h6l2 3h4v11H3z"/><circle cx="12" cy="13" r="3.5"/></symbol>
+ <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></symbol>
+ <symbol id="i-warn" viewBox="0 0 24 24"><path d="M12 3l10 18H2z"/><path d="M12 10v5M12 18v.5"/></symbol>
+ <symbol id="i-back" viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></symbol>
+ <symbol id="i-next" viewBox="0 0 24 24"><path d="M9 5l7 7-7 7"/></symbol>
+ <symbol id="i-plus" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></symbol>
+ <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V4H4v12h4"/></symbol>
+ <symbol id="i-trash" viewBox="0 0 24 24"><path d="M4 7h16M10 7V4h4v3M6 7l1 13h10l1-13"/></symbol>
+ <symbol id="i-check" viewBox="0 0 24 24"><path d="M5 12l5 5 9-10"/></symbol>
+ <symbol id="i-drop" viewBox="0 0 24 24"><path d="M12 3s7 7.5 7 12a7 7 0 01-14 0c0-4.5 7-12 7-12z"/></symbol>
+ <symbol id="i-speed" viewBox="0 0 24 24"><path d="M4 18a9 9 0 1116 0"/><path d="M12 14l4-5"/></symbol>
+ <symbol id="i-stop" viewBox="0 0 24 24"><rect x="5" y="5" width="14" height="14" rx="2"/></symbol>
+ <symbol id="i-gear" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></symbol>
+ <symbol id="i-spray" viewBox="0 0 24 24"><path d="M4 20l6-6"/><path d="M10 14l3-3 3 3-3 3z"/><path d="M15 6c2 0 4 1 5 3M14 3c3 0 6 2 7 5"/></symbol>
+ <symbol id="i-bolt" viewBox="0 0 24 24"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></symbol>
+ <symbol id="i-enr" viewBox="0 0 48 40"><circle cx="22" cy="17" r="13"/><circle cx="22" cy="17" r="9"/><circle cx="22" cy="17" r="5"/><circle cx="22" cy="17" r="1.6" fill="currentColor"/><path d="M35 17h7l3 4"/><path d="M8 30h28"/><path d="M12 30l-3 6M32 30l3 6"/><circle cx="9" cy="36" r="2.5"/><circle cx="35" cy="36" r="2.5"/><path d="M36 30h6"/></symbol>
+ <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4.5"/><path d="M12 2v2.5M12 19.5V22M2 12h2.5M19.5 12H22M4.9 4.9l1.8 1.8M17.3 17.3l1.8 1.8M4.9 19.1l1.8-1.8M17.3 6.7l1.8-1.8"/></symbol>
+ <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8.5 8.5 0 019.5 4a8.5 8.5 0 1010.5 10.5z"/></symbol>
+ <symbol id="i-cloud" viewBox="0 0 24 24"><path d="M7 18a4 4 0 01-.6-7.96A5.5 5.5 0 0117 9a4.5 4.5 0 01.5 9z"/><path d="M15 4.5a3 3 0 014.5 2.6" /></symbol>
+ <symbol id="i-pen" viewBox="0 0 24 24"><path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 7l4 4"/></symbol>
+ <symbol id="i-clock" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></symbol>
+ <symbol id="i-car" viewBox="0 0 24 24"><path d="M3 16v-4l2-5h11l3 5h2v4z"/><circle cx="7" cy="17" r="2"/><circle cx="17" cy="17" r="2"/><path d="M5 12h14"/></symbol>
+ <symbol id="i-tool" viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 005 5L13 18l-3 3-4-4 3-3 6.5-6.5a4 4 0 01-1-1z"/></symbol>
+ <symbol id="i-cup" viewBox="0 0 24 24"><path d="M4 9h12v5a5 5 0 01-5 5H9a5 5 0 01-5-5z"/><path d="M16 11h2a2 2 0 010 4h-2"/><path d="M8 3v3M12 3v3"/></symbol>
+ <symbol id="i-flag" viewBox="0 0 24 24"><path d="M5 21V4h11l-2 4 2 4H5"/></symbol>
+ <symbol id="i-pin" viewBox="0 0 24 24"><path d="M12 21s-7-6.3-7-11.5a7 7 0 0114 0C19 14.7 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></symbol>
+ <symbol id="i-box" viewBox="0 0 24 24"><path d="M3 8l9-5 9 5v8l-9 5-9-5z"/><path d="M3 8l9 5 9-5M12 13v8"/></symbol>
+ <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h6"/></symbol>
+ <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v6H4V6h6"/></symbol>
+ <symbol id="i-pipe" viewBox="0 0 24 24"><path d="M3 9h7v6H3zM14 9h7v6h-7z"/><path d="M10 12h4"/></symbol>
+</svg>
+
+<header class="hero">
+ <div class="in">
+  <div class="row"><div class="brand"><b><svg class="i"><use href="#i-drop"/></svg></b><div class="bn"><span>Verhaeghe Irrigation</span><small>Assistant technique terrain</small></div></div><div class="hr"><span class="sync" id="sync"><i></i><span>Sur cet appareil</span></span><div class="theme" role="group" aria-label="Thème"><button data-th="light" aria-label="Mode clair" title="Mode clair"><svg class="i"><use href="#i-sun"/></svg></button><button data-th="dark" aria-label="Mode sombre" title="Mode sombre"><svg class="i"><use href="#i-moon"/></svg></button></div></div></div>
+  <nav id="nav">
+   <a href="#accueil" data-v="accueil"><svg class="i"><use href="#i-home"/></svg>Accueil</a>
+   <a href="#enrouleurs" data-v="enrouleurs"><svg class="i"><use href="#i-reel"/></svg>Enrouleurs</a>
+   <a href="#pompage" data-v="pompage"><svg class="i"><use href="#i-pump"/></svg>Pompage</a>
+   <a href="#heures" data-v="heures"><svg class="i"><use href="#i-clock"/></svg>Heures</a>
+   <a href="#photos" data-v="photos"><svg class="i"><use href="#i-cam"/></svg>Photos</a>
+   <span class="nsep" aria-hidden="true"></span>
+   <a href="#magasin" data-v="magasin" class="nmag"><svg class="i"><use href="#i-box"/></svg>Magasin</a>
+  </nav>
+ </div>
+ <svg class="wave" viewBox="0 0 1200 70" preserveAspectRatio="none" aria-hidden="true"><path d="M0 40 C200 10 400 70 600 40 S1000 10 1200 40 V70 H0z" fill="rgba(255,255,255,.06)"/><path d="M0 52 C250 30 450 72 700 50 S1050 30 1200 52 V70 H0z" fill="rgba(255,255,255,.07)"/></svg>
+</header>
+
+<main>
+<section id="v-accueil">
+ <div class="hello"><div class="hrow"><h2 id="hi">Bonjour</h2><div class="clock" aria-live="off"><span id="clk">--:--</span><small id="clkS"></small></div></div><div class="dl"><p id="today"></p><a class="wx" id="wx" target="_blank" rel="noopener"><span id="wxIco"><svg class="i"><use href="#i-cloud"/></svg></span><span id="wxTxt">Météo</span><svg class="i" style="width:16px;height:16px;opacity:.6"><use href="#i-ext"/></svg></a><button class="ghost wxe" id="wxEdit" aria-label="Changer la commune" title="Changer la commune"><svg class="i" style="width:18px;height:18px"><use href="#i-pen"/></svg></button></div>
+ <form id="wxForm" class="wxf" hidden><input id="wxCity" placeholder="Votre commune (ex. Arras)" aria-label="Commune pour la météo"><button>OK</button></form></div>
+ <div class="tiles">
+  <a class="tile" href="#enrouleurs"><span class="n" id="nP"></span><div class="ic c1"><svg class="i"><use href="#i-reel"/></svg></div><div><h3>Enrouleurs</h3><span>Diagnostic par symptôme</span></div></a>
+  <a class="tile" href="#pompage"><span class="n" id="nM"></span><div class="ic c2"><svg class="i"><use href="#i-pump"/></svg></div><div><h3>Station de pompage</h3><span>Diagnostic et mise en service</span></div></a>
+  <a class="tile" href="#heures"><span class="n" id="nT"></span><div class="ic c3"><svg class="i"><use href="#i-clock"/></svg></div><div><h3>Heures</h3><span>Trajets et interventions</span></div></a>
+  <a class="tile" href="#photos"><span class="n" id="nF"></span><div class="ic c4"><svg class="i"><use href="#i-cam"/></svg></div><div><h3>Photos</h3><span>Par chantier</span></div></a>
+ </div>
+ <div class="card" id="homeFo" style="margin-top:16px"></div>
+ <div class="card pth" id="ptHome"></div>
+ <div class="card resume" id="resume"></div>
+ <div class="card todo" id="todo"></div>
+</section>
+
+<section id="v-enrouleurs">
+ <div id="symList">
+  <div class="head"><div><h2>Enrouleurs</h2><p>Choisissez la marque, puis le diagnostic ou la documentation.</p></div></div>
+  <div class="brands" id="brands" role="tablist" aria-label="Marque"></div>
+  <div class="card binfo" id="brandInfo"></div>
+  <div class="seg btabs" id="btabs" role="tablist"></div>
+  <div id="tabDiag">
+   <div class="warn"><svg class="i"><use href="#i-warn"/></svg><span>Avant tout démontage : couper l'arrivée d'eau, décompresser le tuyau et caler la bobine.</span></div>
+   <div class="search"><svg class="i"><use href="#i-search"/></svg><input id="q" type="search" placeholder="Rechercher un symptôme : courroie, fuite, capteur…" aria-label="Rechercher"></div>
+   <div class="sym" id="pannes"></div>
+  </div>
+  <div id="tabPdf" hidden>
+   <div class="card">
+    <div class="grid">
+     <label>Type de document<select id="dType"><option>Notice d'utilisation</option><option>Vue éclatée / pièces</option><option>Schéma électrique</option><option>Régulateur / électronique</option><option>Fiche technique</option><option>Autre</option></select></label>
+     <label>Modèle concerné<input id="dModel" placeholder="Rainstar T61, Optima, 790 GX…"></label>
+    </div>
+    <div class="shoot" style="margin-top:14px"><label class="big" id="pdfL"><svg class="i"><use href="#i-file"/></svg>Ajouter un PDF<input id="dFile" type="file" accept="application/pdf,.pdf" multiple></label><span class="tag" id="dInfo"></span></div>
+   </div>
+   <div class="search" style="margin-top:14px"><svg class="i"><use href="#i-search"/></svg><input id="dq" type="search" placeholder="Rechercher un document…" aria-label="Rechercher un document"></div>
+   <div id="pdfList"></div>
+   <div id="pdfLinks"></div>
+  </div>
+  <div id="tabMemo" class="memobox" data-k="e" hidden></div>
+ </div>
+ <div id="symDet" class="det" hidden></div>
+</section>
+
+<section id="v-pompage">
+ <div class="head"><div><h2>Station de pompage</h2><p>Diagnostic des pannes et mise en service.</p></div></div>
+ <div class="seg ptabs" id="pmTabs" role="tablist"><button data-pt="tb">Tableau de bord</button><button data-pt="for">Forages</button><button data-pt="mes">Mise en service</button><button data-pt="memo">Mémo</button><button data-pt="diag">Diagnostic</button></div>
+ <div id="pmDiag">
+  <div id="pmList">
+   <div class="warn"><svg class="i"><use href="#i-warn"/></svg><span>Avant d'intervenir sur l'armoire ou la pompe : consigner, vérifier l'absence de tension, isoler et vidanger la partie hydraulique.</span></div>
+   <div class="search"><svg class="i"><use href="#i-search"/></svg><input id="pq" type="search" placeholder="Rechercher : thermique, désamorçage, ballon…" aria-label="Rechercher une panne de pompage"></div>
+   <div class="sym" id="pmPannes"></div>
+  </div>
+  <div id="pmDet" class="det" hidden></div>
+ </div>
+ <div id="pmTb" hidden>
+  <div class="kpis" id="tbKpi"></div>
+  <div class="card"><div class="ptlh"><h3 style="font-size:19px">Derniers forages</h3><button class="ghost" data-goto="for">Tout voir</button></div><div id="tbFo"></div></div>
+ </div>
+ <div id="pmMemo" class="memobox" data-k="p" hidden></div>
+ <div id="pmFor" hidden>
+  <div class="ptlh" style="margin-bottom:10px"><h3 style="font-size:22px">Position des forages</h3><button class="or" id="foNew"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div>
+  <form class="card addf" id="foForm" hidden>
+   <div class="grid">
+    <label>Nom du forage<input id="foN" required placeholder="Forage nord, F2…"></label>
+    <label>Client / exploitation<input id="foC" list="chantiers" placeholder="EARL Dupont"></label>
+    <label>Commune<input id="foV" placeholder="Abbeville"></label>
+   </div>
+   <label style="margin-top:12px">Coordonnées GPS<input id="foGps" required inputmode="text" placeholder="50.10512, 1.83364   ou   50°06'18.4&quot;N 1°50'01.1&quot;E"></label>
+   <p class="tag" id="foGpsInfo" style="margin:6px 0 0">Collez les coordonnées copiées depuis Google Maps, Waze ou un GPS (décimales ou degrés-minutes-secondes).</p>
+   <div class="grid" style="margin-top:12px">
+    <label>Profondeur<span class="unit"><input id="foP" inputmode="decimal"><em>m</em></span></label>
+    <label>Diamètre tubage<span class="unit"><input id="foD" inputmode="decimal"><em>mm</em></span></label>
+    <label>Niveau statique<span class="unit"><input id="foNs" inputmode="decimal"><em>m</em></span></label>
+    <label>Niveau dynamique<span class="unit"><input id="foNd" inputmode="decimal"><em>m</em></span></label>
+    <label>Débit<span class="unit"><input id="foQ" inputmode="decimal"><em>m³/h</em></span></label>
+    <label>Profondeur pompe<span class="unit"><input id="foPp" inputmode="decimal"><em>m</em></span></label>
+    <label>Pompe installée<input id="foPm" placeholder="Marque, modèle, kW"></label>
+    <label>Année / foreur<input id="foY" placeholder="2015, Société X"></label>
+   </div>
+   <label style="margin-top:12px">Accès, remarques<textarea id="foR" placeholder="Accès par le chemin à gauche du hangar, clé chez…"></textarea></label>
+   <div class="tools"><button type="submit"><svg class="i"><use href="#i-check"/></svg>Enregistrer le forage</button><button type="button" class="ghost" id="foCancel">Fermer</button></div>
+  </form>
+  <div class="search"><svg class="i"><use href="#i-search"/></svg><input id="foQs" type="search" placeholder="Rechercher un forage, un client, une commune…" aria-label="Rechercher un forage"></div>
+  <div id="foList"></div>
+ </div>
+ <div id="pmMes" hidden>
+ <div class="ptlh" style="margin-bottom:10px"><h3 style="font-size:22px">Mise en service pas à pas</h3><button class="ghost" id="mesNew"><svg class="i"><use href="#i-plus"/></svg>Nouvelle fiche</button></div>
+ <div class="stepper" id="stepper"></div>
+ <div class="pbar"><div><b id="progBar"></b></div><span id="progTxt"></span></div>
+ <div class="card" id="stepBody"></div>
+ <div class="stepnav"><button class="ghost" id="prev"><svg class="i"><use href="#i-back"/></svg>Précédent</button><button id="next">Suivant<svg class="i"><use href="#i-next"/></svg></button></div>
+ <div class="saved" id="mesList"></div>
+ </div>
+</section>
+
+<datalist id="chantiers"></datalist><datalist id="enrRefs"></datalist><datalist id="peDims"></datalist>
+
+<section id="v-heures">
+ <div class="head"><div><h2>Pointage</h2><p>Notez librement vos heures de trajet, d'intervention et de pause.</p></div></div>
+ <div class="daynav"><button class="ghost ico2" id="ptPrev" aria-label="Jour précédent"><svg class="i"><use href="#i-back"/></svg></button><input type="date" id="ptDate" aria-label="Jour affiché"><button class="ghost ico2" id="ptNext" aria-label="Jour suivant"><svg class="i"><use href="#i-next"/></svg></button><button class="ghost" id="ptToday">Aujourd'hui</button></div>
+ <form class="card ptadd" id="ptForm">
+  <h3 style="font-size:21px;margin-bottom:10px">Noter mes heures</h3>
+  <div class="ptype" role="radiogroup" aria-label="Type">
+   <label class="k-trajet"><input type="radio" name="ptT" value="trajet" checked><span><svg class="i"><use href="#i-car"/></svg>Trajet</span></label>
+   <label class="k-inter"><input type="radio" name="ptT" value="inter"><span><svg class="i"><use href="#i-tool"/></svg>Intervention</span></label>
+   <label class="k-pause"><input type="radio" name="ptT" value="pause"><span><svg class="i"><use href="#i-cup"/></svg>Pause</span></label>
+  </div>
+  <div class="grid ptimes">
+   <label>Début<input type="time" id="ptS" required></label>
+   <label>Fin<input type="time" id="ptE" required></label>
+   <label>Durée<input id="ptDur" readonly tabindex="-1" placeholder="–"></label>
+  </div>
+  <label style="margin-top:12px">Chantier / client / remarque<input id="ptC" list="chantiers" placeholder="EARL Dupont…"></label>
+  <div class="tools"><button type="submit"><svg class="i"><use href="#i-plus"/></svg>Ajouter à la journée</button></div>
+ </form>
+ <div class="pttot" id="ptTot"></div>
+ <div class="ptbar" id="ptBar"></div>
+ <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Trajets entre interventions</h3><span class="tag" id="rtSum"></span></div><div id="ptRoute"></div></div>
+ <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Détail de la journée</h3><button class="ghost" id="ptAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div><div id="ptList"></div>
+  <div class="tools"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier la journée</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div></div>
+ <div class="card" style="margin-top:14px"><h3 style="font-size:21px;margin-bottom:8px" id="ptWT">Semaine</h3><div id="ptWeek"></div></div>
+</section>
+
+<section id="v-magasin">
+ <div class="head"><div style="flex:1 1 240px"><h2>Magasin</h2><p>Désignations et références des pièces.</p>
+ <div class="qlook" id="qlook"><div class="qin"><svg class="i"><use href="#i-search"/></svg><input id="qIn" type="search" autocomplete="off" placeholder="Taper une désignation pour voir sa référence" aria-label="Trouver la référence d'une pièce"></div><div class="qres" id="qRes"></div></div></div><button class="or" id="mgNew"><svg class="i"><use href="#i-plus"/></svg>Ajouter un produit</button></div>
+ <div class="seg mgtabs" id="mgTabs" role="tablist"></div>
+ <form class="card addf mgform" id="mgForm" hidden>
+  <div class="mgfh"><span class="mgfi" id="mgFi"></span><div><h3 id="mgFt">Nouveau produit</h3><span class="tag" id="mgFs"></span></div></div>
+  <div class="mg2">
+   <label>Désignation pièce<input id="mgD" required placeholder="Courroie turbine"></label>
+   <label>Référence pièce<input id="mgR" required placeholder="Code article" autocapitalize="characters"></label>
+  </div>
+  <div id="mgEnrF">
+   <div class="lbl">Marque de l'enrouleur</div>
+   <div class="pick mgbr" id="mgBr"></div>
+   <label>Modèles compatibles<input id="mgCompE" list="enrRefs" placeholder="Rainstar T51 à T61, Optima 110…"></label>
+  </div>
+  <div id="mgStaF">
+   <div class="lbl">Catégorie</div>
+   <div class="pick" id="mgCat"></div>
+   <div class="grid"><label>Marque<input id="mgMS" list="mgMarquesS" placeholder="Grundfos, KSB, Caprari…"></label>
+   <label>Modèle compatible<input id="mgCompS" placeholder="SP 46, 11 kW…"></label></div>
+  </div>
+  <details class="more"><summary>Plus de détails (fournisseur, emplacement, stock)</summary>
+  <div class="grid" style="margin-top:10px">
+   <label>Fournisseur<input id="mgFo" list="mgFours" placeholder="Fournisseur"></label>
+   <label>Emplacement<input id="mgE" placeholder="Rayon B, étagère 3"></label>
+   <label>Stock<input id="mgS" type="number" min="0" inputmode="numeric" value="0"></label>
+   <label>Stock mini (alerte)<input id="mgMin" type="number" min="0" inputmode="numeric" placeholder="ex. 2"></label>
+  </div>
+  <label style="margin-top:12px">Remarque<input id="mgN" placeholder="Remarque"></label></details>
+  <div class="tools"><button type="submit" id="mgSave"><svg class="i"><use href="#i-check"/></svg>Enregistrer</button><button type="button" class="ghost" id="mgCancel">Fermer</button></div>
+ </form>
+ <datalist id="mgMarquesS"><option value="Grundfos"><option value="KSB"><option value="Caprari"><option value="Lowara"><option value="Wilo"><option value="Ebara"><option value="Pedrollo"><option value="Schneider"><option value="Danfoss"><option value="ABB"></datalist><datalist id="mgFours"></datalist>
+ <datalist id="desEnr"></datalist><datalist id="desSta"></datalist>
+ <input id="mgQ" type="hidden" value="">
+ <label class="allb"><input type="checkbox" id="mgLow"> Stock bas uniquement</label>
+ <div id="mgList"></div>
+</section>
+
+<section id="v-photos">
+ <div class="head"><div><h2>Photos</h2><p>Plaques moteur, défauts, avant / après.</p></div></div>
+ <div class="card">
+  <div class="grid">
+   <label>Catégorie<select id="pCat"><option>Enrouleur</option><option>Station de pompage</option><option>Armoire électrique</option><option>Autre</option></select></label>
+   <label>Chantier / client<input id="pC" list="chantiers"></label>
+   <label>Légende<input id="pL" placeholder="Plaque moteur, fuite joint…"></label>
+  </div>
+  <div class="shoot" style="margin-top:14px"><label class="big" id="shootL"><svg class="i"><use href="#i-cam"/></svg>Prendre ou choisir des photos<input id="pFile" type="file" accept="image/*" capture="environment" multiple></label><span class="tag" id="pInfo"></span></div>
+ </div>
+ <div class="chips" id="pChips"></div>
+ <div class="ph" id="phList"></div>
+</section>
+<p class="fine">Fiches génériques : se référer toujours à la notice du constructeur (pressions, réglages, couples de serrage).</p>
+</main>
+<div class="lb" id="lb"><img id="lbImg" alt=""><div id="lbCap"></div><div class="tools"><button class="ghost" id="lbClose">Fermer</button><button class="del" id="lbDel"><svg class="i"><use href="#i-trash"/></svg>Supprimer</button></div></div>
+<button class="botfab" id="botFab" aria-label="Ouvrir l'assistant" hidden><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><circle cx="9" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12.5" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="10.5" r="1.2" fill="currentColor" stroke="none"/></svg></button>
+<div class="bot" id="bot" role="dialog" aria-label="Assistant Verhaeghe" hidden>
+ <div class="bothd"><span class="botav"><svg class="i"><use href="#i-drop"/></svg></span><div><b>Assistant Verhaeghe</b><small>Dépannage, pièces, forages, heures</small></div><button class="ico" id="botNew" aria-label="Nouvelle conversation" title="Nouvelle conversation"><svg class="i"><use href="#i-plus"/></svg></button><button class="ico" id="botX" aria-label="Fermer">✕</button></div>
+ <div class="botmsgs" id="botMsgs"></div>
+ <form class="botin" id="botForm"><textarea id="botQ" rows="1" placeholder="Posez votre question…" aria-label="Votre question"></textarea><button id="botSend" aria-label="Envoyer"><svg class="i"><use href="#i-next"/></svg></button></form>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+{
+const domOf=x=>x.dom||(x.m==='Pompage'?'pmp':'enr');
+const MB={e:{dom:'enr',f:'',all:false},p:{dom:'pmp',f:''}};
+const $=s=>document.querySelector(s);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const ic=n=>`<svg class="i"><use href="#i-${n}"/></svg>`;
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,7);
+const toast=m=>{const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('on'),2200)};
+const copy=async txt=>{if(window.AndroidApp){try{AndroidApp.copy(txt);toast('Copié dans le presse-papier')}catch(e){toast('Copie impossible')}return}try{await navigator.clipboard.writeText(txt);toast('Copié dans le presse-papier')}catch(e){toast('Copie refusée par le navigateur')}};
+
+
+/* ---------- Thème clair / sombre ---------- */
+{const root=document.documentElement,body=document.body;
+ const sys=()=>matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light';
+ let th=null;try{th=localStorage.getItem('dep_theme')}catch(e){}
+ const force=t=>{for(const el of [root,body]){if(el.style.getPropertyValue('color-scheme')!==t||el.style.getPropertyPriority('color-scheme')!=='important')el.style.setProperty('color-scheme',t,'important')}
+  if(root.dataset.theme!==t)root.dataset.theme=t;body.classList.toggle('is-dark',t==='dark');body.classList.toggle('is-light',t==='light')};
+ const cur=()=>th||sys();
+ const apply=()=>{const t=cur();force(t);
+  document.querySelectorAll('[data-th]').forEach(b=>{b.classList.toggle('cur',b.dataset.th===t);b.setAttribute('aria-pressed',b.dataset.th===t)})};
+ document.querySelector('.theme').addEventListener('click',e=>{const b=e.target.closest('[data-th]');if(!b)return;th=b.dataset.th;try{localStorage.setItem('dep_theme',th)}catch(x){}apply()});
+ matchMedia('(prefers-color-scheme: dark)').addEventListener?.('change',()=>{if(!th)apply()});
+ const mo=new MutationObserver(()=>{if(th)force(th)});mo.observe(root,{attributes:true,attributeFilter:['data-theme','style','class']});
+ apply()}
+
+
+/* ---------- Météo (lien) ---------- */
+{let city='';try{city=localStorage.getItem('dep_city')||''}catch(e){}
+ const set=()=>{$('#wxTxt').textContent=city?'Météo '+city:'Météo';
+  $('#wx').href='https://www.google.com/search?q='+encodeURIComponent('météo '+(city||''));};
+ $('#wxEdit').addEventListener('click',()=>{const f=$('#wxForm');f.hidden=!f.hidden;if(!f.hidden){$('#wxCity').value=city;$('#wxCity').focus()}});
+ $('#wxForm').addEventListener('submit',e=>{e.preventDefault();city=$('#wxCity').value.trim();try{localStorage.setItem('dep_city',city)}catch(x){}set();$('#wxForm').hidden=true;toast('Commune enregistrée')});
+ set()}
+
+
+/* ---------- Météo relevée (écrite par la tâche programmée) ---------- */
+{const SUN='<circle cx="16" cy="16" r="6" fill="#ffc531"/><g stroke="#ffc531" stroke-width="2.4" stroke-linecap="round"><path d="M16 3v3M16 26v3M3 16h3M26 16h3M6.8 6.8l2.1 2.1M23.1 23.1l2.1 2.1M6.8 25.2l2.1-2.1M23.1 8.9l2.1-2.1"/></g>';
+ const CL=(x,y,c)=>`<path d="M${x} ${y}h14a5 5 0 000-10 7 7 0 00-13.4-1.6A5.4 5.4 0 00${x} ${y}z" transform="translate(-2 0)" fill="${c}"/>`;
+ const CLOUD=(c='light-dark(#b9c6d4,#8798aa)')=>`<path d="M9 24h15a5.5 5.5 0 00.6-11 7.5 7.5 0 00-14.2-1.8A6.3 6.3 0 009 24z" fill="${c}"/>`;
+ const DROPS='<g stroke="#2f7de1" stroke-width="2.4" stroke-linecap="round"><path d="M12 27l-1.5 3M18 27l-1.5 3M24 27l-1.5 3"/></g>';
+ const ICONS={
+  soleil:SUN,
+  eclaircies:'<g transform="translate(-4 -5) scale(.8)">'+SUN+'</g>'+CLOUD(),
+  nuageux:CLOUD(),
+  pluie:'<g transform="translate(0 -3)">'+CLOUD()+'</g>'+DROPS,
+  averses:'<g transform="translate(-4 -6) scale(.7)">'+SUN+'</g><g transform="translate(0 -3)">'+CLOUD()+'</g>'+DROPS,
+  orage:'<g transform="translate(0 -4)">'+CLOUD('light-dark(#8e9bab,#6d7c8e)')+'</g><path d="M17 20l-4 6h4l-2 5 6-8h-4l2-3z" fill="#ffc531"/>',
+  neige:'<g transform="translate(0 -3)">'+CLOUD()+'</g><g fill="#7fb6f0"><circle cx="11" cy="28" r="1.7"/><circle cx="17" cy="29.5" r="1.7"/><circle cx="23" cy="28" r="1.7"/></g>',
+  brouillard:CLOUD()+'<g stroke="light-dark(#9aa8b8,#7a8a9c)" stroke-width="2.2" stroke-linecap="round"><path d="M6 27h20M9 30.5h15"/></g>'};
+ const LABEL={soleil:'Soleil',eclaircies:'Éclaircies',nuageux:'Nuageux',pluie:'Pluie',averses:'Averses',orage:'Orage',neige:'Neige',brouillard:'Brouillard'};
+ window.__wx=d=>{if(!d||d.temp==null)return;const k=ICONS[d.ciel]?d.ciel:'nuageux';
+  const t=new Date(d.maj),age=(Date.now()-t)/36e5,hh=isNaN(t)?'':t.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  $('#wxIco').innerHTML=`<svg class="wxi" viewBox="0 0 32 32" role="img" aria-label="${LABEL[k]}">${ICONS[k]}</svg>`;
+  $('#wxTxt').innerHTML=`<b>${Math.round(+d.temp)}°</b> ${esc(LABEL[k])}${d.min!=null&&d.max!=null?` <small>${Math.round(+d.min)}° / ${Math.round(+d.max)}°</small>`:''} <small>· ${esc(d.ville||'')}${hh?' à '+hh:''}${age>12?' (ancien)':''}</small>`;
+  $('#wx').title='Relevé '+(isNaN(t)?'':t.toLocaleString('fr-FR'))+' — toucher pour les prévisions détaillées';
+  if(d.ville)$('#wx').href='https://www.google.com/search?q='+encodeURIComponent('météo '+d.ville)};
+}
+
+
+/* ---------- Horloge ---------- */
+{const tick=()=>{const d=new Date();$('#clk').textContent=d.toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+  $('#clkS').textContent='Semaine '+(()=>{const t=new Date(Date.UTC(d.getFullYear(),d.getMonth(),d.getDate()));const n=t.getUTCDay()||7;t.setUTCDate(t.getUTCDate()+4-n);return Math.ceil(((t-Date.UTC(t.getUTCFullYear(),0,1))/864e5+1)/7)})();};
+ tick();setInterval(tick,1000)}
+
+/* ---------- Pannes enrouleurs ---------- */
+const PANNES=[
+{t:"Ne rembobine pas",s:"Turbine, courroie, pression",ico:"reel",k:"turbine courroie pression by-pass",
+ c:["Pression d'entrée insuffisante","By-pass de turbine trop ouvert","Boîte de vitesses au point mort ou levier mal engagé","Courroie cassée, détendue ou qui patine","Turbine bloquée par un corps étranger (sable, cailloux, herbe)","Levier d'arrêt de fin de course resté enclenché"],
+ v:["Lire le manomètre d'entrée et comparer à la pression mini du constructeur","Fermer progressivement le by-pass et observer la reprise","Contrôler le rapport engagé sur la boîte","Contrôler la tension et l'état de la courroie","Ouvrir le couvercle de turbine et nettoyer","Réarmer le levier d'arrêt"],
+ p:["Courroie turbine","Joint de couvercle turbine","Crépine / filtre d'entrée"]},
+{t:"Vitesse irrégulière ou fausse",s:"Capteur, batterie, régulation",ico:"speed",k:"vitesse capteur aimant batterie régulation ordinateur",
+ c:["Capteur de vitesse défaillant ou trop éloigné de l'aimant","Batterie faible","Vanne de by-pass motorisée grippée","Paramètres de régulation faux (diamètre, nombre de couches)","Spires mal rangées qui changent le diamètre d'enroulement"],
+ v:["Mesurer la vitesse réelle : longueur enroulée et chrono, comparer à l'affichage","Contrôler l'écart capteur / aimant (quelques mm)","Mesurer la tension batterie","Manœuvrer le by-pass en manuel","Vérifier les paramètres tuyau dans le régulateur"],
+ p:["Capteur de vitesse","Aimant de capteur","Batterie 12 V","Motoréducteur de by-pass"]},
+{t:"Ne s'arrête pas en fin de course",s:"Levier, câble, vanne d'arrêt",ico:"stop",k:"arrêt fin course levier vanne câble ressort",
+ c:["Tige ou levier d'arrêt déréglé","Câble ou ressort d'arrêt cassé","Vanne d'arrêt qui ne ferme pas","Le traîneau / chariot n'actionne pas le levier"],
+ v:["Couper l'eau immédiatement si le chariot arrive en butée","Actionner le levier à la main et observer la coupure","Régler la butée","Inspecter le câble et le ressort","Manœuvrer la vanne à la main, contrôler ses joints"],
+ p:["Ressort d'arrêt","Câble d'arrêt","Kit joints vanne d'arrêt"]},
+{t:"Fuite au joint tournant",s:"Joints, rotule, serrage",ico:"drop",k:"fuite joint tournant rotule entrée",
+ c:["Joints usés","Rotule grippée ou rayée","Serrage insuffisant","Sable dans le joint"],
+ v:["Décompresser puis démonter le joint tournant","Contrôler les portées (rayures, ovalisation)","Nettoyer, graisser, remonter avec joints neufs","Remettre en pression progressivement"],
+ p:["Kit joints joint tournant","Graisse étanche","Joint de bride d'entrée"]},
+{t:"Tuyau PE mal enroulé",s:"Spiraleur, chaîne, guide-tube",ico:"gear",k:"tuyau pe spiraleur guide chaîne vis spires",
+ c:["Guide-tube (spiraleur) désynchronisé","Chaîne de spiraleur détendue ou cassée","Vis sans fin ou patin usés","Tuyau trop peu tendu en début d'enroulement"],
+ v:["Remettre le guide-tube en butée et resynchroniser","Retendre ou remplacer la chaîne","Contrôler l'usure du patin et graisser la vis","Dérouler quelques spires et réenrouler sous tension"],
+ p:["Chaîne de spiraleur","Pignon","Patin de guide-tube"]},
+{t:"Canon : rotation ou portée",s:"Buse, ressort, inverseur",ico:"spray",k:"canon asperseur buse batteur bras secteur portée",
+ c:["Buse usée ou bouchée","Ressort du bras batteur fatigué","Pression au canon insuffisante","Inverseur de secteur bloqué ou mal réglé"],
+ v:["Contrôler la pression au canon (manomètre)","Démonter et contrôler la buse (diamètre, usure)","Régler la tension du ressort de bras","Nettoyer et régler l'inverseur"],
+ p:["Buse de canon","Ressort de bras","Joint de canon"]},
+{t:"Régulateur éteint ou en défaut",s:"Batterie, panneau, fusible",ico:"bolt",k:"électronique ordinateur batterie panneau solaire fusible écran",
+ c:["Batterie déchargée","Panneau solaire sale ou hors service","Fusible grillé","Connecteur oxydé, câble capteur coupé"],
+ v:["Mesurer la tension batterie, puis la charge du panneau au soleil","Contrôler le fusible","Nettoyer les connecteurs (bombe contact)","Contrôler la continuité du câble capteur"],
+ p:["Fusible","Batterie 12 V","Connecteur étanche","Bombe nettoyant contact"]},
+{t:"Tuyau PE percé ou écrasé",s:"Manchon de réparation",ico:"pipe",k:"tuyau pe percé fuite écrasé réparation manchon",
+ c:["Choc, passage d'engin, frottement","Tuyau plié lors du déroulage"],
+ v:["Repérer et couper la partie abîmée","Poser un manchon de réparation au bon diamètre","Vérifier que la réparation passe dans le guide-tube"],
+ p:["Manchon de réparation PE","Colliers inox"]}
+];
+
+/* ---------- Marques ---------- */
+const MARQUES={
+irrifrance:{n:"Irrifrance",s:"Optima, séries 30…",col:"#e8641b",
+ info:[["Gammes","Optima (dont versions homologuées route), séries 30"],["Entraînement","Turbine"],["Régulation","Gestion électronique, options Irricontrol ou Irridoseur"],["Pilotage","Bloc monobloc électrovannes + pressostat, vanne papillon motorisée"]],
+ p:{0:["Contrôler le bloc de pilotage : électrovannes et pressostat","Vérifier que la vanne papillon motorisée s'ouvre bien"],
+    1:["Contrôler les paramètres de l'Irricontrol / Irridoseur (dose, vitesse, tuyau)","Manœuvrer la vanne papillon motorisée : elle règle le débit vers la turbine"],
+    2:["Contrôler le système de blocage automatique de la tourelle et la vanne de fin"],
+    6:["Irricontrol / Irridoseur : batterie, panneau solaire, connecteurs du bloc de pilotage"]}},
+rm:{n:"RM",s:"GX, XJ, Giant",col:"#c62828",
+ info:[["Gammes","GX (540, 790, 1100…), XJ basse et stable, Giant XJ / XJM, eSpeedy à enroulement électrique"],["Entraînement","Turbine à division de flux avec by-pass intégré ; réducteur 4 vitesses en bain d'huile (540 GX : boîte 3 vitesses à courroie)"],["Régulation","Compensateur automatique de vitesse selon le diamètre d'enroulement, tachymètre électronique"],["Sécurités","Anti-déroulement du tuyau, arrêt si enroulement hors forme"]],
+ p:{0:["Régler le by-pass intégré à la turbine","Contrôler le niveau d'huile du réducteur","540 GX : contrôler les courroies de la boîte 3 vitesses","Vérifier que la sécurité d'enroulement hors forme n'a pas arrêté la machine"],
+    1:["Contrôler le compensateur automatique de vitesse","Comparer avec le tachymètre électronique (m/h)"],
+    2:["Contrôler le dispositif d'arrêt et la sécurité anti-déroulement"],
+    4:["Trancanage à vis sans fin : utiliser le réglage micrométrique et contrôler le double guide","Si la machine s'arrête seule : sécurité d'enroulement hors forme déclenchée"],
+    5:["Canon SIME à retour lent : contrôler la buse montée par rapport à la série fournie"],
+    6:["eSpeedy : enroulement électrique, contrôler l'alimentation et le moteur"]}},
+bauer:{n:"Bauer",s:"Rainstar A, T, E",col:"#2e8b3e",
+ info:[["Gammes","Rainstar A (compact), T (T32 à T61), E (dont E55, E100)"],["Entraînement","Turbines TVR 18 (T32–T42), TVR 20 (T51–T61), TVR 60 (série E), boîte BAUER 4 vitesses ; A1/A2 : bloc turbine-boîte à buse interchangeable"],["Régulation","Ecostar 4000 S, 4300 ou 6000 (écran tactile, commande SMS), avec batterie tampon et panneau solaire"],["Canon","Bauer SR (SR101, SR140)"]],
+ p:{0:["Contrôler le rapport engagé sur la boîte BAUER 4 vitesses","Rainstar A1/A2 : contrôler la buse interchangeable du bloc turbine"],
+    1:["Ecostar : vérifier le mode de régulation choisi (dose ou vitesse) et le diamètre de buse saisi","Contrôler les paramètres du tube PE"],
+    2:["Rainstar A : contrôler l'arrêt fin de position automatique et le chargement du traîneau"],
+    5:["Canon SR : contrôler buse et réglage du secteur"],
+    6:["Ecostar 6000 en veille : il redémarre en touchant l'écran, pas avec les touches","Contrôler batterie tampon et panneau solaire"]}},
+autre:{n:"Autre",s:"Toutes marques",col:"#5b6b78",info:[],p:{}}
+};
+let brand='irrifrance';try{brand=localStorage.getItem('dep_brand')||brand}catch(e){}
+if(!MARQUES[brand])brand='irrifrance';
+const bName=()=>{if(brand!=='autre')return MARQUES[brand].n;try{return localStorage.getItem('dep_other')||'Autre marque'}catch(e){return 'Autre marque'}};
+function drawBrands(){const B=MARQUES[brand];document.documentElement.style.setProperty('--bc',B.col);
+ $('#brands').innerHTML=Object.entries(MARQUES).map(([k,m])=>`<button role="tab" aria-selected="${k===brand}" data-b="${k}" class="${k===brand?'cur':''}" style="--bc:${m.col}"><svg class="enr" viewBox="0 0 48 40" aria-hidden="true"><use href="#i-enr"/></svg>${esc(m.n)}<small>${esc(m.s)}</small></button>`).join('');
+ let other='';try{other=localStorage.getItem('dep_other')||''}catch(e){}
+ $('#brandInfo').innerHTML=brand==='autre'
+  ?`<h3>Autre marque</h3><label>Nom de la marque<input id="otherName" value="${esc(other)}" placeholder="Ocmis, Irrimec, Turbocar…"></label><p class="tag" style="margin:8px 0 0">Fiches génériques. Ajoutez vos propres notes dans chaque fiche.</p>`
+  :`<details><summary><h3 style="margin:0">${esc(B.n)} : caractéristiques</h3></summary><dl style="margin-top:12px">${B.info.map(([a,b])=>`<dt>${esc(a)}</dt><dd>${esc(b)}</dd>`).join('')}</dl></details>`}
+$('#brands').addEventListener('click',e=>{const b=e.target.closest('[data-b]');if(!b)return;brand=b.dataset.b;try{localStorage.setItem('dep_brand',brand)}catch(e){}drawBrands();drawPannes();drawBTabs();drawDocs();drawMemo()});
+$('#brandInfo').addEventListener('input',e=>{if(e.target.id==='otherName'){try{localStorage.setItem('dep_other',e.target.value)}catch(x){}}});
+drawBrands();
+
+
+/* ---------- Onglets marque : diagnostic / PDF ---------- */
+const LINKS={
+ irrifrance:[["Enrouleur Optima : fiche produit","https://www.agriexpo.online/fr/prod/irrifrance/product-169371-187991.html"],["Enrouleurs séries 30 : fiche produit","https://www.agriexpo.online/fr/prod/irrifrance/product-169371-143416.html"]],
+ rm:[["Enrouleur 790 GX : fiche produit","https://www.agriexpo.online/fr/prod/rm-irrigation-spa/product-170145-166732.html"],["Enrouleur 1100 GX : fiche produit","https://www.agriexpo.online/fr/prod/rm-irrigation-spa/product-170145-166745.html"]],
+ bauer:[["Ecostar 6000 : instructions de service (PDF)","https://portal.bauer-at.com/upload/file/BA_ECOSTAR_6000_V1-9_FR.pdf"],["Ecostar 6000 : fiche (PDF)","https://portal.bauer-at.com/upload/file/BAU_015_10_FY_Ecostar_6000_f_preview.pdf"],["Rainstar E55L / E55XL : notice (PDF)","https://portal.bauer-at.com/upload/file/BA_RAINSTAR_E55L_E55XL_f%5B1%5D.pdf"],["Rainstar E : notice (PDF)","https://portal.bauer-at.com/upload/file/Rainstar_E_Franzoesisch%5B0%5D.pdf"],["Gamme Rainstar A, T, E : brochure (PDF)","https://portal.bauer-at.com/upload/file/BAU_022_09_BRO_Rainstar_FR_preview%5B0%5D.pdf"]],
+ autre:[]};
+let btab='diag';try{btab=localStorage.getItem('dep_btab')||'diag'}catch(e){}
+const bDocs=()=>S.docs.filter(d=>d.b===brand);
+function drawBTabs(){const n=bDocs().length,m=memoOf('e').filter(x=>!x.s).length;
+ $('#btabs').innerHTML=`<button data-t="diag" class="${btab==='diag'?'cur':''}">${ic('search')}Diagnostic</button><button data-t="memo" class="${btab==='memo'?'cur':''}">${ic('list')}Mémo${m?` <b>${m}</b>`:''}</button><button data-t="pdf" class="${btab==='pdf'?'cur':''}">${ic('file')}PDF <b>${n}</b></button>`;
+ $('#tabDiag').hidden=btab!=='diag';$('#tabPdf').hidden=btab!=='pdf';$('#tabMemo').hidden=btab!=='memo'}
+$('#btabs').addEventListener('click',e=>{const b=e.target.closest('[data-t]');if(!b)return;btab=b.dataset.t;try{localStorage.setItem('dep_btab',btab)}catch(x){}drawBTabs();drawDocs()});
+const kb=n=>n>1048576?(n/1048576).toFixed(1).replace('.',',')+' Mo':Math.max(1,Math.round(n/1024))+' Ko';
+function drawDocs(){const q=$('#dq').value.trim().toLowerCase();
+ const l=bDocs().filter(d=>!q||(d.name+' '+d.type+' '+d.model).toLowerCase().includes(q)).sort((a,b)=>(a.type||'').localeCompare(b.type||'')||b.t-a.t);
+ $('#pdfList').innerHTML=l.length?l.map(d=>`<div class="doc"><span class="pdf">PDF</span><div class="t"><b>${esc(d.name)}</b><div class="tag">${[d.type,d.model,d.size?kb(d.size):'',new Date(d.t).toLocaleDateString('fr-FR')].filter(Boolean).map(esc).join(' · ')}</div></div><a class="open" href="/_blob/${esc(d.a)}" target="_blank" rel="noopener">Ouvrir</a><button class="ico" data-ddel="${esc(d.id)}" aria-label="Supprimer">${ic('trash')}</button></div>`).join('')
+  :`<p class="empty">${q?'Aucun document ne correspond.':'Aucun PDF pour '+esc(bName())+'.<br>Ajoutez vos notices, vues éclatées et schémas.'}</p>`;
+ const L=LINKS[brand]||[];
+ $('#pdfLinks').innerHTML=L.length?`<div class="linkh">Documentation en ligne ${esc(MARQUES[brand].n)}</div>`+L.map(([t,u])=>`<div class="doc"><span class="pdf" style="background:var(--bc)">WEB</span><div class="t"><b>${esc(t)}</b><div class="tag">${esc(new URL(u).hostname)}</div></div><a class="open" href="${esc(u)}" target="_blank" rel="noopener">${ic('ext')}</a></div>`).join('')+`<p class="tag">Liens vers les sites des fabricants et distributeurs : ils s'ouvrent dans le navigateur.</p>`:''}
+$('#dq').addEventListener('input',drawDocs);
+$('#dFile').addEventListener('change',async e=>{const files=[...e.target.files];if(!files.length)return;
+ if(!assets){toast('Ajout de PDF indisponible ici');e.target.value='';return}
+ $('#dInfo').textContent='Envoi en cours…';let n=0;
+ for(const f of files){try{if(f.size>20971520){toast(f.name+' : plus de 20 Mo');continue}
+  const r=await assets.upload(f,{type:'application/pdf'});
+  await put('docs',{id:uid(),b:brand,bn:bName(),name:f.name.replace(/\.pdf$/i,''),type:$('#dType').value,model:$('#dModel').value.trim(),a:r.id,size:r.sizeBytes||f.size,t:Date.now()});n++}
+  catch(err){toast('PDF non enregistré'+(err&&err.code?' ('+err.code+')':''))}}
+ e.target.value='';$('#dInfo').textContent=n?n+' PDF ajouté(s)':''});
+$('#pdfList').addEventListener('click',async e=>{const b=e.target.closest('[data-ddel]');if(!b)return;const d=S.docs.find(x=>x.id===b.dataset.ddel);if(!d)return;
+ if(b.dataset.ok!=='1'){b.dataset.ok='1';b.style.color='var(--bad)';toast('Touchez encore pour supprimer');setTimeout(()=>{b.dataset.ok='';b.style.color=''},3000);return}
+ await del('docs',d.id);if(assets){try{await assets.delete(d.a)}catch(x){}}toast('PDF supprimé')});
+
+/* ---------- Mise en service ---------- */
+const HEAD=[["client","Client"],["site","Site / lieu"],["date","Date","date"],["tech","Technicien"],["pompe","Pompe (marque, modèle)"],["moteur","Moteur (kW)"]];
+const CK=[
+["Sécurité",["Consignation électrique faite","EPI portés","Schéma électrique et notice pompe disponibles","Accès et éclairage corrects"]],
+["Hydraulique",["Ressource en eau suffisante (niveau, forage, bassin)","Crépine et clapet de pied propres","Vannes d'aspiration ouvertes","Vanne de refoulement fermée ou entrouverte","Serrage brides et raccords","Pré-gonflage du ballon / anti-bélier contrôlé","Manomètres en place"]],
+["Électrique",["Serrage des borniers","Isolement moteur au mégohmmètre","Relais thermique réglé sur l'intensité plaque","Calibre des protections vérifié","Câblage sondes de niveau et capteur de pression"]],
+["Sous tension",["Tension entre phases mesurée","Ordre des phases contrôlé","Paramètres variateur saisis (plaque moteur, rampes, consigne)"]],
+["Démarrage",["Pompe amorcée et purgée","Sens de rotation vérifié par impulsion","Démarrage vanne entrouverte, ouverture progressive","Pas de bruit anormal, vibration ni cavitation","Pas de fuite à la garniture"]],
+["Sécurités",["Manque d'eau","Surpression / pressostat","Déclenchement thermique","Arrêt d'urgence","Redémarrage après coupure secteur"]],
+["Clôture",["Site rangé et nettoyé","Explications au client","Documentation remise","PV de mise en service signé"]]
+];
+const REL=[["Électrique",[["u12","U L1-L2","V"],["u23","U L2-L3","V"],["u31","U L3-L1","V"],["iso","Isolement","MΩ"],["in","In plaque","A"],["th","Réglage thermique","A"],["i1","I L1","A"],["i2","I L2","A"],["i3","I L3","A"]]],
+["Hydraulique",[["pr","P refoulement","bar"],["pon","P enclenchement","bar"],["poff","P déclenchement","bar"],["pg","Pré-gonflage ballon","bar"],["deb","Débit","m³/h"],["h","Compteur horaire","h"]]]];
+const RELF=REL.flatMap(g=>g[1]);
+const STEPS=[{n:"Chantier"},...CK.map(([n],gi)=>({n,gi})),{n:"Relevés"},{n:"Rapport"}];
+const STAT=["À prévoir","Commandé","Reçu"];
+
+/* ---------- Stockage ---------- */
+const S={memo:[],photos:[],mes:[],notes:[],docs:[],pointage:[],forages:[],magasin:[]};let db=null,assets=null;
+const LS={get(k){try{return JSON.parse(localStorage.getItem('dep_'+k))||[]}catch(e){return[]}},set(k,v){try{localStorage.setItem('dep_'+k,JSON.stringify(v));return true}catch(e){return false}}};
+for(const k in S)S[k]=LS.get(k);
+async function put(k,item){
+ if(db){try{await db.collection(k).doc(item.id).set(item)}catch(e){toast(e.code==='quota_exceeded'?'Stockage plein':'Enregistrement impossible')}return}
+ const i=S[k].findIndex(x=>x.id===item.id);i<0?S[k].push(item):S[k][i]=item;
+ if(!LS.set(k,S[k]))toast('Mémoire de l\'appareil pleine');render(k)}
+async function del(k,id){
+ if(db){try{await db.collection(k).doc(id).delete()}catch(e){toast('Suppression impossible')}return}
+ S[k]=S[k].filter(x=>x.id!==id);LS.set(k,S[k]);render(k)}
+function render(k){if(k==='magasin'){drawMg();drawQ();return}if(pmTab==='tb'&&$('#pmTb'))setTimeout(drawTb);if(k==='notes')return;if(k==='forages'){drawFo();drawHomeFo();return}if(k==='pointage'){drawPt();drawHome();return}if(k==='docs'){drawBTabs();drawDocs();return}({memo:drawMemo,photos:drawPhotos,mes:drawMesList}[k])();drawHome()}
+
+/* ---------- Navigation ---------- */
+const VIEWS=['accueil','enrouleurs','pompage','heures','photos','magasin'];
+function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
+ for(const x of VIEWS)$('#v-'+x).classList.toggle('cur',x===v);
+ document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('cur',a.dataset.v===v));
+ if(v==='accueil')drawHome();scrollTo({top:0})}
+window.addEventListener('hashchange',route);
+
+/* ---------- Accueil ---------- */
+function drawHome(){drawPtHome();drawHomeFo();
+ const h=new Date().getHours();$('#hi').textContent=h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir';
+ $('#today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
+ const todo=S.memo.filter(x=>!x.s);
+ $('#nP').textContent=PANNES.length;$('#nM').textContent=S.mes.length||'';$('#nT').textContent=todo.length||'';$('#nF').textContent=S.photos.length||'';
+ if(cur){const {ok,tot}=count(),p=tot?ok/tot:0,C=2*Math.PI*26;
+  $('#resume').innerHTML=`<svg class="ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="var(--line)" stroke-width="7"/><circle cx="32" cy="32" r="26" fill="none" stroke="var(--ok)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*p} ${C}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">${Math.round(p*100)}%</text></svg>
+  <div class="t"><h3 style="font-size:21px">Mise en service en cours</h3><span class="tag">${esc(cur.h.client||'Client non renseigné')} · ${ok} / ${tot} contrôles</span></div><button onclick="location.hash='pompage'">Reprendre${ic('next')}</button>`}
+ $('#todo').innerHTML=`<h3>Pièces à prévoir</h3>`+(todo.length?`<ul>${todo.slice(0,5).map(x=>`<li><span><b>${esc(x.q)} ×</b> ${esc(x.d)}</span><span class="tag">${esc([domOf(x)==='pmp'?'Pompage':(x.m||'Enrouleur'),x.c].filter(Boolean).join(' · '))}</span></li>`).join('')}</ul>${todo.length>5?`<p class="tag">+ ${todo.length-5} autres</p>`:''}`:`<p class="tag" style="margin:0">Rien à prévoir pour l'instant.</p>`)}
+
+/* ---------- Enrouleurs ---------- */
+function drawPannes(){const q=$('#q').value.trim().toLowerCase();
+ const list=PANNES.map((p,i)=>({...p,i})).filter(p=>!q||(p.t+' '+p.s+' '+p.k+' '+p.c.join(' ')+' '+p.p.join(' ')).toLowerCase().includes(q));
+ const B=MARQUES[brand];
+ $('#pannes').innerHTML=list.length?list.map(p=>`<button data-p="${p.i}"><span class="ic">${ic(p.ico)}</span><span>${esc(p.t)}<small>${esc(p.s)}${B.p[p.i]?' · <b style="color:var(--bc)">spécifique '+esc(B.n)+'</b>':''}</small></span></button>`).join(''):`<p class="empty" style="grid-column:1/-1">Aucun symptôme ne correspond à « ${esc(q)} ».</p>`}
+let openI=null;
+function openPanne(i){const p=PANNES[i],B=MARQUES[brand],sp=B.p[i]||[];openI=i;$('#symList').hidden=true;const d=$('#symDet');d.hidden=false;
+ const nid=brand+'-'+i,note=(S.notes.find(n=>n.id===nid)||{}).txt||'';
+ d.innerHTML=`<button class="back" id="back">${ic('back')}Tous les symptômes</button><p class="tag" style="margin:0 0 4px;color:var(--bc);font-weight:700">${esc(bName())}</p><h2>${esc(p.t)}</h2>
+ ${sp.length?`<div class="card blk bspec"><h3>Spécifique ${esc(B.n)}</h3><ul>${sp.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`:''}
+ <div class="card blk"><h3>Causes probables</h3><ul class="causes">${p.c.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+ <div class="card blk"><h3>Vérifications dans l'ordre</h3><ol class="steps">${p.v.map((x,n)=>`<li><label><input type="checkbox"><span class="num">${n+1}</span><span>${esc(x)}</span></label></li>`).join('')}</ol></div>
+ <div class="card blk"><h3>Pièces à prévoir</h3><div class="pick">${p.p.map((x,n)=>`<label><input type="checkbox" data-pc="${n}" checked>${esc(x)}</label>`).join('')}</div>
+ <label>Chantier / client<input id="pcC" list="chantiers" placeholder="Facultatif"></label>
+ <div class="tools"><button class="or" id="pcAdd" data-i="${i}">${ic('plus')}Ajouter au mémo</button></div></div>
+ <div class="card blk"><h3>Mes notes ${esc(bName())}</h3><textarea id="noteTxt" data-n="${esc(nid)}" placeholder="Astuces, réglages, références relevées sur ce modèle…">${esc(note)}</textarea><div class="tools"><button class="ghost" id="noteSave">${ic('check')}Enregistrer la note</button></div></div>`;scrollTo({top:0})}
+$('#q').addEventListener('input',drawPannes);
+$('#pannes').addEventListener('click',e=>{const b=e.target.closest('[data-p]');if(b)openPanne(+b.dataset.p)});
+$('#symDet').addEventListener('click',async e=>{
+ if(e.target.closest('#back')){$('#symDet').hidden=true;$('#symList').hidden=false;return}
+ if(e.target.closest('#noteSave')){const t=$('#noteTxt');await put('notes',{id:t.dataset.n,txt:t.value,t:Date.now()});toast('Note enregistrée');return}
+ const b=e.target.closest('#pcAdd');if(!b)return;const p=PANNES[+b.dataset.i];const c=$('#pcC').value.trim();
+ const sel=[...document.querySelectorAll('[data-pc]:checked')].map(x=>p.p[+x.dataset.pc]);if(!sel.length)return toast('Aucune pièce cochée');
+ for(const d of sel)await put('memo',{id:uid(),d,r:refFor(d,'enr')?.ref||'',q:1,c,s:0,t:Date.now(),from:p.t,m:bName(),dom:'enr'});toast(sel.length+' pièce(s) ajoutée(s) au mémo')});
+drawPannes();
+
+
+/* ---------- Diagnostic station de pompage ---------- */
+const PPANNES=[
+{t:"La pompe ne démarre pas",s:"Alimentation, sécurités, commande",ico:"pump",k:"démarre pas tension fusible thermique contacteur manque d'eau arrêt d'urgence",
+ c:["Pas de tension : disjoncteur, fusibles, sectionneur ouvert","Relais thermique déclenché","Sécurité manque d'eau active (sonde de niveau, flotteur, pressostat d'aspiration)","Pressostat ou capteur de pression qui ne donne pas l'ordre de marche","Variateur en défaut (code affiché)","Arrêt d'urgence enclenché","Bobine de contacteur ou commande HS"],
+ v:["Mesurer la tension à l'arrivée et entre phases","Contrôler disjoncteur, fusibles et sectionneur","Chercher la cause avant de réarmer le thermique","Contrôler le niveau d'eau et les sondes / flotteurs","Lire et noter le code défaut du variateur","Vérifier l'arrêt d'urgence et la boucle de sécurité","Contrôler la tension de bobine du contacteur","Contrôler l'isolement moteur au mégohmmètre"],
+ p:["Fusibles","Contacteur","Relais thermique","Sonde de niveau / flotteur"]},
+{t:"Disjonction ou thermique qui déclenche",s:"Surintensité, phase, isolement",ico:"bolt",k:"disjoncte thermique surintensité phase isolement roulements",
+ c:["Pompe qui force : roue grippée, corps étranger, roulements","Manque de phase ou déséquilibre de tension","Réglage thermique trop bas","Isolement moteur faible ou défaut à la terre","Tension d'alimentation trop basse","Point de fonctionnement hors plage (débit trop fort)"],
+ v:["Mesurer l'intensité sur chaque phase et comparer à la plaque","Mesurer les tensions entre phases","Contrôler l'isolement au mégohmmètre","Hors tension, tourner l'arbre à la main","Contrôler le réglage du thermique","Contrôler le serrage du bornier","Contrôler l'ouverture de la vanne de refoulement"],
+ p:["Relais thermique","Roulements moteur","Condensateur (moteur mono)"]},
+{t:"Tourne mais pas de débit ou pression faible",s:"Amorçage, aspiration, rotation",ico:"drop",k:"débit pression faible désamorcée prise d'air crépine clapet sens rotation roue",
+ c:["Pompe désamorcée ou prise d'air à l'aspiration","Crépine colmatée, clapet de pied bloqué","Sens de rotation inversé","Roue usée ou obstruée","Vanne fermée ou partiellement fermée","Niveau d'eau trop bas, hauteur d'aspiration trop grande","Fuite importante au refoulement"],
+ v:["Contrôler le sens de rotation","Réamorcer et purger le corps de pompe","Chercher les prises d'air (raccords, joints d'aspiration)","Nettoyer la crépine, contrôler le clapet de pied","Contrôler l'ouverture des vannes","Mesurer pression à l'aspiration et au refoulement","Contrôler l'usure de la roue"],
+ p:["Crépine","Clapet de pied","Joints d'aspiration","Roue de pompe"]},
+{t:"Bruit, vibrations, cavitation",s:"Aspiration, roulements, alignement",ico:"speed",k:"bruit vibration cavitation roulements accouplement alignement",
+ c:["Cavitation : niveau bas, aspiration colmatée ou sous-dimensionnée","Roulements usés","Accouplement usé ou désaligné","Fixations ou massif desserrés","Fonctionnement hors plage (vanne trop ouverte ou trop fermée)"],
+ v:["Contrôler la pression à l'aspiration","Contrôler crépine et niveau d'eau","Écouter les roulements (pompe et moteur)","Contrôler l'alignement et l'élastique d'accouplement","Resserrer fixations et tuyauteries","Ajuster le point de fonctionnement"],
+ p:["Roulements","Élastique d'accouplement","Silent-blocs"]},
+{t:"Démarrages et arrêts trop fréquents",s:"Ballon, pressostat, fuite",ico:"gear",k:"cycles courts démarrages fréquents ballon membrane pressostat fuite clapet capteur",
+ c:["Ballon dégonflé ou membrane percée","Écart enclenchement / déclenchement trop faible","Fuite sur le réseau","Clapet anti-retour qui fuit","Capteur de pression défectueux","Consigne ou réglages variateur inadaptés"],
+ v:["Vidanger le ballon et contrôler le pré-gonflage à vide","Appuyer sur la valve d'air : de l'eau = membrane percée","Contrôler les réglages du pressostat","Fermer le refoulement et observer si la pression chute","Contrôler l'étanchéité du clapet anti-retour","Comparer capteur et manomètre"],
+ p:["Membrane de ballon","Clapet anti-retour","Pressostat","Capteur de pression"]},
+{t:"Fuite à la garniture ou au presse-étoupe",s:"Garniture, tresse, joints",ico:"drop",k:"fuite garniture mécanique presse-étoupe tresse joint",
+ c:["Garniture mécanique usée","Fonctionnement à sec","Eau chargée en sable","Presse-étoupe à tresse trop desserré (un léger goutte-à-goutte reste normal)","Joint de corps abîmé"],
+ v:["Repérer l'origine exacte de la fuite","Presse-étoupe : resserrer progressivement, sans chauffer","Remplacer la garniture si la fuite persiste","Rechercher la cause d'un fonctionnement à sec","Contrôler l'état de l'arbre à l'emplacement de la garniture"],
+ p:["Garniture mécanique","Tresse de presse-étoupe","Joint de corps"]},
+{t:"Variateur en défaut",s:"Code défaut, ventilation, câble",ico:"bolt",k:"variateur défaut code surtension surchauffe ventilateur filtre terre",
+ c:["Surtension ou sous-tension réseau","Surchauffe : ventilateur HS, filtres d'armoire colmatés","Surintensité moteur","Défaut à la terre sur le câble ou le moteur","Paramètres incorrects"],
+ v:["Noter le code défaut et le rechercher dans la notice du variateur","Mesurer la tension réseau","Nettoyer les filtres, contrôler les ventilateurs","Contrôler l'isolement du câble et du moteur","Vérifier les paramètres moteur et les rampes"],
+ p:["Ventilateur d'armoire","Filtres d'armoire"]},
+{t:"Coups de bélier",s:"Clapet, anti-bélier, rampes",ico:"stop",k:"coup de bélier clapet claque anti-bélier rampe arrêt",
+ c:["Arrêt brutal de la pompe sans rampe","Clapet anti-retour qui claque","Réservoir anti-bélier dégonflé ou absent","Fermeture rapide d'une vanne"],
+ v:["Contrôler la pression de gonflage de l'anti-bélier","Allonger la rampe d'arrêt du variateur","Contrôler le clapet anti-retour","Manœuvrer les vannes lentement"],
+ p:["Clapet anti-retour","Vessie d'anti-bélier"]}
+];
+let pmTab='diag';try{pmTab=localStorage.getItem('dep_pmtab')||'diag'}catch(e){}
+function drawPmTabs(){document.querySelectorAll('#pmTabs [data-pt]').forEach(b=>b.classList.toggle('cur',b.dataset.pt===pmTab));$('#pmDiag').hidden=pmTab!=='diag';$('#pmMes').hidden=pmTab!=='mes';$('#pmFor').hidden=pmTab!=='for';$('#pmTb').hidden=pmTab!=='tb';if(pmTab==='tb')drawTb();$('#pmMemo').hidden=pmTab!=='memo';const n=memoOf('p').filter(x=>!x.s).length;document.querySelector('[data-pt=memo]').innerHTML='Mémo'+(n?` <b>${n}</b>`:'')}
+$('#pmTabs').addEventListener('click',e=>{const b=e.target.closest('[data-pt]');if(!b)return;pmTab=b.dataset.pt;try{localStorage.setItem('dep_pmtab',pmTab)}catch(x){}drawPmTabs()});
+function drawPmPannes(){const q=$('#pq').value.trim().toLowerCase();
+ const list=PPANNES.map((p,i)=>({...p,i})).filter(p=>!q||(p.t+' '+p.s+' '+p.k+' '+p.c.join(' ')+' '+p.p.join(' ')).toLowerCase().includes(q));
+ $('#pmPannes').innerHTML=list.length?list.map(p=>`<button data-pp="${p.i}"><span class="ic" style="background:light-dark(#dff6f3,#123a37);color:var(--teal)">${ic(p.ico)}</span><span>${esc(p.t)}<small>${esc(p.s)}</small></span></button>`).join(''):`<p class="empty" style="grid-column:1/-1">Aucune panne ne correspond à « ${esc(q)} ».</p>`}
+function openPm(i){const p=PPANNES[i];$('#pmList').hidden=true;const d=$('#pmDet');d.hidden=false;const nid='pompe-'+i,note=(S.notes.find(n=>n.id===nid)||{}).txt||'';
+ d.innerHTML=`<button class="back" id="pmBack">${ic('back')}Toutes les pannes</button><p class="tag" style="margin:0 0 4px;color:var(--teal);font-weight:700">Station de pompage</p><h2>${esc(p.t)}</h2>
+ <div class="card blk"><h3>Causes probables</h3><ul class="causes">${p.c.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>
+ <div class="card blk"><h3>Vérifications dans l'ordre</h3><ol class="steps">${p.v.map((x,n)=>`<li><label><input type="checkbox"><span class="num">${n+1}</span><span>${esc(x)}</span></label></li>`).join('')}</ol></div>
+ <div class="card blk"><h3>Pièces à prévoir</h3><div class="pick">${p.p.map((x,n)=>`<label><input type="checkbox" data-ppc="${n}" checked>${esc(x)}</label>`).join('')}</div>
+ <label>Chantier / client<input id="ppC" list="chantiers" placeholder="Facultatif"></label>
+ <div class="tools"><button class="or" id="ppAdd" data-i="${i}">${ic('plus')}Ajouter au mémo</button></div></div>
+ <div class="card blk"><h3>Mes notes</h3><textarea id="ppNote" data-n="${nid}" placeholder="Modèle de pompe, réglages, références…">${esc(note)}</textarea><div class="tools"><button class="ghost" id="ppNoteSave">${ic('check')}Enregistrer la note</button></div></div>`;scrollTo({top:0})}
+$('#pq').addEventListener('input',drawPmPannes);
+$('#pmPannes').addEventListener('click',e=>{const b=e.target.closest('[data-pp]');if(b)openPm(+b.dataset.pp)});
+$('#pmDet').addEventListener('click',async e=>{
+ if(e.target.closest('#pmBack')){$('#pmDet').hidden=true;$('#pmList').hidden=false;return}
+ if(e.target.closest('#ppNoteSave')){const t=$('#ppNote');await put('notes',{id:t.dataset.n,txt:t.value,t:Date.now()});toast('Note enregistrée');return}
+ const b=e.target.closest('#ppAdd');if(!b)return;const p=PPANNES[+b.dataset.i];const c=$('#ppC').value.trim();
+ const sel=[...document.querySelectorAll('[data-ppc]:checked')].map(x=>p.p[+x.dataset.ppc]);if(!sel.length)return toast('Aucune pièce cochée');
+ for(const d of sel)await put('memo',{id:uid(),d,r:refFor(d,'sta')?.ref||'',q:1,c,s:0,t:Date.now(),from:p.t,m:'Pompage',dom:'pmp'});toast(sel.length+' pièce(s) ajoutée(s) au mémo')});
+drawPmTabs();drawPmPannes();
+
+
+/* ---------- Forages (position GPS) ---------- */
+function parseGps(s){s=(s||'').trim().replace(/[′’]/g,"'").replace(/[″”]/g,'"');if(!s)return null;
+ const dms=[...s.matchAll(/(-?\d+(?:[.,]\d+)?)\s*°\s*(?:(\d+(?:[.,]\d+)?)\s*'\s*)?(?:(\d+(?:[.,]\d+)?)\s*"\s*)?([NSEOW])?/gi)];
+ if(dms.length>=2){const v=dms.slice(0,2).map(m=>{let x=Math.abs(parseFloat(m[1].replace(',','.')))+(m[2]?parseFloat(m[2].replace(',','.'))/60:0)+(m[3]?parseFloat(m[3].replace(',','.'))/3600:0);
+   if(m[1].startsWith('-')||/[SWO]/i.test(m[4]||''))x=-x;return {x,h:(m[4]||'').toUpperCase()}});
+  let lat=v[0].x,lon=v[1].x;if(/[EOW]/.test(v[0].h)&&/[NS]/.test(v[1].h))[lat,lon]=[lon,lat];return ok(lat,lon)}
+ let parts=s.includes(';')?s.split(/\s*;\s*/):/,\s/.test(s)?s.split(/,\s+/):s.split(/\s+/);
+ if(parts.length!==2&&!/\s/.test(s)&&(s.match(/,/g)||[]).length===1)parts=s.split(',');
+ if(parts.length!==2)return null;const [a,b]=parts.map(x=>parseFloat(x.replace(',','.')));return ok(a,b);
+ function ok(lat,lon){return isFinite(lat)&&isFinite(lon)&&Math.abs(lat)<=90&&Math.abs(lon)<=180?{lat:+lat.toFixed(6),lon:+lon.toFixed(6)}:null}}
+function toDms(v,pos,neg){const a=Math.abs(v),d=Math.floor(a),m=Math.floor((a-d)*60),s=((a-d)*60-m)*60;return `${d}°${String(m).padStart(2,'0')}'${s.toFixed(1).padStart(4,'0')}"${v>=0?pos:neg}`}
+const FOF=[['foP','prof','Profondeur','m'],['foD','diam','Diamètre tubage','mm'],['foNs','ns','Niveau statique','m'],['foNd','nd','Niveau dynamique','m'],['foQ','q','Débit','m³/h'],['foPp','pp','Profondeur pompe','m'],['foPm','pompe','Pompe installée',''],['foY','annee','Année / foreur','']];
+let foEdit=null;
+$('#foGps').addEventListener('input',()=>{const g=parseGps($('#foGps').value);$('#foGpsInfo').innerHTML=!$('#foGps').value.trim()?'Collez les coordonnées copiées depuis Google Maps, Waze ou un GPS (décimales ou degrés-minutes-secondes).':g?`<b style="color:var(--ok)">✓ Latitude ${g.lat} · Longitude ${g.lon}</b>${g.lat<41||g.lat>51.5||g.lon<-5.5||g.lon>10?' <span style="color:var(--or)">· position hors de France, vérifiez l\'ordre latitude / longitude</span>':''}`:'<b style="color:var(--bad)">Format non reconnu</b> : ex. 50.10512, 1.83364'});
+function foOpen(f){foEdit=f?f.id:null;$('#foForm').hidden=false;$('#foN').value=f?.n||'';$('#foC').value=f?.c||'';$('#foV').value=f?.v||'';$('#foGps').value=f?`${f.lat}, ${f.lon}`:'';$('#foR').value=f?.r||'';
+ FOF.forEach(([id,k])=>$('#'+id).value=f?.[k]??'');$('#foGps').dispatchEvent(new Event('input'));$('#foForm').scrollIntoView({block:'start'});$('#foN').focus()}
+$('#foNew').addEventListener('click',()=>foOpen(null));
+$('#foCancel').addEventListener('click',()=>{$('#foForm').hidden=true;foEdit=null});
+$('#foForm').addEventListener('submit',async e=>{e.preventDefault();const g=parseGps($('#foGps').value);if(!g){toast('Coordonnées GPS non reconnues');$('#foGps').focus();return}
+ const old=S.forages.find(x=>x.id===foEdit)||{};const f={...old,id:foEdit||uid(),n:$('#foN').value.trim(),c:$('#foC').value.trim(),v:$('#foV').value.trim(),lat:g.lat,lon:g.lon,r:$('#foR').value.trim(),t:old.t||Date.now(),maj:Date.now()};
+ FOF.forEach(([id,k])=>f[k]=$('#'+id).value.trim());await put('forages',f);$('#foForm').hidden=true;foEdit=null;toast('Forage enregistré')});
+function drawFo(){const q=$('#foQs').value.trim().toLowerCase();
+ const l=S.forages.filter(f=>!q||[f.n,f.c,f.v,f.pompe,f.r].join(' ').toLowerCase().includes(q)).sort((a,b)=>(a.c||'').localeCompare(b.c||'')||(a.n||'').localeCompare(b.n||''));
+ $('#foList').innerHTML=l.length?l.map(f=>{const ll=`${f.lat},${f.lon}`;
+  return `<div class="fo"><div class="top"><span class="pinb">${ic('pin')}</span><div style="flex:1"><h3>${esc(f.n||'Forage')}</h3><div class="tag">${esc([f.c,f.v].filter(Boolean).join(' · '))}</div><div class="gps">${f.lat}, ${f.lon}</div><div class="dms">${toDms(f.lat,'N','S')} ${toDms(f.lon,'E','O')}</div></div></div>
+  ${FOF.some(([,k])=>f[k])?`<dl>${FOF.filter(([,k])=>f[k]).map(([,k,l,u])=>`<div><dt>${l}</dt><dd>${esc(f[k])}${u?' '+u:''}</dd></div>`).join('')}</dl>`:''}
+  ${f.r?`<p class="rq">${esc(f.r)}</p>`:''}
+  <div class="tools"><a href="https://www.google.com/maps/search/?api=1&query=${ll}" target="_blank" rel="noopener">${ic('pin')}Voir sur la carte</a><a class="alt" href="https://www.google.com/maps/dir/?api=1&destination=${ll}" target="_blank" rel="noopener">${ic('car')}Itinéraire</a><button class="ghost" data-focp="${esc(f.id)}">${ic('copy')}Copier</button><button class="ghost" data-foed="${esc(f.id)}">${ic('pen')}Modifier</button><button class="ico" data-fodel="${esc(f.id)}" aria-label="Supprimer">${ic('trash')}</button></div></div>`}).join('')
+  :`<p class="empty">${q?'Aucun forage ne correspond.':'Aucun forage enregistré.<br>Touchez « Ajouter » et collez les coordonnées GPS.'}</p>`;
+ const s=new Set([...S.memo,...S.photos,...S.forages].map(x=>x.c).filter(Boolean));$('#chantiers').innerHTML=[...s].map(c=>`<option value="${esc(c)}">`).join('')}
+$('#foQs').addEventListener('input',drawFo);
+$('#foList').addEventListener('click',async e=>{const c=e.target.closest('[data-focp]'),ed=e.target.closest('[data-foed]'),d=e.target.closest('[data-fodel]');
+ if(c){const f=S.forages.find(x=>x.id===c.dataset.focp);if(f)copy(`${f.n}${f.c?' ('+f.c+')':''}\n${f.lat}, ${f.lon}\nhttps://www.google.com/maps/search/?api=1&query=${f.lat},${f.lon}`)}
+ if(ed){const f=S.forages.find(x=>x.id===ed.dataset.foed);if(f)foOpen(f)}
+ if(d){if(d.dataset.ok!=='1'){d.dataset.ok='1';d.style.color='var(--bad)';toast('Touchez encore pour supprimer');setTimeout(()=>{d.dataset.ok='';d.style.color=''},3000);return}await del('forages',d.dataset.fodel)}});
+
+/* ---------- Pompage ---------- */
+let cur=null,step=0;
+const blank=()=>({id:uid(),h:{date:new Date().toISOString().slice(0,10)},ck:{},r:{},obs:'',t:Date.now()});
+try{cur=JSON.parse(localStorage.getItem('dep_draft'))}catch(e){}if(!cur||!cur.id)cur=blank();
+try{step=+localStorage.getItem('dep_step')||0}catch(e){}
+const saveDraft=()=>{try{localStorage.setItem('dep_draft',JSON.stringify(cur));localStorage.setItem('dep_step',step)}catch(e){}};
+function count(){let ok=0,tot=0;CK.forEach(([,it],gi)=>it.forEach((_,ii)=>{tot++;if(cur.ck[gi+'-'+ii])ok++}));return{ok,tot}}
+const gDone=gi=>CK[gi][1].every((_,ii)=>cur.ck[gi+'-'+ii]);
+const num=v=>parseFloat(String(v||'').replace(',','.'));
+function alerts(){const In=num(cur.r.in),a=[];
+ if(In)['i1','i2','i3'].forEach((k,i)=>{if(num(cur.r[k])>In)a.push('I L'+(i+1)+' dépasse l\'intensité plaque')});
+ if(In&&num(cur.r.th)>In*1.05)a.push('Réglage thermique supérieur à l\'intensité plaque');
+ if(cur.r.iso&&num(cur.r.iso)<1)a.push('Isolement faible (< 1 MΩ) : ne pas démarrer');return a}
+function drawStepper(){
+ $('#stepper').innerHTML=STEPS.map((s,i)=>{const done=s.gi!=null?gDone(s.gi):i===0?!!cur.h.client:i===STEPS.length-2?RELF.some(([k])=>cur.r[k]):false;
+  return `<button data-st="${i}" class="${i===step?'cur':''} ${done?'done':''}">${done?'✓ ':''}${esc(s.n)}</button>`}).join('');
+ const {ok,tot}=count();$('#progBar').style.width=(ok/tot*100)+'%';$('#progTxt').textContent=ok+' / '+tot;
+ const c=$('#stepper .cur');if(c)c.scrollIntoView({block:'nearest',inline:'center'})}
+function drawStep(){const s=STEPS[step];let h='';
+ if(step===0)h=`<h3 style="font-size:23px;margin-bottom:14px">Informations chantier</h3><div class="grid">${HEAD.map(([k,l,t])=>`<label>${l}<input data-h="${k}" type="${t||'text'}" value="${esc(cur.h[k])}"></label>`).join('')}</div>`;
+ else if(s.gi!=null){const [g,it]=CK[s.gi];h=`<h3 style="font-size:23px;margin-bottom:6px">${esc(g)}</h3><div class="ckl">${it.map((x,ii)=>`<label><input type="checkbox" data-k="${s.gi}-${ii}"${cur.ck[s.gi+'-'+ii]?' checked':''}><span>${esc(x)}</span></label>`).join('')}</div><button class="ghost ckAll" data-all="${s.gi}">${ic('check')}Tout cocher</button>`}
+ else if(s.n==='Relevés')h=`<h3 style="font-size:23px;margin-bottom:14px">Relevés</h3>${REL.map(([g,f])=>`<div class="rgroup">${g}</div><div class="grid">${f.map(([k,l,u])=>`<label>${l}<span class="unit"><input data-r="${k}" inputmode="decimal" value="${esc(cur.r[k])}"><em>${u}</em></span></label>`).join('')}</div>`).join('')}<div id="relAlert"></div>`;
+ else h=`<h3 style="font-size:23px;margin-bottom:14px">Observations et rapport</h3><label>Observations<textarea id="mesObs" placeholder="Réserves, travaux à prévoir, remarques client…">${esc(cur.obs)}</textarea></label><div id="relAlert"></div><div class="tools"><button id="mesSave">${ic('check')}Enregistrer l'intervention</button><button class="ghost" id="mesCopy">${ic('copy')}Copier le rapport</button></div>`;
+ $('#stepBody').innerHTML=h;$('#prev').disabled=step===0;$('#next').style.visibility=step===STEPS.length-1?'hidden':'visible';
+ drawAlert();drawStepper();saveDraft()}
+function drawAlert(){const el=$('#relAlert');if(!el)return;const a=alerts();el.innerHTML=a.map(x=>`<div class="alert">${ic('warn')}${esc(x)}</div>`).join('')}
+$('#stepper').addEventListener('click',e=>{const b=e.target.closest('[data-st]');if(b){step=+b.dataset.st;drawStep()}});
+$('#prev').addEventListener('click',()=>{if(step>0){step--;drawStep()}});
+$('#next').addEventListener('click',()=>{if(step<STEPS.length-1){step++;drawStep();$('#stepper').scrollIntoView({block:'start'})}});
+$('#stepBody').addEventListener('input',e=>{const t=e.target;
+ if(t.dataset.h)cur.h[t.dataset.h]=t.value;else if(t.dataset.r){cur.r[t.dataset.r]=t.value;drawAlert()}else if(t.id==='mesObs')cur.obs=t.value;else return;
+ saveDraft();drawStepper()});
+$('#stepBody').addEventListener('change',e=>{const t=e.target;if(t.dataset.k){cur.ck[t.dataset.k]=t.checked;saveDraft();drawStepper()}});
+$('#stepBody').addEventListener('click',async e=>{
+ const a=e.target.closest('[data-all]');if(a){const gi=+a.dataset.all;CK[gi][1].forEach((_,ii)=>cur.ck[gi+'-'+ii]=true);drawStep();return}
+ if(e.target.closest('#mesSave')){cur.t=Date.now();await put('mes',JSON.parse(JSON.stringify(cur)));toast('Intervention enregistrée')}
+ if(e.target.closest('#mesCopy'))copy(report(cur))});
+$('#mesNew').addEventListener('click',()=>{cur=blank();step=0;drawStep();toast('Nouvelle fiche')});
+function report(m){const L=['MISE EN SERVICE STATION DE POMPAGE'];HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
+ CK.forEach(([g,it],gi)=>{L.push('','— '+g);it.forEach((x,ii)=>L.push((m.ck[gi+'-'+ii]?'[x] ':'[ ] ')+x))});
+ const r=RELF.filter(([k])=>m.r[k]);if(r.length){L.push('','— Relevés');r.forEach(([k,l,u])=>L.push(l+' : '+m.r[k]+' '+u))}
+ if(m.obs)L.push('','— Observations',m.obs);return L.join('\n')}
+function drawMesList(){const l=[...S.mes].sort((a,b)=>b.t-a.t);
+ $('#mesList').innerHTML=l.length?'<h3>Interventions enregistrées</h3>'+l.map(m=>`<button data-open="${esc(m.id)}"><span><b>${esc(m.h?.client||'Sans nom')}</b> <span class="tag">${esc(m.h?.site||'')}</span></span><span class="tag">${esc(m.h?.date||'')}</span></button>`).join(''):''}
+$('#mesList').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(!b)return;const m=S.mes.find(x=>x.id===b.dataset.open);
+ if(m){cur=JSON.parse(JSON.stringify(m));cur.ck=cur.ck||{};cur.r=cur.r||{};cur.h=cur.h||{};step=0;drawStep();scrollTo({top:0});toast('Fiche ouverte')}});
+drawStep();
+
+
+/* ---------- Pointage ---------- */
+const PT={trajet:'Trajet',inter:'Intervention',pause:'Pause'};
+const dKey=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
+const hm=ms=>{const m=Math.round(ms/6e4);return Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')};
+const hms=ms=>{const s=Math.floor(ms/1e3);return Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
+const tOf=ms=>new Date(ms).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
+let ptDay=dKey(Date.now());
+const running=()=>S.pointage.find(x=>!x.end);
+const durOf=x=>x.end?Math.max(0,x.end-x.start):0;
+const daySegs=d=>S.pointage.filter(x=>x.day===d).sort((a,b)=>a.start-b.start);
+function totals(d){const o={trajet:0,inter:0,pause:0};daySegs(d).forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));o.tot=o.trajet+o.inter;return o}
+
+const toMs=(d,v)=>new Date(d+'T'+v).getTime();
+function ptDefaults(){const L=daySegs(ptDay).filter(x=>x.end),last=L[L.length-1];
+ if(!$('#ptS').value||$('#ptForm').dataset.day!==ptDay){$('#ptS').value=last?tOf(last.end):'08:00';$('#ptE').value='';$('#ptForm').dataset.day=ptDay}ptDurUpd()}
+function ptDurUpd(){const s=$('#ptS').value,e=$('#ptE').value;$('#ptDur').value=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):''}
+$('#ptS').addEventListener('input',ptDurUpd);$('#ptE').addEventListener('input',ptDurUpd);
+$('#ptForm').addEventListener('submit',async e=>{e.preventDefault();const s=toMs(ptDay,$('#ptS').value),en=toMs(ptDay,$('#ptE').value);
+ if(!(en>s))return toast('L\'heure de fin doit être après le début');
+ const type=document.querySelector('[name=ptT]:checked').value;
+ if(daySegs(ptDay).some(x=>x.end&&s<x.end&&en>x.start))toast('Attention : chevauche une autre ligne');
+ await put('pointage',{id:uid(),day:ptDay,type,start:s,end:en,c:$('#ptC').value.trim(),t:Date.now()});
+ $('#ptS').value=$('#ptE').value;$('#ptE').value='';ptDurUpd();
+ const nx=type==='trajet'?'inter':'trajet';document.querySelector(`[name=ptT][value=${nx}]`).checked=true;if(type!=='trajet')$('#ptC').value='';
+ toast(PT[type]+(type==='trajet'?' ajouté : ':' ajoutée : ')+hm(en-s))});
+function drawPtTotals(){const o=totals(ptDay),all=o.trajet+o.inter+o.pause||1;
+ $('#ptTot').innerHTML=[['trajet','Trajet',o.trajet],['inter','Intervention',o.inter],['pause','Pause',o.pause],['tot','Total travaillé',o.tot]].map(([k,l,v])=>`<div class="k-${k}"><b>${hm(v)}</b><span>${l}</span></div>`).join('');
+ $('#ptBar').innerHTML=`<i style="width:${o.trajet/all*100}%;background:var(--blue)"></i><i style="width:${o.inter/all*100}%;background:var(--teal)"></i><i style="width:${o.pause/all*100}%;background:var(--mute)"></i>`;
+}
+function drawPt(){const today=dKey(Date.now()),isT=ptDay===today;
+ $('#ptDate').value=ptDay;$('#ptToday').hidden=isT;ptDefaults();
+ const L=daySegs(ptDay);
+ $('#ptList').innerHTML=L.length?L.map(x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"></div>`).join('')
+  :`<p class="empty" style="margin:0">Aucun pointage ce jour.</p>`;
+ drawPtTotals();drawRoute();drawWeek()}
+
+function drawRoute(){const L=daySegs(ptDay);const I=L.filter(x=>x.type==='inter');
+ if(!I.length){$('#ptRoute').innerHTML=`<p class="tag" style="margin:0">Pointez au moins une intervention pour voir les trajets entre chantiers.</p>`;$('#rtSum').textContent='';return}
+ const out=[];let prevEnd=null,sumTr=0,nTr=0;
+ const trBetween=(a,b)=>L.filter(x=>x.type==='trajet'&&x.start>=a-6e4&&(x.end||Date.now())<=b+6e4);
+ const first=L[0];out.push(`<li class="k-start"><span class="ri">${ic('home')}</span><div class="rb"><b>Début de journée</b><small>${tOf(first.start)}</small></div></li>`);
+ I.forEach((x,i)=>{const from=i===0?first.start:prevEnd;const T=trBetween(from,x.start);const tr=T.reduce((s,y)=>s+durOf(y),0);
+  const lbl=i===0?'Trajet vers le 1er chantier':`Trajet ${esc(I[i-1].c||'chantier '+i)} → ${esc(x.c||'chantier '+(i+1))}`;
+  if(T.length){sumTr+=tr;if(i>0)nTr++;out.push(`<li class="k-trajet"><span class="ri">${ic('car')}</span><div class="rb"><b>${lbl}</b><small>${tOf(T[0].start)} – ${T[T.length-1].end?tOf(T[T.length-1].end):'en cours'}</small></div><span class="rv">${hm(tr)}</span></li>`)}
+  else if(i>0){const gap=x.start-prevEnd-L.filter(y=>y.type==='pause'&&y.start>=prevEnd&&y.start<x.start).reduce((s,y)=>s+durOf(y),0);
+   if(gap>6e4)out.push(`<li class="k-gap"><span class="ri">${ic('warn')}</span><div class="rb"><b>${lbl}</b><small>Trajet non pointé : écart entre les deux interventions</small></div><span class="rv">${hm(gap)}</span></li>`)}
+  out.push(`<li class="k-inter"><span class="ri">${ic('tool')}</span><div class="rb"><b>${esc(x.c||'Intervention '+(i+1))}</b><small>${tOf(x.start)} – ${x.end?tOf(x.end):'en cours'}</small></div><span class="rv">${hm(durOf(x))}</span></li>`);
+  prevEnd=x.end||Date.now()});
+ const last=I[I.length-1];if(last.end){const R=L.filter(x=>x.type==='trajet'&&x.start>=last.end-6e4);const r=R.reduce((s,y)=>s+durOf(y),0);
+  if(R.length){sumTr+=r;out.push(`<li class="k-trajet"><span class="ri">${ic('car')}</span><div class="rb"><b>Trajet retour</b><small>${tOf(R[0].start)} – ${R[R.length-1].end?tOf(R[R.length-1].end):'en cours'}</small></div><span class="rv">${hm(r)}</span></li>`)}}
+ $('#ptRoute').innerHTML=`<ul class="route">${out.join('')}</ul>`;
+ $('#rtSum').textContent=`${I.length} intervention${I.length>1?'s':''}`;
+ if(nTr){const between=[];I.forEach((x,i)=>{if(i){const t=trBetween(I[i-1].end||0,x.start).reduce((s,y)=>s+durOf(y),0);if(t)between.push(t)}});$('#rtSum').textContent=`${I.length} interventions · trajet moyen ${hm(between.reduce((a,b)=>a+b,0)/between.length)}`}}
+function weekDays(d){const x=new Date(d+'T12:00');const n=(x.getDay()+6)%7;x.setDate(x.getDate()-n);return [...Array(7)].map((_,i)=>{const y=new Date(x);y.setDate(x.getDate()+i);return dKey(y)})}
+function drawWeek(){const W=weekDays(ptDay);let s={trajet:0,inter:0,tot:0};
+ const rows=W.map(d=>{const o=totals(d);s.trajet+=o.trajet;s.inter+=o.inter;s.tot+=o.tot;const dt=new Date(d+'T12:00');
+  return `<tr class="${d===ptDay?'cur':''}"><td><button data-day="${d}">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'})}</button></td><td>${o.trajet?hm(o.trajet):'–'}</td><td>${o.inter?hm(o.inter):'–'}</td><td>${o.tot?hm(o.tot):'–'}</td></tr>`}).join('');
+ const wn=$('#clkS')?'':'';
+ $('#ptWT').textContent='Semaine du '+new Date(W[0]+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
+ $('#ptWeek').innerHTML=`<table class="wk"><thead><tr><th>Jour</th><th>Trajet</th><th>Interv.</th><th>Total</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${hm(s.trajet)}</td><td>${hm(s.inter)}</td><td>${hm(s.tot)}</td></tr></tfoot></table>`}
+const shift=n=>{const x=new Date(ptDay+'T12:00');x.setDate(x.getDate()+n);ptDay=dKey(x);drawPt()};
+$('#ptPrev').addEventListener('click',()=>shift(-1));$('#ptNext').addEventListener('click',()=>shift(1));
+$('#ptToday').addEventListener('click',()=>{ptDay=dKey(Date.now());drawPt()});
+$('#ptDate').addEventListener('change',e=>{if(e.target.value){ptDay=e.target.value;drawPt()}});
+$('#ptWeek').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(b){ptDay=b.dataset.day;drawPt()}});
+$('#ptList').addEventListener('change',async e=>{const row=e.target.closest('[data-id]'),f=e.target.dataset.f;if(!row||!f)return;const x=S.pointage.find(y=>y.id===row.dataset.id);if(!x)return;const n={...x};
+ if(f==='type')n.type=e.target.value;else if(f==='c')n.c=e.target.value.trim();
+ else{if(!e.target.value)return;const ms=new Date(x.day+'T'+e.target.value).getTime();n[f]=ms;if(n.end&&n.end<=n.start){toast('La fin doit être après le début');drawPt();return}}
+ await put('pointage',n)});
+$('#ptList').addEventListener('click',async e=>{const b=e.target.closest('[data-pdel]');if(!b)return;
+ if(b.dataset.ok!=='1'){b.dataset.ok='1';b.style.color='var(--bad)';toast('Touchez encore pour supprimer');setTimeout(()=>{b.dataset.ok='';b.style.color=''},3000);return}
+ await del('pointage',b.dataset.pdel)});
+$('#ptAdd').addEventListener('click',async()=>{const L=daySegs(ptDay),last=L[L.length-1];const s=last&&last.end?last.end:new Date(ptDay+'T08:00').getTime();
+ await put('pointage',{id:uid(),day:ptDay,type:'inter',start:s,end:s+36e5,c:'',t:Date.now()});toast('Ligne ajoutée : ajustez les heures')});
+const dayTxt=d=>{const o=totals(d);const L=daySegs(d);return [`POINTAGE ${new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`,...L.map(x=>`${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${PT[x.type]}  ${hm(durOf(x))}${x.c?'  ('+x.c+')':''}`),`Trajet : ${hm(o.trajet)} · Intervention : ${hm(o.inter)} · Pause : ${hm(o.pause)}`,`Total travaillé : ${hm(o.tot)}`].join('\n')};
+$('#ptCopy').addEventListener('click',()=>copy(dayTxt(ptDay)));
+$('#ptCopyW').addEventListener('click',()=>{const W=weekDays(ptDay).filter(d=>daySegs(d).length);if(!W.length)return toast('Semaine vide');let t=0;W.forEach(d=>t+=totals(d).tot);copy(W.map(dayTxt).join('\n\n')+`\n\nTOTAL SEMAINE : ${hm(t)}`)});
+
+
+function drawPtHome(){if(!$('#ptHome'))return;const o=totals(dKey(Date.now())),n=daySegs(dKey(Date.now())).filter(x=>x.type==='inter').length;
+ $('#ptHome').innerHTML=`<div class="t"><h3>Heures du jour</h3><span class="tag">Trajet ${hm(o.trajet)} · Intervention ${hm(o.inter)}${n?' ('+n+')':''} · <b style="color:var(--ink)">Total ${hm(o.tot)}</b></span></div><div class="q"><button onclick="location.hash='heures'">${ic('clock')}Noter mes heures</button></div>`}
+
+
+/* ---------- Pompage : petit tableau de bord ---------- */
+function drawTb(){const F=S.forages||[],num=v=>parseFloat(String(v||'').replace(',','.'));
+ const prof=F.map(f=>num(f.prof)).filter(isFinite),deb=F.map(f=>num(f.q)).filter(isFinite);
+ const pm=memoOf('p'),todo=pm.filter(x=>!x.s).length,cmd=pm.filter(x=>x.s===1).length;
+ const mesOk=S.mes.filter(m=>CK.every(([,it],gi)=>it.every((_,ii)=>m.ck&&m.ck[gi+'-'+ii]))).length;
+ const k=(go,l,v,sm)=>`<button class="kpi" data-goto="${go}"><span>${l}</span><b>${v}</b><small>${sm}</small></button>`;
+ $('#tbKpi').innerHTML=k('for','Forages',F.length,F.length?new Set(F.map(f=>(f.c||'').toLowerCase()).filter(Boolean)).size+' client(s)':'Aucun enregistré')
+  +k('for','Profondeur moy.',prof.length?Math.round(prof.reduce((a,b)=>a+b,0)/prof.length)+' m':'–',prof.length?'max '+Math.max(...prof)+' m':'non renseignée')
+  +k('mes','Mises en service',S.mes.length,S.mes.length?mesOk+' complète(s)':'Aucune enregistrée')
+  +k('memo','Pièces pompage',todo,cmd?cmd+' commandée(s)':'à prévoir');
+ $('#tbFo').innerHTML=foMini(3)}
+function foMini(n){const L=[...(S.forages||[])].sort((a,b)=>(b.maj||b.t)-(a.maj||a.t)).slice(0,n);
+ return L.length?L.map(f=>`<div class="act"><li style="list-style:none"><span class="ai" style="background:light-dark(#dff6f3,#123a37);color:var(--teal)">${ic('pin')}</span><span class="at"><b>${esc(f.n||'Forage')}</b> <span class="tag">${esc([f.c,f.v].filter(Boolean).join(' · '))}</span><br><span class="tag">${f.lat}, ${f.lon}${f.q?' · '+esc(f.q)+' m³/h':''}${f.prof?' · '+esc(f.prof)+' m':''}</span></span><a class="ghost" style="text-decoration:none;color:var(--blue);font-weight:700;white-space:nowrap" href="https://www.google.com/maps/dir/?api=1&destination=${f.lat},${f.lon}" target="_blank" rel="noopener">Itinéraire</a></li></div>`).join(''):'<p class="tag" style="margin:0">Aucun forage enregistré.</p>'}
+function drawHomeFo(){const e=$('#homeFo');if(!e)return;const n=(S.forages||[]).length;
+ e.innerHTML=`<div class="ptlh"><h3 style="font-size:21px">Forages <span class="tag" style="font-size:15px">${n}</span></h3><button class="ghost" id="hfoAll">Tout voir</button></div>${foMini(3)}`}
+$('#homeFo').addEventListener('click',e=>{if(!e.target.closest('#hfoAll'))return;pmTab='for';try{localStorage.setItem('dep_pmtab','for')}catch(x){}drawPmTabs();location.hash='pompage'});
+$('#pmTb').addEventListener('click',e=>{const b=e.target.closest('[data-goto]');if(!b)return;pmTab=b.dataset.goto;try{localStorage.setItem('dep_pmtab',pmTab)}catch(x){}drawPmTabs();scrollTo({top:0})});
+
+
+/* ---------- Magasin (catalogue des références) ---------- */
+let mgEdit=null,mgSec='enr';try{mgSec=localStorage.getItem('dep_mgsec')||'enr'}catch(e){}
+const secOf=x=>x.sec||(x.f==='Pompage'?'sta':'enr');
+const SECN={enr:'Enrouleur',sta:'Station'};
+function refFor(des,sec){const d=(des||'').trim().toLowerCase();if(!d)return null;return S.magasin.find(x=>secOf(x)===sec&&(x.d||'').trim().toLowerCase()===d)||null}
+const MGBR=['Irrifrance','RM','Bauer','Autre'],MGCAT=['Pompe','Moteur','Armoire / électrique','Variateur','Hydraulique / vannes','Ballon / pressostat','Autre'];
+function mgMode(sec){const f=$('#mgForm');f.classList.toggle('sta',sec==='sta');f.dataset.sec=sec;
+ $('#mgFi').innerHTML=ic(sec==='enr'?'reel':'pump');$('#mgFt').textContent=(mgEdit?'Modifier le produit':'Nouveau produit')+(sec==='enr'?' enrouleur':' station');
+ $('#mgFs').textContent=sec==='enr'?'Pièce pour enrouleur d\'irrigation':'Pièce pour station de pompage';
+ $('#mgD').placeholder=sec==='enr'?'Courroie turbine':'Garniture mécanique';
+ $('#mgEnrF').hidden=sec!=='enr';$('#mgStaF').hidden=sec!=='sta'}
+function mgOpen(x){mgEdit=x?x.id:null;const sec=x?secOf(x):mgSec;if(x&&sec!==mgSec){mgSec=sec;drawMg()}
+ mgMode(sec);$('#mgForm').hidden=false;$('#mgR').value=x?.ref||'';$('#mgD').value=x?.d||'';
+ const br=x?.m&&MGBR.includes(x.m)?x.m:(x?.m?'Autre':(brand&&MARQUES[brand]?MARQUES[brand].n:'Autre'));
+ $('#mgBr').innerHTML=MGBR.map(b=>`<label><input type="radio" name="mgBr" value="${b}"${b===br?' checked':''}>${b}</label>`).join('');
+ $('#mgCat').innerHTML=MGCAT.map(c=>`<label><input type="radio" name="mgCat" value="${esc(c)}"${(x?.cat||'Pompe')===c?' checked':''}>${esc(c)}</label>`).join('');
+ $('#mgCompE').value=sec==='enr'?(x?.comp||''):'';$('#mgCompS').value=sec==='sta'?(x?.comp||''):'';$('#mgMS').value=sec==='sta'?(x?.m||''):'';
+ $('#mgFo').value=x?.fo||'';$('#mgE').value=x?.e||'';$('#mgS').value=x?.s??0;$('#mgMin').value=x?.min??'';$('#mgN').value=x?.n||'';$('#mgForm').scrollIntoView({block:'start'});$('#mgD').focus()}
+$('#mgNew').addEventListener('click',()=>mgOpen(null));
+$('#mgCancel').addEventListener('click',()=>{$('#mgForm').hidden=true;mgEdit=null});
+$('#mgForm').addEventListener('submit',async e=>{e.preventDefault();const sec=$('#mgForm').dataset.sec||mgSec,ref=$('#mgR').value.trim().toUpperCase(),d=$('#mgD').value.trim();
+ const dup=S.magasin.find(x=>x.id!==mgEdit&&secOf(x)===sec&&(x.d||'').trim().toLowerCase()===d.toLowerCase());if(dup)toast('Attention : cette désignation existe déjà ('+dup.ref+')');
+ const old=S.magasin.find(x=>x.id===mgEdit)||{};
+ const extra=sec==='enr'?{m:(document.querySelector('[name=mgBr]:checked')||{}).value||'',comp:$('#mgCompE').value.trim(),cat:''}:{m:$('#mgMS').value.trim(),cat:(document.querySelector('[name=mgCat]:checked')||{}).value||'',comp:$('#mgCompS').value.trim()};
+ await put('magasin',{...old,id:mgEdit||uid(),ref,d,sec,...extra,fo:$('#mgFo').value.trim(),e:$('#mgE').value.trim(),s:Math.max(0,+$('#mgS').value||0),min:$('#mgMin').value===''?null:+$('#mgMin').value,n:$('#mgN').value.trim(),t:old.t||Date.now(),maj:Date.now()});
+ mgSec=sec;$('#mgForm').hidden=true;mgEdit=null;toast('Produit '+(sec==='enr'?'enrouleur':'station')+' enregistré')});
+function drawMg(){const q=$('#mgQ').value.trim().toLowerCase(),A=S.magasin,lowOnly=$('#mgLow').checked;
+ const low=x=>x.min!=null&&x.s<=x.min,out=x=>x.min!=null&&x.s<=0;
+ $('#mgNew').classList.toggle('sta',mgSec==='sta');$('#mgNew').innerHTML=ic('plus')+'Ajouter un produit '+(mgSec==='enr'?'enrouleur':'station');
+ if(!$('#mgForm').hidden&&!mgEdit&&$('#mgForm').dataset.sec!==mgSec)mgMode(mgSec);
+ $('#mgTabs').innerHTML=Object.entries(SECN).map(([k,l])=>`<button data-ms="${k}" class="${mgSec===k?'cur':''}">${ic(k==='enr'?'reel':'pump')}${l} <b>${A.filter(x=>secOf(x)===k).length}</b></button>`).join('');
+ const L=A.filter(x=>secOf(x)===mgSec&&(!lowOnly||low(x))&&(!q||[x.ref,x.d,x.m,x.fo,x.e,x.n].join(' ').toLowerCase().includes(q))).sort((a,b)=>(a.d||'').localeCompare(b.d||'','fr'));
+ $('#mgList').innerHTML=L.length?`<div class="mgh"><span>Désignation pièce</span><span>Référence pièce</span><span>Stock</span></div>`+L.map(x=>`<div class="mgr ${mgSec} ${out(x)?'out':low(x)?'low':''}"><span class="des">${esc(x.d)}</span><span class="ref">${esc(x.ref)}</span>
+  <div class="stk"><button data-mq="-1" data-id="${esc(x.id)}" aria-label="Retirer 1">−</button><b>${esc(x.s??0)}</b><button data-mq="1" data-id="${esc(x.id)}" aria-label="Ajouter 1">+</button></div>
+  ${[x.m,x.cat,x.comp,x.fo,x.e,x.n].some(Boolean)||low(x)?`<div class="meta">${esc([x.cat,x.m,x.comp,x.fo].filter(Boolean).join(' · '))}${x.e?` · <b style="color:var(--ink)">${esc(x.e)}</b>`:''}${x.n?' · '+esc(x.n):''}${out(x)?' <span class="lw">Rupture</span>':low(x)?' <span class="lw">Stock bas</span>':''}</div>`:''}
+  <div class="tools"><button class="ghost" data-mmemo="${esc(x.id)}">${ic('list')}Au mémo</button><button class="ghost" data-mcp="${esc(x.id)}">${ic('copy')}Copier</button><button class="ghost" data-med="${esc(x.id)}">${ic('pen')}Modifier</button><button class="ico" data-mdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button></div></div>`).join('')
+  :`<p class="empty">${q||lowOnly?'Aucune pièce ne correspond.':'Aucune pièce '+(mgSec==='enr'?'enrouleur':'station')+' pour l\'instant.<br>Ajoutez-les avec « Ajouter un produit » : désignation + référence.'}</p>`;
+ $('#mgFours').innerHTML=[...new Set(A.map(x=>x.fo).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('');
+ const dl=sec=>A.filter(x=>secOf(x)===sec).sort((a,b)=>(a.d||'').localeCompare(b.d||'','fr')).map(x=>`<option value="${esc(x.d)}">${esc(x.ref)}</option>`).join('');
+ $('#desEnr').innerHTML=dl('enr');$('#desSta').innerHTML=dl('sta')}
+$('#mgQ').addEventListener('input',drawMg);$('#mgLow').addEventListener('change',drawMg);
+$('#mgTabs').addEventListener('click',e=>{const b=e.target.closest('[data-ms]');if(!b)return;mgSec=b.dataset.ms;try{localStorage.setItem('dep_mgsec',mgSec)}catch(x){}drawMg()});
+$('#mgList').addEventListener('click',async e=>{const g=k=>e.target.closest(`[data-${k}]`);let b;
+ if(b=g('mq')){const x=S.magasin.find(y=>y.id===b.dataset.id);if(x)await put('magasin',{...x,s:Math.max(0,(+x.s||0)+(+b.dataset.mq)),maj:Date.now()});return}
+ if(b=g('med')){const x=S.magasin.find(y=>y.id===b.dataset.med);if(x)mgOpen(x);return}
+ if(b=g('mcp')){const x=S.magasin.find(y=>y.id===b.dataset.mcp);if(x)copy(`${x.d} — réf. ${x.ref}${x.m?' ('+x.m+')':''}`);return}
+ if(b=g('mmemo')){const x=S.magasin.find(y=>y.id===b.dataset.mmemo);if(!x)return;const pm=secOf(x)==='sta';
+  await put('memo',{id:uid(),d:x.d,r:x.ref,q:1,c:'',s:0,t:Date.now(),dom:pm?'pmp':'enr',m:pm?'Pompage':(x.m||bName()),from:'Magasin'});toast('Ajouté au mémo '+(pm?'pompage':'enrouleurs'));return}
+ if(b=g('mdel')){if(b.dataset.ok!=='1'){b.dataset.ok='1';b.style.color='var(--bad)';toast('Touchez encore pour supprimer');setTimeout(()=>{b.dataset.ok='';b.style.color=''},3000);return}await del('magasin',b.dataset.mdel)}});
+
+
+/* ---------- Recherche rapide désignation → référence ---------- */
+function drawQ(){const q=$('#qIn').value.trim().toLowerCase();if(!q){$('#qRes').innerHTML='';return}
+ const words=q.split(/\s+/).filter(Boolean);
+ const L=S.magasin.filter(x=>words.every(w=>(x.d||'').toLowerCase().includes(w)||(x.ref||'').toLowerCase().includes(w)))
+  .sort((a,b)=>((a.d||'').toLowerCase().startsWith(q)?0:1)-((b.d||'').toLowerCase().startsWith(q)?0:1)||(a.d||'').localeCompare(b.d||'','fr')).slice(0,8);
+ const hl=s=>{let t=esc(s);words.forEach(w=>{const e=w.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');t=t.replace(new RegExp('('+esc(e)+')','ig'),'<mark>$1</mark>')});return t};
+ $('#qRes').innerHTML=L.length?L.map(x=>`<div class="qr"><span class="d">${hl(x.d)}<small>${secOf(x)==='sta'?'Station':'Enrouleur'}${x.m?' · '+esc(x.m):''}</small></span><span class="r">${esc(x.ref)}</span><button data-qc="${esc(x.id)}" aria-label="Copier la référence">${ic('copy')}</button></div>`).join('')
+  :`<div class="qr"><span class="d tag">Aucune pièce trouvée pour « ${esc($('#qIn').value.trim())} »</span></div>`}
+$('#qIn').addEventListener('input',drawQ);$('#qIn').addEventListener('focus',drawQ);
+document.addEventListener('click',e=>{if(!e.target.closest('#qlook'))$('#qRes').innerHTML=''});$('#qIn').addEventListener('keydown',e=>{if(e.key==='Escape'){$('#qIn').value='';drawQ()}});
+$('#qRes').addEventListener('click',e=>{const b=e.target.closest('[data-qc]');if(!b)return;const x=S.magasin.find(y=>y.id===b.dataset.qc);if(x)copy(x.ref)});
+
+
+/* ---------- Partage du mémo (texte, WhatsApp, e-mail, PDF) ---------- */
+const memoTitle=k=>k==='e'?'Mémo pièces enrouleurs'+(MB.e.all?'':' – '+bName()):'Mémo pièces stations de pompage';
+function memoRows(k){return memoOf(k).filter(x=>x.s!==2).sort((a,b)=>(a.c||'').localeCompare(b.c||'')||((a.s||0)-(b.s||0)))}
+function memoText(k){const l=memoRows(k);if(!l.length)return '';const g={};l.forEach(x=>(g[x.c||'Sans chantier']=g[x.c||'Sans chantier']||[]).push(x));
+ return 'VERHAEGHE IRRIGATION – '+memoTitle(k).toUpperCase()+'\n'+new Date().toLocaleDateString('fr-FR')+'\n\n'+Object.entries(g).map(([c,a])=>c+'\n'+a.map(x=>`- ${x.q} × ${x.d}${x.r?' (réf. '+x.r+')':''}${k==='e'&&x.m&&MB.e.all?' ['+x.m+']':''} — ${STAT[x.s||0]}${k==='e'&&(x.enr||x.pe||x.sn)?'\n    Enrouleur : '+[x.enr,x.pe&&'PE '+x.pe,x.sn&&'n° série '+x.sn].filter(Boolean).join(' · '):''}`).join('\n')).join('\n\n')}
+/* Mini PDF (A4, Helvetica), sans bibliothèque externe — API compatible avec ce que memoPdf utilise */
+const MiniPDF=(()=>{const WD=[[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584,761,556,0,222,556,333,1000,556,556,333,1000,667,333,1000,0,611,0,0,222,222,333,333,350,556,1000,333,1000,500,333,944,0,500,667,278,333,556,556,556,556,260,556,333,737,370,556,584,333,737,333,400,584,333,333,333,556,537,278,333,333,365,556,834,834,834,611,667,667,667,667,667,667,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,500,556,556,556,556,278,278,278,278,556,556,556,556,556,556,556,584,611,556,556,556,556,500,556,500],[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584,761,556,0,278,556,500,1000,556,556,333,1000,667,333,1000,0,611,0,0,278,278,500,500,350,556,1000,333,1000,556,333,944,0,500,667,278,333,556,556,556,556,280,556,333,737,370,556,584,333,737,333,400,584,333,333,333,611,556,278,333,333,365,556,834,834,834,611,722,722,722,722,722,722,1000,722,667,667,667,667,278,278,278,278,722,722,778,778,778,778,778,584,778,722,722,722,722,667,667,611,556,556,556,556,556,556,889,556,556,556,556,556,278,278,278,278,611,611,611,611,611,611,611,584,611,611,611,611,611,556,611,556]];const K=72/25.4;
+const CP={0x20AC:128,0x201A:130,0x192:131,0x201E:132,0x2026:133,0x2020:134,0x2021:135,0x2C6:136,0x2030:137,0x160:138,0x2039:139,0x152:140,0x17D:142,0x2018:145,0x2019:146,0x201C:147,0x201D:148,0x2022:149,0x2013:150,0x2014:151,0x2DC:152,0x2122:153,0x161:154,0x203A:155,0x153:156,0x17E:158,0x178:159};
+const enc=s=>[...String(s)].map(ch=>{const c=ch.codePointAt(0);if(c<128||(c>=160&&c<256))return c;return CP[c]||(ch===' '||ch===' '?32:63)});
+class Doc{constructor(){this.pages=[];this.addPage();this.fs=12;this.bold=false;this.fc=[0,0,0];this.dc=[0,0,0];this.tc=[0,0,0];this.lw=.2}
+addPage(){this.pages.push([]);this.cur=this.pages.length-1}setPage(i){this.cur=i-1}getNumberOfPages(){return this.pages.length}
+_c(a){return a.length===1&&typeof a[0]==='number'?[a[0],a[0],a[0]]:a.slice(0,3)}
+setFillColor(...a){this.fc=this._c(a)}setDrawColor(...a){this.dc=this._c(a)}setTextColor(...a){this.tc=this._c(a)}
+setLineWidth(w){this.lw=w}setFont(f,s){this.bold=s==='bold'}setFontSize(s){this.fs=s}
+_p(s){this.pages[this.cur].push(s)}_n(v){return (Math.round(v*100)/100).toString()}
+_rgb(c,op){return c.map(v=>this._n(v/255)).join(' ')+' '+op}
+_X(x){return this._n(x*K)}_Y(y){return this._n((297-y)*K)}
+width(s){const t=WD[this.bold?1:0];return enc(s).reduce((a,c)=>a+(t[c-32]||556),0)/1000*this.fs/K}
+getTextWidth(s){return this.width(s)}
+rect(x,y,w,h,st){const r=`${this._X(x)} ${this._Y(y+h)} ${this._n(w*K)} ${this._n(h*K)} re`;const f=st&&st.includes('F'),d=!st||st.includes('D');
+ this._p(`${this._rgb(this.fc,'rg')} ${this._rgb(this.dc,'RG')} ${this._n(this.lw*K)} w ${r} ${f&&d?'B':f?'f':'S'}`)}
+roundedRect(x,y,w,h,r,_,st){const k=.5523*r,X=v=>this._X(v),Y=v=>this._Y(v);
+ const p=`${X(x+r)} ${Y(y)} m ${X(x+w-r)} ${Y(y)} l ${X(x+w-r+k)} ${Y(y)} ${X(x+w)} ${Y(y+r-k)} ${X(x+w)} ${Y(y+r)} c ${X(x+w)} ${Y(y+h-r)} l ${X(x+w)} ${Y(y+h-r+k)} ${X(x+w-r+k)} ${Y(y+h)} ${X(x+w-r)} ${Y(y+h)} c ${X(x+r)} ${Y(y+h)} l ${X(x+r-k)} ${Y(y+h)} ${X(x)} ${Y(y+h-r+k)} ${X(x)} ${Y(y+h-r)} c ${X(x)} ${Y(y+r)} l ${X(x)} ${Y(y+r-k)} ${X(x+r-k)} ${Y(y)} ${X(x+r)} ${Y(y)} c h`;
+ this._p(`${this._rgb(this.fc,'rg')} ${p} f`)}
+line(a,b,c,d){this._p(`${this._rgb(this.dc,'RG')} ${this._n(this.lw*K)} w ${this._X(a)} ${this._Y(b)} m ${this._X(c)} ${this._Y(d)} l S`)}
+text(t,x,y,o={}){(Array.isArray(t)?t:[t]).forEach((s,i)=>{let xx=x;const w=this.width(s);if(o.align==='center')xx-=w/2;else if(o.align==='right')xx-=w;
+ const str=enc(s).map(c=>c===40||c===41||c===92?'\\'+String.fromCharCode(c):c<32||c>126?'\\'+c.toString(8).padStart(3,'0'):String.fromCharCode(c)).join('');
+ this._p(`BT /${this.bold?'F2':'F1'} ${this._n(this.fs)} Tf ${this._rgb(this.tc,'rg')} ${this._X(xx)} ${this._Y(y+i*this.fs/K*1.15)} Td (${str}) Tj ET`)})}
+splitTextToSize(t,w){const out=[];String(t).split('\n').forEach(par=>{let cur='';for(const wd of par.split(' ')){const tr=cur?cur+' '+wd:wd;if(this.width(tr)>w&&cur){out.push(cur);cur=wd}else cur=tr}out.push(cur)});return out}
+output(){const objs=[];const add=s=>{objs.push(s);return objs.length};
+ const f1=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'),f2=add('<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+ const pagesId=objs.length+1+this.pages.length*2+0;const kids=[];
+ this.pages.forEach(pg=>{const c=pg.join('\n');const cid=add(`<< /Length ${c.length} >>\nstream\n${c}\nendstream`);kids.push(add(`<< /Type /Page /Parent ${pagesId} 0 R /MediaBox [0 0 595.28 841.89] /Resources << /Font << /F1 ${f1} 0 R /F2 ${f2} 0 R >> >> /Contents ${cid} 0 R >>`))});
+ const pid=add(`<< /Type /Pages /Kids [${kids.map(k=>k+' 0 R').join(' ')}] /Count ${kids.length} >>`);const cat=add(`<< /Type /Catalog /Pages ${pid} 0 R >>`);
+ let out='%PDF-1.4\n%âãÏÓ\n';const offs=[];objs.forEach((o,i)=>{offs.push(out.length);out+=`${i+1} 0 obj\n${o}\nendobj\n`});
+ const x=out.length;out+=`xref\n0 ${objs.length+1}\n0000000000 65535 f \n`+offs.map(o=>String(o).padStart(10,'0')+' 00000 n \n').join('')+`trailer\n<< /Size ${objs.length+1} /Root ${cat} 0 R >>\nstartxref\n${x}\n%%EOF`;
+ const b=new Uint8Array(out.length);for(let i=0;i<out.length;i++)b[i]=out.charCodeAt(i)&255;return b}}
+return {jsPDF:Doc}})();
+
+async function memoPdf(k){const l=memoRows(k);if(!l.length)return toast('Rien à partager');
+ const J=MiniPDF;
+ const doc=new J.jsPDF({unit:'mm',format:'a4'}),W=210,H=297,M=14,CW=W-2*M,enr=k==='e';
+ const C={blue:[47,125,225],deep:[22,74,140],ink:[30,42,54],mute:[102,118,138],line:[196,207,219],head:[232,239,247],band:[220,233,250],zebra:[247,249,252],
+  st:[[253,232,216,166,80,10],[226,239,253,30,90,170],[220,243,230,20,120,70]]};
+ const cols=enr?[['Qté',12,'c'],['Désignation',50],['Référence',32],['Enrouleur',56],['Statut',32,'c']]:[['Qté',12,'c'],['Désignation',82],['Référence',50],['Statut',38,'c']];
+ const P=2.2,LH=4.4,FS=9.5;let y=0,page=1;
+ const fill=(c)=>doc.setFillColor(c[0],c[1],c[2]),draw=(c)=>doc.setDrawColor(c[0],c[1],c[2]),txt=(c)=>doc.setTextColor(c[0],c[1],c[2]);
+ const nChant=new Set(l.map(x=>x.c||'Sans chantier')).size,nPcs=l.reduce((s,x)=>s+(+x.q||1),0);
+ function pageHead(first){fill(C.blue);doc.rect(0,0,W,first?30:16,'F');txt([255,255,255]);doc.setFont('helvetica','bold');
+  if(first){doc.setFontSize(17);doc.text('Verhaeghe Irrigation',M,12);doc.setFont('helvetica','normal');doc.setFontSize(11);doc.text(memoTitle(k),M,19.5);
+   doc.setFontSize(9.5);doc.text(`${l.length} ligne${l.length>1?'s':''} · ${nPcs} pièce${nPcs>1?'s':''} · ${nChant} chantier${nChant>1?'s':''}`,M,25.5);
+   doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(new Date().toLocaleDateString('fr-FR'),W-M,12,{align:'right'});y=40}
+  else{doc.setFontSize(11);doc.text('Verhaeghe Irrigation – '+memoTitle(k),M,10);doc.setFont('helvetica','normal');doc.text(new Date().toLocaleDateString('fr-FR'),W-M,10,{align:'right'});y=24}}
+ function tableHead(){const h=8;fill(C.head);draw(C.line);doc.setLineWidth(.3);doc.rect(M,y,CW,h,'FD');let x=M;
+  doc.setFont('helvetica','bold');doc.setFontSize(9);txt(C.deep);
+  cols.forEach(([t,w,a],i)=>{if(i)doc.line(x,y,x,y+h);doc.text(t,a==='c'?x+w/2:x+P,y+5.4,a==='c'?{align:'center'}:{});x+=w});y+=h}
+ function need(hh,withHead){if(y+hh>H-16){doc.addPage();page++;pageHead(false);if(withHead)tableHead()}}
+ function band(c,sub){need(10+8+10,false);fill(C.band);draw(C.line);doc.setLineWidth(.3);const h=sub?11:8;doc.rect(M,y,CW,h,'FD');fill(C.blue);doc.rect(M,y,1.6,h,'F');
+  txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(11);doc.text(c,M+5,y+5.5);
+  if(sub){doc.setFont('helvetica','normal');doc.setFontSize(8.5);txt(C.mute);doc.text(sub,M+5,y+9.4)}y+=h;tableHead()}
+ const g={};l.forEach(x=>(g[x.c||'Sans chantier']=g[x.c||'Sans chantier']||[]).push(x));
+ pageHead(true);
+ for(const [c,a] of Object.entries(g)){const q=a.reduce((s,x)=>s+(+x.q||1),0);band(c,`${a.length} ligne${a.length>1?'s':''} · ${q} pièce${q>1?'s':''}`);
+  a.forEach((x,ri)=>{const vals=[String(x.q||1),x.d||'',x.r||'—',...(enr?[[x.enr,x.pe&&'PE '+x.pe,x.sn&&'N° '+x.sn].filter(Boolean).join('\n')||'—']:[]),STAT[x.s||0]];
+   doc.setFontSize(FS);const lines=vals.map((v,i)=>{doc.setFont('helvetica',i===2||i===1?'bold':'normal');return v.split('\n').flatMap(s=>doc.splitTextToSize(s,cols[i][1]-2*P))});
+   const hh=Math.max(...lines.map(t=>t.length))*LH+2*P;need(hh,true);
+   if(ri%2){fill(C.zebra);doc.rect(M,y,CW,hh,'F')}
+   let xx=M;lines.forEach((t,i)=>{const [_,w,al]=cols[i];
+    if(i===lines.length-1){const st=C.st[x.s||0];fill(st.slice(0,3));doc.roundedRect(xx+2,y+1.6,w-4,6.2,1.6,1.6,'F');txt(st.slice(3));doc.setFont('helvetica','bold');doc.setFontSize(8.5);doc.text(t[0],xx+w/2,y+5.7,{align:'center'})}
+    else{txt(i===2?C.deep:C.ink);doc.setFont('helvetica',i===1||i===2?'bold':'normal');doc.setFontSize(i===3?8.5:FS);
+     t.forEach((ln,j)=>doc.text(ln,al==='c'?xx+w/2:xx+P,y+P+3.3+j*LH,al==='c'?{align:'center'}:{}))}
+    xx+=w});
+   draw(C.line);doc.setLineWidth(.25);doc.rect(M,y,CW,hh);let vx=M;cols.forEach(([,w],i)=>{if(i)doc.line(vx,y,vx,y+hh);vx+=w});y+=hh});
+  y+=7}
+ const n=doc.getNumberOfPages();for(let i=1;i<=n;i++){doc.setPage(i);draw(C.line);doc.setLineWidth(.2);doc.line(M,H-12,W-M,H-12);doc.setFont('helvetica','normal');doc.setFontSize(8);txt(C.mute);
+  doc.text('Généré le '+new Date().toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})+' – appli Verhaeghe Irrigation',M,H-7.5);doc.text(`Page ${i} / ${n}`,W-M,H-7.5,{align:'right'})}
+ const bytes=doc.output(),name=(k==='e'?'memo-enrouleurs':'memo-pompage')+'-'+dKey(Date.now())+'.pdf';
+ await deliverPdf(k,bytes,name)}
+async function deliverPdf(k,bytes,name){const root=document.querySelector(`.memobox[data-k=${k}]`),st=root.querySelector('[data-r=pdfst]');
+ const say=(html)=>{st.hidden=false;st.innerHTML=html};
+ const viaLink=async(why)=>{if(!assets){say(`<b style="color:var(--bad)">Le PDF n'a pas pu être enregistré${why?' ('+esc(why)+')':''}.</b> Utilisez « WhatsApp », « E-mail » ou « Copier ».`);return}
+  say('Création d\'un lien vers le PDF…');try{const r=await assets.upload(new Blob([bytes],{type:'application/pdf'}),{type:'application/pdf'});
+   say(`<a class="shb" href="${esc(r.url)}" target="_blank" rel="noopener">${ic('file')}Ouvrir le PDF</a> <span class="tag">Ouvrez-le puis utilisez le bouton de partage du navigateur.</span>`)}
+  catch(e){say(`<b style="color:var(--bad)">PDF non enregistré${e&&e.code?' ('+esc(e.code)+')':''}.</b> Utilisez « WhatsApp », « E-mail » ou « Copier ».`)}};
+ if(!dl)return viaLink('téléchargement indisponible ici');
+ say('Confirmez le téléchargement dans la fenêtre qui s\'ouvre…');
+ try{await dl.save({filename:name,data:new Blob([bytes],{type:'application/pdf'})});say(`<b style="color:var(--ok)">✓ PDF « ${esc(name)} » enregistré.</b> <span class="tag">Il est dans vos téléchargements (ou la feuille de partage sur iPhone).</span> <button class="ghost small" data-r="pdflink">Lien de secours</button>`);
+  st.querySelector('[data-r=pdflink]').onclick=()=>viaLink()}
+ catch(e){if(e&&e.code==='declined')say('Téléchargement annulé. <button class="ghost small" data-r="pdflink">Obtenir un lien vers le PDF</button>'),st.querySelector('[data-r=pdflink]').onclick=()=>viaLink();else viaLink(e&&e.code)}}
+let dl=null;
+if(window.AndroidApp){dl={save:async({filename,data})=>{const a=new Uint8Array(await data.arrayBuffer());let s='';for(let i=0;i<a.length;i+=8192)s+=String.fromCharCode.apply(null,a.subarray(i,i+8192));
+ const r=AndroidApp.saveFile(btoa(s),filename,'application/pdf');if(r!=='ok')throw {code:'unavailable',message:r};return {status:'saved'}}};document.documentElement.classList.add('android')}window.__memoTest={pdf:memoPdf,setDl:v=>dl=v,all:v=>MB.e.all=v};
+
+
+/* ---------- Assistant (chatbot) ---------- */
+{let sample=null,ctl=null,turns=[],busy=false;
+ const box=$('#botMsgs');
+ const md=t=>{let s=esc(t);s=s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');const L=s.split('\n');let out='',ul=false;
+  for(const l of L){const m=l.match(/^\s*[-•*]\s+(.*)/)||l.match(/^\s*\d+[.)]\s+(.*)/);if(m){if(!ul){out+='<ul>';ul=true}out+='<li>'+m[1]+'</li>'}else{if(ul){out+='</ul>';ul=false}if(l.trim())out+='<p>'+l.replace(/^#+\s*/,'')+'</p>'}}
+  return out+(ul?'</ul>':'')};
+ const add=(cls,html)=>{const d=document.createElement('div');d.className='bm '+cls;d.innerHTML=html;box.appendChild(d);box.scrollTop=box.scrollHeight;return d};
+ const SUG=['Enrouleur Bauer qui ne rembobine plus','Quelle est la référence de la courroie turbine ?','Pompe qui disjoncte au démarrage','Résume mes heures de la semaine','Quelles pièces sont à commander ?'];
+ function welcome(){box.innerHTML='';add('a',md('Bonjour ! Je suis l\'assistant de l\'appli. Je peux vous aider à **diagnostiquer une panne** d\'enrouleur ou de station de pompage, **trouver une référence** au magasin, consulter le **mémo**, les **forages** ou vos **heures**, et ajouter des pièces au mémo.'));
+  const s=document.createElement('div');s.className='botsug';s.innerHTML=SUG.map(q=>`<button type="button">${esc(q)}</button>`).join('');box.appendChild(s);
+  s.addEventListener('click',e=>{const b=e.target.closest('button');if(b){$('#botQ').value=b.textContent;ask()}})}
+ const rules=()=>`Tu es l'assistant technique de l'application « Verhaeghe Irrigation », utilisée par des techniciens de terrain (département de la Somme) pour le dépannage des enrouleurs d'irrigation (marques Irrifrance, RM, Bauer…), la mise en service et le dépannage des stations de pompage, les forages, le mémo des pièces, le magasin de références et le pointage des heures.
+Réponds en français, de façon courte, concrète et pratique (listes à puces, étapes numérotées). Rappelle la sécurité quand c'est utile (couper l'eau, décompresser, consigner l'électrique). Ne donne pas de valeurs constructeur inventées : renvoie à la notice si tu n'es pas sûr.
+Utilise les outils pour lire les données de l'appli (fiches pannes, magasin, mémo, forages, heures) au lieu de deviner. Pour ajouter une pièce au mémo, utilise ajouter_au_memo seulement si le technicien le demande.
+Contexte actuel : onglet « ${location.hash.slice(1)||'accueil'} », marque d'enrouleur sélectionnée : ${bName()}, date : ${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}.
+Fiches pannes enrouleurs : ${PANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.
+Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
+ const TOOLS=[
+  {name:'fiche_panne',description:'Renvoie une fiche de dépannage complète (causes, vérifications, pièces, points spécifiques à la marque sélectionnée, notes du technicien). type = "enrouleur" ou "pompage", index = numéro de la fiche.',inputSchema:{type:'object',properties:{type:{type:'string',enum:['enrouleur','pompage']},index:{type:'integer'}},required:['type','index']},
+   execute:({type,index})=>{const enrl=String(type)!=='pompage',L=enrl?PANNES:PPANNES,p=L[Number(index)];if(!p)throw new Error('fiche inconnue');const n=S.notes.find(x=>x.id===(enrl?brand+'-'+index:'pompe-'+index));
+    return {titre:p.t,causes:p.c,verifications:p.v,pieces:p.p,specifique_marque:enrl?(MARQUES[brand].p[index]||[]):[],marque:enrl?bName():null,notes_technicien:n?.txt||''}}},
+  {name:'chercher_reference',description:'Cherche des pièces dans le magasin par désignation ou référence (mots-clés). Renvoie désignation, référence, section, marque, stock, emplacement.',inputSchema:{type:'object',properties:{recherche:{type:'string'}},required:['recherche']},
+   execute:({recherche})=>{const w=String(recherche||'').toLowerCase().split(/\s+/).filter(Boolean);return S.magasin.filter(x=>w.every(k=>[x.d,x.ref,x.m,x.comp].join(' ').toLowerCase().includes(k))).slice(0,15).map(x=>({designation:x.d,reference:x.ref,section:secOf(x)==='sta'?'station':'enrouleur',marque:x.m||'',stock:x.s??0,emplacement:x.e||'',compatibilite:x.comp||''}))}},
+  {name:'lire_memo',description:'Liste les pièces du mémo (à prévoir, commandées, reçues). section = "enrouleur", "pompage" ou "tout".',inputSchema:{type:'object',properties:{section:{type:'string',enum:['enrouleur','pompage','tout']}}},
+   execute:({section})=>S.memo.filter(x=>!section||section==='tout'||(section==='pompage')===(domOf(x)==='pmp')).slice(0,60).map(x=>({designation:x.d,reference:x.r||'',quantite:x.q,chantier:x.c||'',statut:STAT[x.s||0],marque:x.m||'',enrouleur:[x.enr,x.pe,x.sn].filter(Boolean).join(' · ')}))},
+  {name:'ajouter_au_memo',description:'Ajoute une pièce au mémo (la référence est complétée depuis le magasin si elle existe). À utiliser seulement à la demande du technicien.',inputSchema:{type:'object',properties:{designation:{type:'string'},quantite:{type:'integer'},chantier:{type:'string'},section:{type:'string',enum:['enrouleur','pompage']}},required:['designation','section']},
+   execute:async({designation,quantite,chantier,section})=>{const pm=String(section)==='pompage',d=String(designation||'').trim();if(!d)throw new Error('désignation vide');const ref=refFor(d,pm?'sta':'enr')?.ref||'';
+    await put('memo',{id:uid(),d,r:ref,q:Math.max(1,Number(quantite)||1),c:String(chantier||''),s:0,t:Date.now(),dom:pm?'pmp':'enr',m:pm?'Pompage':bName(),from:'Assistant'});return {ajoute:d,reference:ref||'(pas au magasin)',memo:pm?'pompage':'enrouleurs'}}},
+  {name:'lire_forages',description:'Liste les forages enregistrés : nom, client, commune, coordonnées GPS, profondeur, débit, pompe, accès.',execute:()=>(S.forages||[]).slice(0,40).map(f=>({nom:f.n,client:f.c,commune:f.v,gps:`${f.lat}, ${f.lon}`,profondeur_m:f.prof,debit_m3h:f.q,niveau_statique:f.ns,niveau_dynamique:f.nd,pompe:f.pompe,acces:f.r}))},
+  {name:'heures_semaine',description:'Totaux des heures (trajet, intervention, pause) par jour pour la semaine en cours, avec les chantiers.',execute:()=>weekDays(dKey(Date.now())).map(d=>{const o=totals(d);return {jour:d,trajet:hm(o.trajet),intervention:hm(o.inter),pause:hm(o.pause),total:hm(o.tot),chantiers:[...new Set(daySegs(d).filter(x=>x.type==='inter'&&x.c).map(x=>x.c))]}})}
+ ];
+ const LBL={fiche_panne:'Lecture de la fiche panne',chercher_reference:'Recherche au magasin',lire_memo:'Lecture du mémo',ajouter_au_memo:'Ajout au mémo',lire_forages:'Lecture des forages',heures_semaine:'Lecture des heures'};
+ async function ask(){const q=$('#botQ').value.trim();if(!q||busy)return;$('#botQ').value='';fit();
+  box.querySelector('.botsug')?.remove();add('u',esc(q).replace(/\n/g,'<br>'));turns.push({role:'user',content:q});if(turns.length>16)turns=turns.slice(-16);while(turns[0]&&turns[0].role!=='user')turns.shift();
+  const a=add('a think','Réflexion…');busy=true;ctl=new AbortController();const sb=$('#botSend');sb.classList.add('stop');sb.innerHTML='■';sb.setAttribute('aria-label','Arrêter');
+  const used=[];const tools=TOOLS.map(t=>({...t,execute:(i,c)=>{used.push(LBL[t.name]);if(a.classList.contains('think'))a.textContent=LBL[t.name]+'…';return t.execute(i,c)}}));
+  let caps=null;try{caps=await sample.limits()}catch(e){}
+  try{const {text}=await sample([{role:'user',content:rules()},...turns],{cache:false,signal:ctl.signal,...(caps&&caps.tools?{tools}:{}),onText:({text})=>{a.classList.remove('think');a.innerHTML=md(text);box.scrollTop=box.scrollHeight}});
+   a.classList.remove('think');a.innerHTML=md(text)+(used.length?`<span class="tool">✓ ${esc([...new Set(used)].join(' · '))}</span>`:'');turns.push({role:'assistant',content:text})}
+  catch(e){a.classList.remove('think');const M={cancelled:'Réponse arrêtée.',not_granted:'L\'assistant n\'a pas été autorisé. Rechargez la page pour l\'autoriser.',rate_limited:'Trop de questions d\'un coup : réessayez dans un moment.',session_expired:'Reconnectez-vous à Claude.',refused:'Je ne peux pas répondre à cette demande.',sampling_disabled:'L\'assistant n\'est pas disponible pour ce compte.'};
+   if(e&&e.text){a.innerHTML=md(e.text);turns.push({role:'assistant',content:e.text})}else{a.classList.add('err');a.textContent=M[e&&e.code]||'Réponse interrompue, réessayez.'}
+   if(e&&(e.code==='not_granted'||e.code==='sampling_disabled')){$('#botFab').hidden=true}}
+  finally{busy=false;sb.classList.remove('stop');sb.innerHTML=ic('next');sb.setAttribute('aria-label','Envoyer')}}
+ const fit=()=>{const t=$('#botQ');t.style.height='auto';t.style.height=Math.min(120,t.scrollHeight)+'px'};
+ $('#botQ').addEventListener('input',fit);
+ $('#botQ').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask()}});
+ $('#botForm').addEventListener('submit',e=>{e.preventDefault();if(busy){ctl&&ctl.abort();return}ask()});
+ $('#botFab').addEventListener('click',()=>{$('#bot').hidden=false;$('#botFab').hidden=true;if(!box.children.length)welcome();setTimeout(()=>$('#botQ').focus(),50)});
+ $('#botX').addEventListener('click',()=>{$('#bot').hidden=true;$('#botFab').hidden=false});
+ $('#botNew').addEventListener('click',()=>{ctl&&ctl.abort();turns=[];welcome()});
+ (async()=>{try{if(!window.claude||!claude.use)return;sample=await claude.use('sample');if(sample)$('#botFab').hidden=false}catch(e){}})();
+}
+
+/* ---------- Mémo (dans Enrouleurs et Pompage) ---------- */
+function memoOf(k){const B=MB[k];return S.memo.filter(x=>domOf(x)===B.dom&&(k!=='e'||B.all||!x.m||x.m===bName()))}
+function chantiers(){const u=k=>[...new Set(S.memo.map(x=>x[k]).filter(Boolean))].map(v=>`<option value="${esc(v)}">`).join('');$('#enrRefs').innerHTML=u('enr');$('#peDims').innerHTML=u('pe')||['90 x 350 m','100 x 400 m','110 x 400 m','110 x 450 m','120 x 450 m','125 x 500 m'].map(v=>`<option value="${v}">`).join('');const s=new Set([...S.memo,...S.photos,...(S.forages||[])].map(x=>x.c).filter(Boolean));$('#chantiers').innerHTML=[...s].map(c=>`<option value="${esc(c)}">`).join('')}
+document.querySelectorAll('.memobox').forEach(root=>{const k=root.dataset.k;
+ root.innerHTML=`<div class="ptlh" style="margin-bottom:10px"><h3 style="font-size:22px" data-r="title">Mémo pièces</h3><button class="or" data-r="add">${ic('plus')}Ajouter</button></div>
+ ${k==='e'?`<label class="allb"><input type="checkbox" data-r="all"> Afficher toutes les marques</label>`:''}
+ <form class="card addf" data-r="form" hidden>${k==='e'?`<div class="rgroup">Enrouleur concerné</div><div class="grid">
+  <label>Référence enrouleur<input data-r="enr" list="enrRefs" placeholder="Rainstar T61, Optima 110/400…"></label>
+  <label>Dimension PE<input data-r="pe" list="peDims" placeholder="110 x 400 m"></label>
+  <label>N° de série<input data-r="sn" placeholder="N° plaque constructeur" autocapitalize="characters"></label></div>
+  <div class="rgroup" style="margin-top:16px">Pièce</div>`:''}<div class="grid">
+  <label>Désignation<input data-r="d" required list="${k==='e'?'desEnr':'desSta'}" autocomplete="off" placeholder="${k==='e'?'Courroie turbine':'Garniture mécanique'}"></label>
+  <label>Référence<input data-r="r" placeholder="Remplie depuis le magasin"></label>
+  <label>Quantité<input data-r="q" type="number" min="1" value="1" inputmode="numeric"></label>
+  <label>Chantier / client<input data-r="c" list="chantiers" placeholder="EARL Dupont"></label></div>
+  <label class="allb" data-r="tomgw" hidden style="margin-top:12px"><input type="checkbox" data-r="tomg" checked> Ajouter aussi ce produit au magasin</label>
+  <div class="tools"><button type="submit">${ic('check')}Enregistrer la pièce</button><button type="button" class="ghost" data-r="close">Fermer</button></div></form>
+ <div class="seg" data-r="seg"></div><div data-r="list"></div>
+ <div class="share card"><div class="sh"><b>${ic('ext')}Partager la feuille de mémo</b><span class="tag">pièces à prévoir et commandées</span></div>
+  <div class="tools"><button class="pdfb" data-r="pdf">${ic('file')}PDF</button><a class="shb wa" data-r="wa" target="_blank" rel="noopener">WhatsApp</a><a class="shb" data-r="mail">${ic('ext')}E-mail</a><button class="ghost" data-r="copy">${ic('copy')}Copier</button></div>
+  <p class="tag" data-r="mailtxt" hidden style="margin:8px 0 0"></p><div class="pdfst" data-r="pdfst" hidden></div></div>
+ <div class="tools"><button class="ghost" data-r="clean">${ic('trash')}Retirer les reçues</button></div>`;
+ const R=n=>root.querySelector(`[data-r=${n}]`);
+ R('add').addEventListener('click',()=>{R('form').hidden=false;R('d').focus()});
+ const auto=()=>{const m=refFor(R('d').value,k==='e'?'enr':'sta');if(m){if(R('r').value!==m.ref){R('r').value=m.ref;R('r').classList.add('autof');setTimeout(()=>R('r').classList.remove('autof'),1200)}R('r').dataset.auto='1'}else if(R('r').dataset.auto==='1'){R('r').value='';R('r').dataset.auto=''}};
+ const chk=()=>{R('tomgw').hidden=!(R('d').value.trim()&&R('r').value.trim()&&!refFor(R('d').value,k==='e'?'enr':'sta'))};
+ R('d').addEventListener('input',()=>{auto();chk()});R('d').addEventListener('change',()=>{auto();chk()});R('r').addEventListener('input',()=>{R('r').dataset.auto='';chk()});
+ R('close').addEventListener('click',()=>R('form').hidden=true);
+ R('all')?.addEventListener('change',e=>{MB.e.all=e.target.checked;drawMemo()});
+ R('form').addEventListener('submit',async e=>{e.preventDefault();const d=R('d').value.trim();if(!d)return;
+  const it={id:uid(),d,r:R('r').value.trim(),q:+R('q').value||1,c:R('c').value.trim(),s:0,t:Date.now(),dom:MB[k].dom,m:k==='e'?bName():'Pompage'};
+  if(k==='e'){it.enr=R('enr').value.trim();it.pe=R('pe').value.trim();it.sn=R('sn').value.trim()}
+  const sec=k==='e'?'enr':'sta';let mg=false;
+  if(!R('tomgw').hidden&&R('tomg').checked&&it.r&&!refFor(d,sec)){await put('magasin',{id:uid(),d,ref:it.r.toUpperCase(),sec,m:k==='e'?bName():'',s:0,min:null,t:Date.now(),maj:Date.now()});mg=true}
+  await put('memo',it);R('d').value='';R('r').value='';R('q').value=1;R('tomgw').hidden=true;R('d').focus();toast(mg?'Pièce ajoutée au mémo et au magasin':'Pièce ajoutée')});
+ R('seg').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){MB[k].f=b.dataset.f;drawMemo()}});
+ R('list').addEventListener('click',async e=>{const s=e.target.closest('[data-st]'),d=e.target.closest('[data-del]');
+  if(s){const x=S.memo.find(i=>i.id===s.dataset.st);if(x)await put('memo',{...x,s:((x.s||0)+1)%3})}
+  if(d){if(d.dataset.ok!=='1'){d.dataset.ok='1';d.style.color='var(--bad)';toast('Touchez encore pour supprimer');setTimeout(()=>{d.dataset.ok='';d.style.color=''},3000);return}await del('memo',d.dataset.del)}});
+ R('copy').addEventListener('click',()=>{const t=memoText(k);if(!t)return toast('Rien à partager');copy(t)});
+ R('pdf').addEventListener('click',()=>memoPdf(k));
+ const upd=()=>{const t=memoText(k)||'Mémo vide';R('wa').href='https://wa.me/?text='+encodeURIComponent(t);R('mail').href='mailto:?subject='+encodeURIComponent(memoTitle(k))+'&body='+encodeURIComponent(t)};
+ R('wa').addEventListener('click',e=>{if(!memoText(k)){e.preventDefault();toast('Rien à partager')}else upd()});
+ R('mail').addEventListener('click',e=>{if(!memoText(k)){e.preventDefault();return toast('Rien à partager')}upd();const m=R('mailtxt');m.hidden=false;m.textContent='Si la messagerie ne s\'ouvre pas, utilisez « Copier » puis collez le texte dans un e-mail.'});
+ root.addEventListener('pointerenter',upd);
+ R('clean').addEventListener('click',async()=>{const r=memoOf(k).filter(x=>x.s===2);for(const x of r)await del('memo',x.id);toast(r.length+' pièce(s) retirée(s)')});
+});
+function drawMemo(){document.querySelectorAll('.memobox').forEach(root=>{const k=root.dataset.k,B=MB[k],R=n=>root.querySelector(`[data-r=${n}]`);
+ const all=memoOf(k),n=s=>all.filter(x=>String(x.s||0)===s).length;
+ {const t=memoText(k)||'Mémo vide';R('wa').href='https://wa.me/?text='+encodeURIComponent(t);R('mail').href='mailto:?subject='+encodeURIComponent(memoTitle(k))+'&body='+encodeURIComponent(t)}
+ R('title').textContent=k==='e'?'Mémo pièces '+(B.all?'enrouleurs':bName()):'Mémo pièces pompage';
+ R('seg').innerHTML=[['','Toutes',all.length],['0','À prévoir',n('0')],['1','Commandées',n('1')],['2','Reçues',n('2')]].map(([v,l,c])=>`<button data-f="${v}" class="${B.f===v?'cur':''}">${l} <b>${c}</b></button>`).join('');
+ const l=all.filter(x=>B.f===''||String(x.s||0)===B.f).sort((a,b)=>((a.s||0)-(b.s||0))||(b.t-a.t));
+ if(!l.length){R('list').innerHTML=`<p class="empty">Aucune pièce ici.<br>Ajoutez-en avec « Ajouter » ou depuis une fiche panne.</p>`;return}
+ const g={};l.forEach(x=>(g[x.c||'Sans chantier']=g[x.c||'Sans chantier']||[]).push(x));
+ R('list').innerHTML=Object.entries(g).map(([c,a])=>`<div class="grp">${ic('list')}${esc(c)}</div>`+a.map(x=>`<div class="it" data-s="${x.s||0}"><span class="qty">${esc(x.q)}×</span><div class="t"><b>${esc(x.d)}</b><div class="tag">${[k==='e'&&B.all?x.m:'',x.r&&('Réf. '+x.r),x.from].filter(Boolean).map(esc).join(' · ')}</div>${k==='e'&&(x.enr||x.pe||x.sn)?`<div class="enrl">${x.enr?`<span>${ic('reel')}${esc(x.enr)}</span>`:''}${x.pe?`<span>PE ${esc(x.pe)}</span>`:''}${x.sn?`<span>N° ${esc(x.sn)}</span>`:''}</div>`:''}</div><button class="st" data-st="${esc(x.id)}" data-s="${x.s||0}">${STAT[x.s||0]}</button><button class="ico" data-del="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button></div>`).join('')).join('')});
+ chantiers();if(typeof drawBTabs==='function'){drawBTabs();drawPmTabs()}}
+drawMemo();
+
+/* ---------- Photos ---------- */
+let pf='';const CATS=['Enrouleur','Station de pompage','Armoire électrique','Autre'];
+const src=p=>p.a?'/_blob/'+p.a:(p.u||'');
+function drawPhotos(){
+ $('#pChips').innerHTML=[['','Toutes'],...CATS.map(c=>[c,c])].map(([v,l])=>`<button data-c="${esc(v)}" class="${pf===v?'cur':''}">${esc(l)} <span class="tag" style="color:inherit;opacity:.7">${S.photos.filter(p=>!v||p.cat===v).length}</span></button>`).join('');
+ const l=S.photos.filter(p=>!pf||p.cat===pf).sort((a,b)=>b.t-a.t);
+ $('#phList').innerHTML=l.length?l.map(p=>`<figure data-ph="${esc(p.id)}"><img src="${esc(src(p))}" alt="${esc(p.l||p.cat)}" loading="lazy"><figcaption><b>${esc(p.l||p.cat)}</b><br><span class="tag">${esc(p.c||'')} ${new Date(p.t).toLocaleDateString('fr-FR')}</span></figcaption></figure>`).join(''):`<p class="empty" style="grid-column:1/-1">Pas encore de photo.</p>`;
+ chantiers()}
+function shrink(file,max,q){return new Promise((ok,ko)=>{const img=new Image();img.onload=()=>{const k=Math.min(1,max/Math.max(img.width,img.height));const c=document.createElement('canvas');c.width=Math.round(img.width*k);c.height=Math.round(img.height*k);c.getContext('2d').drawImage(img,0,0,c.width,c.height);URL.revokeObjectURL(img.src);c.toBlob(b=>b?ok({b,c}):ko(),'image/jpeg',q)};img.onerror=ko;img.src=URL.createObjectURL(file)})}
+$('#pFile').addEventListener('change',async e=>{const files=[...e.target.files];if(!files.length)return;$('#pInfo').textContent='Envoi en cours…';let n=0;
+ for(const f of files){try{const meta={id:uid(),cat:$('#pCat').value,c:$('#pC').value.trim(),l:$('#pL').value.trim(),t:Date.now()};
+  if(assets){const {b}=await shrink(f,1800,.82);const r=await assets.upload(b,{type:'image/jpeg'});meta.a=r.id}
+  else{const {c}=await shrink(f,900,.7);meta.u=c.toDataURL('image/jpeg',.7)}
+  await put('photos',meta);n++}catch(err){toast('Photo non enregistrée'+(err&&err.code?' ('+err.code+')':''))}}
+ e.target.value='';$('#pL').value='';$('#pInfo').textContent=n?n+' photo(s) ajoutée(s)':''});
+$('#pChips').addEventListener('click',e=>{const b=e.target.closest('[data-c]');if(b){pf=b.dataset.c;drawPhotos()}});
+let open=null;
+$('#phList').addEventListener('click',e=>{const f=e.target.closest('[data-ph]');if(!f)return;open=S.photos.find(p=>p.id===f.dataset.ph);if(!open)return;
+ $('#lbImg').src=src(open);$('#lbCap').textContent=[open.cat,open.c,open.l].filter(Boolean).join(' · ');$('#lb').classList.add('on')});
+$('#lbClose').addEventListener('click',()=>$('#lb').classList.remove('on'));
+$('#lbDel').addEventListener('click',async()=>{if(!open)return;const p=open;$('#lb').classList.remove('on');await del('photos',p.id);if(p.a&&assets){try{await assets.delete(p.a)}catch(e){}}toast('Photo supprimée')});
+drawPhotos();drawMesList();drawBTabs();drawDocs();drawPt();drawFo();drawMg();route();
+
+/* ---------- Synchronisation ---------- */
+(async()=>{try{
+ if(!window.claude||!claude.use)return;
+ db=await claude.use('db');assets=await claude.use('assets');try{dl=await claude.use('downloads')}catch(e){}
+ if(db){const timer=setTimeout(()=>{$('#sync span').textContent='Hors ligne'},10000);
+  for(const k of Object.keys(S))db.collection(k).onSnapshot(s=>{if(!s.metadata.fromCache)clearTimeout(timer);S[k]=s.docs.map(d=>({...d.data(),id:d.id}));render(k)},()=>{clearTimeout(timer);$('#sync span').textContent='Synchro interrompue'});
+  $('#sync').classList.add('on');$('#sync span').textContent='Synchronisé'}
+ db&&db.doc('meteo/actuel').onSnapshot(s=>{if(s.exists)window.__wx&&window.__wx(s.data())},()=>{});
+ if(db&&!assets)$('#shootL').style.display='none';
+ if(!assets){$('#pdfL').style.display='none';$('#dInfo').textContent='L\'ajout de PDF est réservé au propriétaire ou aux éditeurs de l\'appli, en ligne.'}
+}catch(e){}})();
+}
+</script>
+</body>
+</html>
