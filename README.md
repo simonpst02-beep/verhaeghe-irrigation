@@ -20,4 +20,6 @@ Application de terrain : dépannage des enrouleurs (Irrifrance, RM, Bauer…), s
 
 ## Mettre à jour
 
-Remplacez `app/src/main/assets/index.html` par la nouvelle version et poussez sur `main` : un nouvel APK est construit. Pensez à augmenter `versionCode` dans `app/build.gradle` pour pouvoir installer par-dessus l'ancienne version.
+Dans l'appli : **Paramètres** (roue dentée en haut à droite) → **Rechercher une mise à jour**. L'appli lit `version.json` et propose le nouvel APK s'il existe.
+
+Pour publier une version : remplacez `app/src/main/assets/index.html`, augmentez `versionCode`/`versionName` dans `app/build.gradle`, mettez les mêmes valeurs dans `version.json` (et `APP_VERSION`/`APP_CODE` dans `index.html`), puis poussez sur `main`.

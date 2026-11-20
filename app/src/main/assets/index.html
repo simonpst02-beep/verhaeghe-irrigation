@@ -340,6 +340,14 @@ nav a.nmag{flex:1}
 .botin textarea{min-height:44px;max-height:120px;resize:none;padding:10px 12px;border-radius:14px}
 .botin button{width:46px;min-height:46px;padding:0;border-radius:14px;flex:none}.botin button.stop{background:var(--bad)}
 @media(max-width:640px){.botfab{bottom:96px;left:12px;width:54px;height:54px}.bot{left:8px;right:8px;width:auto;bottom:88px;height:calc(100vh - 190px)}}
+.gearb{width:42px;height:42px;border-radius:21px;display:grid;place-items:center;color:#fff;background:rgba(255,255,255,.16);position:relative}.gearb svg{width:21px;height:21px}
+.updot{position:absolute;top:6px;right:6px;width:10px;height:10px;border-radius:50%;background:#ff5a3c;border:2px solid #fff}.updot[hidden]{display:none}
+.prm{margin-bottom:14px}.prm h3{font-size:21px;margin-bottom:10px}.prm .ptlh h3{margin:0}
+.vtag{font-weight:800;background:var(--blueSoft);color:var(--blue);border-radius:10px;padding:4px 10px;font-size:14px}
+.upnotes{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--okSoft);font-size:14.5px}
+.prmth button{font-size:15px}
+.about{display:grid;grid-template-columns:7em minmax(0,1fr);gap:6px 12px;margin:0;font-size:15px}.about dt{color:var(--mute)}.about dd{margin:0;font-weight:600}
+@media(max-width:420px){.hr{gap:5px}.gearb{width:38px;height:38px}}
 .ptlh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px}.ptlh h3{font-size:21px}
 .seg2{display:grid;grid-template-columns:minmax(0,1fr) auto auto auto auto;grid-template-areas:'ty st en du rm' 'cc cc cc cc cc';gap:8px;align-items:center;padding:10px 0 10px 12px;border-top:1px solid var(--line);border-left:5px solid var(--line)}
 .seg2.k-trajet{border-left-color:var(--blue)}.seg2.k-inter{border-left-color:var(--teal)}.seg2.k-pause{border-left-color:var(--mute)}
@@ -407,7 +415,7 @@ nav a.nmag{flex:1}
 
 <header class="hero">
  <div class="in">
-  <div class="row"><div class="brand"><b><svg class="i"><use href="#i-drop"/></svg></b><div class="bn"><span>Verhaeghe Irrigation</span><small>Assistant technique terrain</small></div></div><div class="hr"><span class="sync" id="sync"><i></i><span>Sur cet appareil</span></span><div class="theme" role="group" aria-label="Thème"><button data-th="light" aria-label="Mode clair" title="Mode clair"><svg class="i"><use href="#i-sun"/></svg></button><button data-th="dark" aria-label="Mode sombre" title="Mode sombre"><svg class="i"><use href="#i-moon"/></svg></button></div></div></div>
+  <div class="row"><div class="brand"><b><svg class="i"><use href="#i-drop"/></svg></b><div class="bn"><span>Verhaeghe Irrigation</span><small>Assistant technique terrain</small></div></div><div class="hr"><span class="sync" id="sync"><i></i><span>Sur cet appareil</span></span><div class="theme" role="group" aria-label="Thème"><button data-th="light" aria-label="Mode clair" title="Mode clair"><svg class="i"><use href="#i-sun"/></svg></button><button data-th="dark" aria-label="Mode sombre" title="Mode sombre"><svg class="i"><use href="#i-moon"/></svg></button></div><a href="#parametres" class="gearb" aria-label="Paramètres" title="Paramètres"><svg class="i"><use href="#i-gear"/></svg><i class="updot" id="upDot" hidden></i></a></div></div>
   <nav id="nav">
    <a href="#accueil" data-v="accueil"><svg class="i"><use href="#i-home"/></svg>Accueil</a>
    <a href="#enrouleurs" data-v="enrouleurs"><svg class="i"><use href="#i-reel"/></svg>Enrouleurs</a>
@@ -581,6 +589,32 @@ nav a.nmag{flex:1}
  <input id="mgQ" type="hidden" value="">
  <label class="allb"><input type="checkbox" id="mgLow"> Stock bas uniquement</label>
  <div id="mgList"></div>
+</section>
+
+<section id="v-parametres">
+ <div class="head"><div><h2>Paramètres</h2><p>Mise à jour, affichage, données de l'appli.</p></div></div>
+ <div class="card prm" id="prmUp">
+  <div class="ptlh"><h3>Mise à jour</h3><span class="vtag" id="upVer"></span></div>
+  <p class="tag" id="upTxt" style="margin:0 0 12px"></p>
+  <div class="tools"><button id="upCheck"><svg class="i"><use href="#i-search"/></svg>Rechercher une mise à jour</button><a class="shb" id="upDl" hidden target="_blank" rel="noopener"><svg class="i"><use href="#i-file"/></svg>Télécharger la nouvelle version</a></div>
+  <label class="allb" id="upAutoW" style="margin-top:12px"><input type="checkbox" id="upAuto" checked> Vérifier automatiquement au démarrage</label>
+  <div class="upnotes" id="upNotes" hidden></div>
+ </div>
+ <div class="card prm">
+  <h3>Affichage</h3>
+  <div class="seg prmth" id="prmTh"><button data-pth="light">Clair</button><button data-pth="dark">Sombre</button><button data-pth="auto">Automatique</button></div>
+  <label style="margin-top:12px">Commune pour la météo<input id="prmCity" placeholder="Amiens, Abbeville…"></label>
+ </div>
+ <div class="card prm">
+  <h3>Sauvegarde des données</h3>
+  <p class="tag" style="margin:0 0 12px" id="bkTxt">Enregistrez un fichier de sauvegarde (mémo, heures, forages, magasin, fiches, notes) pour le garder ou le transférer sur un autre téléphone.</p>
+  <div class="tools"><button id="bkExp"><svg class="i"><use href="#i-file"/></svg>Exporter une sauvegarde</button><label class="shb" style="cursor:pointer"><svg class="i"><use href="#i-plus"/></svg>Importer une sauvegarde<input type="file" id="bkImp" accept="application/json,.json" hidden></label></div>
+  <p class="tag" id="bkSt" style="margin:10px 0 0"></p>
+ </div>
+ <div class="card prm">
+  <h3>À propos</h3>
+  <dl class="about"><dt>Application</dt><dd>Verhaeghe Irrigation – Assistant technique terrain</dd><dt>Version</dt><dd id="abVer"></dd><dt>Type</dt><dd id="abType"></dd><dt>Données</dt><dd id="abData"></dd></dl>
+ </div>
 </section>
 
 <section id="v-photos">
@@ -810,7 +844,7 @@ async function del(k,id){
 function render(k){if(k==='magasin'){drawMg();drawQ();return}if(pmTab==='tb'&&$('#pmTb'))setTimeout(drawTb);if(k==='notes')return;if(k==='forages'){drawFo();drawHomeFo();return}if(k==='pointage'){drawPt();drawHome();return}if(k==='docs'){drawBTabs();drawDocs();return}({memo:drawMemo,photos:drawPhotos,mes:drawMesList}[k])();drawHome()}
 
 /* ---------- Navigation ---------- */
-const VIEWS=['accueil','enrouleurs','pompage','heures','photos','magasin'];
+const VIEWS=['accueil','enrouleurs','pompage','heures','photos','magasin','parametres'];
 function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
  for(const x of VIEWS)$('#v-'+x).classList.toggle('cur',x===v);
  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('cur',a.dataset.v===v));
@@ -1311,6 +1345,52 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
  $('#botX').addEventListener('click',()=>{$('#bot').hidden=true;$('#botFab').hidden=false});
  $('#botNew').addEventListener('click',()=>{ctl&&ctl.abort();turns=[];welcome()});
  (async()=>{try{if(!window.claude||!claude.use)return;sample=await claude.use('sample');if(sample)$('#botFab').hidden=false}catch(e){}})();
+}
+
+
+/* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
+const APP_VERSION='1.1',APP_CODE=2,REPO='simonpst02-beep/verhaeghe-irrigation';
+const IS_APK=!!window.AndroidApp;
+const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
+const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
+{const set=(t)=>$('#upTxt').innerHTML=t;
+ $('#upVer').textContent='v'+APP_VERSION;$('#abVer').textContent=APP_VERSION+' (code '+APP_CODE+')';
+ $('#abType').textContent=IS_APK?'Application Android (APK)':'Version web (Claude)';
+ $('#abData').textContent=IS_APK?'Enregistrées sur ce téléphone':'Synchronisées en ligne quand c\'est possible, sinon sur cet appareil';
+ let auto=true;try{auto=localStorage.getItem('dep_upauto')!=='0'}catch(e){}$('#upAuto').checked=auto;
+ $('#upAuto').addEventListener('change',e=>{try{localStorage.setItem('dep_upauto',e.target.checked?'1':'0')}catch(x){}});
+ if(!IS_APK){set('La version web se met à jour toute seule : vous avez toujours la dernière version. Pour le téléphone Android, l\'APK le plus récent se télécharge ici.');$('#upCheck').hidden=true;$('#upAutoW').hidden=true;const d=$('#upDl');d.hidden=false;d.href=APK_URL;d.lastChild.textContent='Télécharger l\'APK Android'}
+ else set('Version installée : '+APP_VERSION+'. Touchez « Rechercher » pour vérifier s\'il existe une nouvelle version.');
+ async function check(silent){if(!IS_APK)return;if(!silent)set('Recherche en cours…');
+  try{const r=await fetch(VER_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();
+   if((+v.code||0)>APP_CODE){$('#upDot').hidden=false;const d=$('#upDl');d.hidden=false;d.href=APK_URL;
+    set(`<b style="color:var(--ok)">Nouvelle version ${esc(v.version)} disponible</b> (vous avez ${APP_VERSION}). Téléchargez-la puis ouvrez le fichier pour l'installer par-dessus : vos données sont conservées.`);
+    if(v.notes){const n=$('#upNotes');n.hidden=false;n.innerHTML='<b>Nouveautés</b><br>'+esc(v.notes).replace(/\n/g,'<br>')}
+    if(silent)toast('Mise à jour '+v.version+' disponible : voir Paramètres')}
+   else if(!silent){set(`<b style="color:var(--ok)">✓ Vous avez la dernière version (${APP_VERSION}).</b>`);$('#upDl').hidden=true}}
+  catch(e){if(!silent)set('<b style="color:var(--bad)">Impossible de vérifier</b> : pas de connexion internet ? Réessayez plus tard.')}}
+ $('#upCheck').addEventListener('click',()=>check(false));
+ if(IS_APK&&auto)setTimeout(()=>check(true),2500);
+ // affichage
+ const drawTh=()=>{let t='auto';try{t=localStorage.getItem('dep_theme')||'auto'}catch(e){}document.querySelectorAll('[data-pth]').forEach(b=>b.classList.toggle('cur',b.dataset.pth===t))};
+ $('#prmTh').addEventListener('click',e=>{const b=e.target.closest('[data-pth]');if(!b)return;const t=b.dataset.pth;
+  if(t==='auto'){try{localStorage.removeItem('dep_theme')}catch(x){}location.reload();return}document.querySelector(`.theme [data-th=${t}]`).click();drawTh()});
+ document.querySelector('.theme').addEventListener('click',()=>setTimeout(drawTh));drawTh();
+ try{$('#prmCity').value=localStorage.getItem('dep_city')||''}catch(e){}
+ $('#prmCity').addEventListener('change',e=>{try{localStorage.setItem('dep_city',e.target.value.trim())}catch(x){}toast('Commune enregistrée')});
+ // sauvegarde
+ const KEYS=['memo','mes','notes','pointage','forages','magasin','docs','photos'];
+ $('#bkExp').addEventListener('click',async()=>{const data={app:'verhaeghe-irrigation',version:APP_VERSION,date:new Date().toISOString(),data:{}};
+  KEYS.forEach(k=>data.data[k]=(S[k]||[]).filter(x=>k!=='photos'||!x.u||x.u.length<400000));
+  const txt=JSON.stringify(data),name='sauvegarde-verhaeghe-'+dKey(Date.now())+'.json';
+  if(IS_APK){const r=AndroidApp.saveFile(btoa(unescape(encodeURIComponent(txt))),name,'application/json');$('#bkSt').textContent=r==='ok'?'✓ Sauvegarde enregistrée dans Téléchargements.':'Erreur : '+r;return}
+  if(dl){try{await dl.save({filename:name,data:txt});$('#bkSt').textContent='✓ Sauvegarde enregistrée.'}catch(e){$('#bkSt').textContent=e&&e.code==='declined'?'Enregistrement annulé.':'Enregistrement impossible.'}}
+  else{copy(txt);$('#bkSt').textContent='Téléchargement indisponible ici : la sauvegarde a été copiée dans le presse-papier.'}});
+ $('#bkImp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;e.target.value='';
+  try{const d=JSON.parse(await f.text());if(d.app!=='verhaeghe-irrigation'||!d.data)throw 0;let n=0;
+   for(const k of KEYS){for(const it of (d.data[k]||[])){if(it&&it.id&&!S[k].some(x=>x.id===it.id)){await put(k,it);n++}}}
+   $('#bkSt').textContent=`✓ ${n} élément(s) importé(s). Les éléments déjà présents n'ont pas été dupliqués.`}
+  catch(x){$('#bkSt').textContent='Fichier de sauvegarde non reconnu.'}});
 }
 
 /* ---------- Mémo (dans Enrouleurs et Pompage) ---------- */
