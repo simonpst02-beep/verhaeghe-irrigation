@@ -671,13 +671,6 @@ nav a.nmag{flex:1}
   <label class="allb" id="upAutoW" style="margin-top:12px"><input type="checkbox" id="upAuto" checked> Vérifier automatiquement au démarrage</label>
   <div class="upnotes" id="upNotes" hidden></div>
  </div>
- <div class="card prm" id="prmBot">
-  <h3>Assistant (chatbot)</h3>
-  <p class="tag" id="botKeyTxt" style="margin:0 0 12px">Dans l'appli Android, l'assistant utilise votre propre clé Claude (API Anthropic). Créez-la sur console.anthropic.com → « API Keys », puis collez-la ici. La clé reste uniquement sur ce téléphone. L'usage est facturé par Anthropic sur votre compte (quelques centimes par conversation).</p>
-  <label>Clé API<input id="botKey" type="password" autocomplete="off" placeholder="sk-ant-…"></label>
-  <div class="tools" style="margin-top:10px"><button id="botKeySave"><svg class="i"><use href="#i-check"/></svg>Enregistrer et tester</button><button class="ghost" id="botKeyDel">Effacer la clé</button></div>
-  <p class="tag" id="botKeySt" style="margin:10px 0 0"></p>
- </div>
  <div class="card prm">
   <h3>Affichage</h3>
   <div class="seg prmth" id="prmTh"><button data-pth="light">Clair</button><button data-pth="dark">Sombre</button><button data-pth="auto">Automatique</button></div>
@@ -1436,39 +1429,17 @@ if(window.AndroidApp){dl={save:async({filename,data})=>{const a=new Uint8Array(a
 /* ---------- Assistant (chatbot) ---------- */
 {let sample=null,ctl=null,turns=[],busy=false;
  const box=$('#botMsgs');
- const KEYK='vi_apikey',MODEL='claude-sonnet-5-5';
- const getKey=()=>{try{return localStorage.getItem(KEYK)||''}catch(e){return ''}};
- function apiSample(){const f=async(msgs,o={})=>{const key=getKey();if(!key)throw {code:'no_key'};
-   const system=msgs[0].content,messages=msgs.slice(1).map(m=>({role:m.role,content:m.content}));
-   const tools=(o.tools||[]).map(t=>({name:t.name,description:t.description,input_schema:t.inputSchema||{type:'object',properties:{}}}));
-   let text='';
-   for(let n=0;n<8;n++){let r;try{r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',signal:o.signal,headers:{'content-type':'application/json','x-api-key':key,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body:JSON.stringify({model:MODEL,max_tokens:1500,system,messages,...(tools.length?{tools}:{})})})}
-     catch(e){if(e&&e.name==='AbortError')throw {code:'cancelled',text};throw {code:'offline'}}
-    if(!r.ok){const s=r.status;throw {code:s===401||s===403?'bad_key':s===429?'rate_limited':s===400?'api_400':s===529||s>=500?'overloaded':'api',status:s,detail:await r.text().catch(()=>'')}}
-    const d=await r.json(),t=d.content.filter(c=>c.type==='text').map(c=>c.text).join('\n');if(t){text+=(text?'\n\n':'')+t;o.onText&&o.onText({text})}
-    const calls=d.content.filter(c=>c.type==='tool_use');if(d.stop_reason!=='tool_use'||!calls.length)return {text};
-    messages.push({role:'assistant',content:d.content});const res=[];
-    for(const c of calls){const tl=(o.tools||[]).find(x=>x.name===c.name);let out,err=false;try{out=await tl.execute(c.input||{})}catch(e){out={erreur:String(e&&e.message||e)};err=true}
-     res.push({type:'tool_result',tool_use_id:c.id,content:JSON.stringify(out??null),...(err?{is_error:true}:{})})}
-    messages.push({role:'user',content:res})}
-   return {text}};
-  f.limits=async()=>({tools:true});return f}
- window.__botKey={test:async()=>{const s=apiSample();return s([{role:'user',content:'Réponds juste OK.'},{role:'user',content:'Test'}],{})}};
-
  const md=t=>{let s=esc(t);s=s.replace(/\*\*(.+?)\*\*/g,'<b>$1</b>');const L=s.split('\n');let out='',ul=false;
   for(const l of L){const m=l.match(/^\s*[-•*]\s+(.*)/)||l.match(/^\s*\d+[.)]\s+(.*)/);if(m){if(!ul){out+='<ul>';ul=true}out+='<li>'+m[1]+'</li>'}else{if(ul){out+='</ul>';ul=false}if(l.trim())out+='<p>'+l.replace(/^#+\s*/,'')+'</p>'}}
   return out+(ul?'</ul>':'')};
  const add=(cls,html)=>{const d=document.createElement('div');d.className='bm '+cls;d.innerHTML=html;box.appendChild(d);box.scrollTop=box.scrollHeight;return d};
- const SUG=['Rapport : EARL Dupont, forage nord, variateur Danfoss FC 202 11 kW, 400 V, 21 A, 35 Hz mini, aval 6 bars, 58 m³/h, RAS','Enrouleur Bauer qui ne rembobine plus','Quelle est la référence de la courroie turbine ?','Pompe qui disjoncte au démarrage','Résume mes heures de la semaine','Quelles pièces sont à commander ?'];
- function welcome(){box.innerHTML='';add('a',md('Bonjour ! Je suis l\'assistant de l\'appli. Je peux vous aider à **diagnostiquer une panne** d\'enrouleur ou de station de pompage, **trouver une référence** au magasin, consulter le **mémo**, les **forages** ou vos **heures**, ajouter des pièces au mémo, et **remplir un rapport d\'intervention chantier** à partir de ce que vous me dictez.'+(sample?'':'\n\n**Pour m\'utiliser dans l\'appli, enregistrez d\'abord votre clé dans Paramètres → Assistant.**')));
+ const SUG=['Enrouleur Bauer qui ne rembobine plus','Quelle est la référence de la courroie turbine ?','Pompe qui disjoncte au démarrage','Résume mes heures de la semaine','Quelles pièces sont à commander ?'];
+ function welcome(){box.innerHTML='';add('a',md('Bonjour ! Je suis l\'assistant de l\'appli. Je peux vous aider à **diagnostiquer une panne** d\'enrouleur ou de station de pompage, **trouver une référence** au magasin, consulter le **mémo**, les **forages** ou vos **heures**, et ajouter des pièces au mémo.'));
   const s=document.createElement('div');s.className='botsug';s.innerHTML=SUG.map(q=>`<button type="button">${esc(q)}</button>`).join('');box.appendChild(s);
   s.addEventListener('click',e=>{const b=e.target.closest('button');if(b){$('#botQ').value=b.textContent;ask()}})}
  const rules=()=>`Tu es l'assistant technique de l'application « Verhaeghe Irrigation », utilisée par des techniciens de terrain (département de la Somme) pour le dépannage des enrouleurs d'irrigation (marques Irrifrance, RM, Bauer…), la mise en service et le dépannage des stations de pompage, les forages, le mémo des pièces, le magasin de références et le pointage des heures.
 Réponds en français, de façon courte, concrète et pratique (listes à puces, étapes numérotées). Rappelle la sécurité quand c'est utile (couper l'eau, décompresser, consigner l'électrique). Ne donne pas de valeurs constructeur inventées : renvoie à la notice si tu n'es pas sûr.
 Utilise les outils pour lire les données de l'appli (fiches pannes, magasin, mémo, forages, heures) au lieu de deviner. Pour ajouter une pièce au mémo, utilise ajouter_au_memo seulement si le technicien le demande.
-Quand le technicien dicte une intervention ou demande un rapport, utilise remplir_intervention (nouvelle=true si c'est un autre chantier que la fiche en cours), puis résume en 3-4 lignes ce qui a été rempli et cite les champs importants encore vides. Crée le PDF avec creer_rapport_pdf seulement s'il le demande.
-Fiche Intervention chantier en cours : ${JSON.stringify({client:cur.h.client||'',site:cur.h.site||'',date:cur.h.date||'',releves_remplis:Object.keys(cur.r).filter(k=>cur.r[k]).length})}.
 Contexte actuel : onglet « ${location.hash.slice(1)||'accueil'} », marque d'enrouleur sélectionnée : ${bName()}, date : ${new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}.
 Fiches pannes enrouleurs : ${PANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.
 Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
@@ -1483,35 +1454,18 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
   {name:'ajouter_au_memo',description:'Ajoute une pièce au mémo (la référence est complétée depuis le magasin si elle existe). À utiliser seulement à la demande du technicien.',inputSchema:{type:'object',properties:{designation:{type:'string'},quantite:{type:'integer'},chantier:{type:'string'},section:{type:'string',enum:['enrouleur','pompage']}},required:['designation','section']},
    execute:async({designation,quantite,chantier,section})=>{const pm=String(section)==='pompage',d=String(designation||'').trim();if(!d)throw new Error('désignation vide');const ref=refFor(d,pm?'sta':'enr')?.ref||'';
     await put('memo',{id:uid(),d,r:ref,q:Math.max(1,Number(quantite)||1),c:String(chantier||''),s:0,t:Date.now(),dom:pm?'pmp':'enr',m:pm?'Pompage':bName(),from:'Assistant'});return {ajoute:d,reference:ref||'(pas au magasin)',memo:pm?'pompage':'enrouleurs'}}},
-  {name:'remplir_intervention',description:'Remplit la fiche « Intervention chantier » (station de pompage) en cours avec les informations dictées par le technicien, puis l\'affiche. Ne renseigne que les champs donnés (les autres restent inchangés). nouvelle=true pour repartir d\'une fiche vierge. Unités implicites : kW, V, A, Hz, mm², bar, m³/h, m³, m, mm. Pour les observations, rédige un texte propre et professionnel à partir des notes du technicien.',
-   inputSchema:{type:'object',properties:{nouvelle:{type:'boolean'},client:{type:'string'},site:{type:'string'},date:{type:'string',description:'AAAA-MM-JJ'},technicien:{type:'string'},forage:{type:'string',description:'nom du forage enregistré (voir lire_forages)'},
-    ...Object.fromEntries([...VAR_F,...POMPE_F,...RELF].map(([k,l,u])=>[k,{type:'string',description:(VAR_F.some(f=>f[0]===k)?'Variateur – ':POMPE_F.some(f=>f[0]===k)?'Pompe – ':'Relevé – ')+l+(u&&u.length<6?' ('+u+')':'')+(k==='vfiltre'?' : "Avec" ou "Sans"':'')}])),
-    observations:{type:'string'}}},
-   execute:(a)=>{if(a.nouvelle)cur=blank();const set=[];
-    [['client','client'],['site','site'],['date','date'],['technicien','tech']].forEach(([x,k])=>{if(a[x]){cur.h[k]=String(a[x]);set.push(x)}});
-    if(a.forage){const q=String(a.forage).toLowerCase(),f=(S.forages||[]).find(x=>(x.n||'').toLowerCase()===q)||(S.forages||[]).find(x=>(x.n||'').toLowerCase().includes(q));
-     if(f){cur.h.forage=f.id;if(!cur.h.client&&f.c)cur.h.client=f.c;if(!cur.h.site)cur.h.site=[f.n,f.v].filter(Boolean).join(', ');[['pprof','prof'],['pdiam','diam'],['pns','ns'],['pnd','nd'],['ppp','pp'],['pdeb','q']].forEach(([x,y])=>{if(!cur.r[x]&&f[y])cur.r[x]=f[y]});set.push('forage')}else set.push('forage introuvable : '+a.forage)}
-    [...VAR_F,...POMPE_F,...RELF].forEach(([k])=>{if(a[k]!=null&&String(a[k]).trim()!==''){cur.r[k]=String(a[k]).trim();set.push(k)}});
-    if(!cur.r.evmarque&&cur.r.vmarque)cur.r.evmarque=cur.r.vmarque;if(!cur.r.evtype&&cur.r.vtype)cur.r.evtype=cur.r.vtype;
-    if(a.observations){cur.obs=String(a.observations);set.push('observations')}
-    if(!cur.h.date)cur.h.date=dKey(Date.now());
-    step=STEPS.length-1;saveDraft();pmTab='mes';try{localStorage.setItem('dep_pmtab','mes')}catch(x){}drawPmTabs();location.hash='pompage';drawStep();
-    const vide=[...VAR_F,...POMPE_F,...RELF].filter(([k])=>!cur.r[k]).map(([,l])=>l);
-    return {ok:true,champs_remplis:set,champs_encore_vides:vide,affiche:'fiche Intervention chantier, étape Rapport (bouton « Rapport PDF »)'}}},
-  {name:'creer_rapport_pdf',description:'Crée le rapport PDF de la fiche Intervention chantier en cours (à utiliser quand le technicien le demande, après remplir_intervention).',
-   execute:async()=>{if(!cur.h.client&&!Object.keys(cur.r).length)throw new Error('fiche vide');step=STEPS.length-1;saveDraft();pmTab='mes';drawPmTabs();location.hash='pompage';drawStep();await rapportPdf(cur);return {ok:true,etat:$('#mesPdfSt').innerText.slice(0,200)}}},
   {name:'lire_forages',description:'Liste les forages enregistrés : nom, client, commune, coordonnées GPS, profondeur, débit, pompe, accès.',execute:()=>(S.forages||[]).slice(0,40).map(f=>({nom:f.n,client:f.c,commune:f.v,gps:`${f.lat}, ${f.lon}`,profondeur_m:f.prof,debit_m3h:f.q,niveau_statique:f.ns,niveau_dynamique:f.nd,pompe:f.pompe,acces:f.r}))},
   {name:'heures_semaine',description:'Totaux des heures (trajet, intervention, pause) par jour pour la semaine en cours, avec les chantiers.',execute:()=>weekDays(dKey(Date.now())).map(d=>{const o=totals(d);return {jour:d,trajet:hm(o.trajet),intervention:hm(o.inter),pause:hm(o.pause),total:hm(o.tot),chantiers:[...new Set(daySegs(d).filter(x=>x.type==='inter'&&x.c).map(x=>x.c))]}})}
  ];
- const LBL={fiche_panne:'Lecture de la fiche panne',chercher_reference:'Recherche au magasin',lire_memo:'Lecture du mémo',ajouter_au_memo:'Ajout au mémo',lire_forages:'Lecture des forages',remplir_intervention:'Remplissage de la fiche chantier',creer_rapport_pdf:'Création du rapport PDF',heures_semaine:'Lecture des heures'};
- async function ask(){const q=$('#botQ').value.trim();if(!q||busy)return;if(!sample&&getKey())sample=apiSample();if(!sample){add('a err',md('Ajoutez votre clé API dans **Paramètres → Assistant** pour utiliser l\'assistant ici.'));return}$('#botQ').value='';fit();
+ const LBL={fiche_panne:'Lecture de la fiche panne',chercher_reference:'Recherche au magasin',lire_memo:'Lecture du mémo',ajouter_au_memo:'Ajout au mémo',lire_forages:'Lecture des forages',heures_semaine:'Lecture des heures'};
+ async function ask(){const q=$('#botQ').value.trim();if(!q||busy)return;$('#botQ').value='';fit();
   box.querySelector('.botsug')?.remove();add('u',esc(q).replace(/\n/g,'<br>'));turns.push({role:'user',content:q});if(turns.length>16)turns=turns.slice(-16);while(turns[0]&&turns[0].role!=='user')turns.shift();
   const a=add('a think','Réflexion…');busy=true;ctl=new AbortController();const sb=$('#botSend');sb.classList.add('stop');sb.innerHTML='■';sb.setAttribute('aria-label','Arrêter');
   const used=[];const tools=TOOLS.map(t=>({...t,execute:(i,c)=>{used.push(LBL[t.name]);if(a.classList.contains('think'))a.textContent=LBL[t.name]+'…';return t.execute(i,c)}}));
   let caps=null;try{caps=await sample.limits()}catch(e){}
   try{const {text}=await sample([{role:'user',content:rules()},...turns],{cache:false,signal:ctl.signal,...(caps&&caps.tools?{tools}:{}),onText:({text})=>{a.classList.remove('think');a.innerHTML=md(text);box.scrollTop=box.scrollHeight}});
    a.classList.remove('think');a.innerHTML=md(text)+(used.length?`<span class="tool">✓ ${esc([...new Set(used)].join(' · '))}</span>`:'');turns.push({role:'assistant',content:text})}
-  catch(e){a.classList.remove('think');const M={no_key:'Ajoutez votre clé API dans Paramètres → Assistant pour utiliser l\'assistant ici.',bad_key:'Clé API refusée : vérifiez-la dans Paramètres → Assistant.',offline:'Pas de connexion internet.',overloaded:'Le service est surchargé, réessayez dans un moment.',api_400:'Requête refusée par le service (crédit épuisé ou clé limitée ?).',cancelled:'Réponse arrêtée.',not_granted:'L\'assistant n\'a pas été autorisé. Rechargez la page pour l\'autoriser.',rate_limited:'Trop de questions d\'un coup : réessayez dans un moment.',session_expired:'Reconnectez-vous à Claude.',refused:'Je ne peux pas répondre à cette demande.',sampling_disabled:'L\'assistant n\'est pas disponible pour ce compte.'};
+  catch(e){a.classList.remove('think');const M={cancelled:'Réponse arrêtée.',not_granted:'L\'assistant n\'a pas été autorisé. Rechargez la page pour l\'autoriser.',rate_limited:'Trop de questions d\'un coup : réessayez dans un moment.',session_expired:'Reconnectez-vous à Claude.',refused:'Je ne peux pas répondre à cette demande.',sampling_disabled:'L\'assistant n\'est pas disponible pour ce compte.'};
    if(e&&e.text){a.innerHTML=md(e.text);turns.push({role:'assistant',content:e.text})}else{a.classList.add('err');a.textContent=M[e&&e.code]||'Réponse interrompue, réessayez.'}
    if(e&&(e.code==='not_granted'||e.code==='sampling_disabled')){$('#botFab').hidden=true}}
   finally{busy=false;sb.classList.remove('stop');sb.innerHTML=ic('next');sb.setAttribute('aria-label','Envoyer')}}
@@ -1522,18 +1476,12 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
  $('#botFab').addEventListener('click',()=>{$('#bot').hidden=false;$('#botFab').hidden=true;if(!box.children.length)welcome();setTimeout(()=>$('#botQ').focus(),50)});
  $('#botX').addEventListener('click',()=>{$('#bot').hidden=true;$('#botFab').hidden=false});
  $('#botNew').addEventListener('click',()=>{ctl&&ctl.abort();turns=[];welcome()});
- (async()=>{try{if(window.claude&&claude.use){sample=await claude.use('sample');if(sample){$('#botFab').hidden=false;$('#prmBot').hidden=true;return}}}catch(e){}
-  sample=getKey()?apiSample():null;$('#botFab').hidden=!window.AndroidApp&&!sample;})();
- {const st=t=>$('#botKeySt').innerHTML=t;const k=getKey();$('#botKey').value=k;if(k)st('<b style="color:var(--ok)">✓ Clé enregistrée.</b>');
-  $('#botKeySave').addEventListener('click',async()=>{const v=$('#botKey').value.trim();if(!v)return st('Collez d\'abord la clé.');try{localStorage.setItem(KEYK,v)}catch(e){}
-   st('Test de la clé…');try{await apiSample()([{role:'user',content:'Réponds juste OK.'},{role:'user',content:'Test'}],{});sample=apiSample();$('#botFab').hidden=false;st('<b style="color:var(--ok)">✓ Clé valide : l\'assistant est prêt (bouton en bas à gauche).</b>')}
-   catch(e){st('<b style="color:var(--bad)">'+({bad_key:'Clé refusée : vérifiez-la.',offline:'Pas de connexion internet.',api_400:'Clé acceptée mais requête refusée (crédit épuisé ?).'}[e&&e.code]||'Échec du test ('+esc(e&&(e.status||e.code)||'?')+').')+'</b>')}});
-  $('#botKeyDel').addEventListener('click',()=>{try{localStorage.removeItem(KEYK)}catch(e){}$('#botKey').value='';sample=null;st('Clé effacée.')})}
+ (async()=>{try{if(!window.claude||!claude.use)return;sample=await claude.use('sample');if(sample)$('#botFab').hidden=false}catch(e){}})();
 }
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='1.6',APP_CODE=7,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='1.7',APP_CODE=8,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
