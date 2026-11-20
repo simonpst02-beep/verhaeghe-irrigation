@@ -1099,7 +1099,7 @@ function drawStep(){if(!(step>=0&&step<STEPS.length))step=0;const s=STEPS[step];
  else if(s.gi!=null){const [g,it]=CK[s.gi];h=`<h3 style="font-size:23px;margin-bottom:6px">${esc(g)}</h3><div class="ckl">${it.map((x,ii)=>`<label><input type="checkbox" data-k="${s.gi}-${ii}"${cur.ck[s.gi+'-'+ii]?' checked':''}><span>${esc(x)}</span></label>`).join('')}</div><button class="ghost ckAll" data-all="${s.gi}">${ic('check')}Tout cocher</button>`}
  else if(s.n==='Relevés'&&(()=>{const f=(S.forages||[]).find(x=>x.id===cur.h.forage);[['evmarque','vmarque'],['evtype','vtype']].forEach(([a,b])=>{if(!cur.r[a]&&cur.r[b])cur.r[a]=cur.r[b]});if(f)[['pprof','prof'],['pdiam','diam'],['pns','ns'],['pnd','nd'],['ppp','pp'],['pdeb','q']].forEach(([a,b])=>{if(!cur.r[a]&&f[b])cur.r[a]=f[b]});return false})());
  else if(s.n==='Relevés')h=`<h3 style="font-size:23px;margin-bottom:14px">Relevés</h3>${REL.map(([g,f])=>`<div class="rgroup">${g}</div><div class="grid">${f.map(([k,l,u,dl])=>u?`<label>${l}<span class="unit"><input data-r="${k}" inputmode="decimal" value="${esc(cur.r[k])}"><em>${u}</em></span></label>`:`<label>${l}<input data-r="${k}" ${dl?`list="${dl}"`:''} value="${esc(cur.r[k])}"></label>`).join('')}</div>`).join('')}<div id="relAlert"></div><datalist id="varMarques"><option value="Danfoss"><option value="Schneider Electric (Altivar)"><option value="ABB"><option value="Grundfos"><option value="Siemens"><option value="Wilo"><option value="Lowara"><option value="WEG"></datalist>`;
- else h=`<h3 style="font-size:23px;margin-bottom:14px">Observations et rapport</h3><label>Observations<textarea id="mesObs" placeholder="Réserves, travaux à prévoir, remarques client…">${esc(cur.obs)}</textarea></label><div id="relAlert"></div><div class="tools"><button id="mesSave">${ic('check')}Enregistrer l'intervention</button><button class="ghost" id="mesCopy">${ic('copy')}Copier le rapport</button></div>`;
+ else h=`<h3 style="font-size:23px;margin-bottom:14px">Observations et rapport</h3><label>Observations<textarea id="mesObs" placeholder="Réserves, travaux à prévoir, remarques client…">${esc(cur.obs)}</textarea></label><div id="relAlert"></div><div class="tools"><button id="mesSave">${ic('check')}Enregistrer l'intervention</button><button class="ghost" id="mesCopy">${ic('copy')}Copier le rapport</button><button id="mesPdf">${ic('file')}Rapport PDF</button></div><div class="pdfst" id="mesPdfSt" hidden></div>`;
  $('#stepBody').innerHTML=h;$('#prev').disabled=step===0;$('#next').style.visibility=step===STEPS.length-1?'hidden':'visible';
  drawAlert();drawStepper();saveDraft()}
 function drawAlert(){const el=$('#relAlert');if(!el)return;const a=alerts();el.innerHTML=a.map(x=>`<div class="alert">${ic('warn')}${esc(x)}</div>`).join('')}
@@ -1113,7 +1113,7 @@ $('#stepBody').addEventListener('change',e=>{const t=e.target;if(t.dataset.k){cu
 $('#stepBody').addEventListener('click',async e=>{
  const a=e.target.closest('[data-all]');if(a){const gi=+a.dataset.all;CK[gi][1].forEach((_,ii)=>cur.ck[gi+'-'+ii]=true);drawStep();return}
  if(e.target.closest('#mesSave')){cur.t=Date.now();await put('mes',JSON.parse(JSON.stringify(cur)));toast('Intervention enregistrée')}
- if(e.target.closest('#mesCopy'))copy(report(cur))});
+ if(e.target.closest('#mesCopy'))copy(report(cur));if(e.target.closest('#mesPdf'))rapportPdf(cur)});
 $('#mesNew').addEventListener('click',()=>{cur=blank();step=0;drawStep();toast('Nouvelle fiche')});
 function report(m){const L=['INTERVENTION CHANTIER – STATION DE POMPAGE'];{const f=(S.forages||[]).find(x=>x.id===m.h.forage);if(f)L.push('Forage : '+(f.n||'Forage')+(f.c?' ('+f.c+')':'')+' – GPS '+f.lat+', '+f.lon)}HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
  CK_ORDER.forEach(gi=>{const [g,it]=CK[gi];L.push('','— '+g);it.forEach((x,ii)=>L.push((m.ck[gi+'-'+ii]?'[x] ':'[ ] ')+x))});
@@ -1371,7 +1371,46 @@ async function memoPdf(k){const l=memoRows(k);if(!l.length)return toast('Rien à
   doc.text('Généré le '+new Date().toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'})+' – appli Verhaeghe Irrigation',M,H-7.5);doc.text(`Page ${i} / ${n}`,W-M,H-7.5,{align:'right'})}
  const bytes=doc.output(),name=(k==='e'?'memo-enrouleurs':'memo-pompage')+'-'+dKey(Date.now())+'.pdf';
  await deliverPdf(k,bytes,name)}
-async function deliverPdf(k,bytes,name){const root=document.querySelector(`.memobox[data-k=${k}]`),st=root.querySelector('[data-r=pdfst]');
+async function rapportPdf(m){
+ const doc=new MiniPDF.jsPDF(),W=210,H=297,M=14,CW=W-2*M;
+ const C={blue:[47,125,225],deep:[22,74,140],ink:[30,42,54],mute:[102,118,138],line:[205,214,226],soft:[243,247,252],band:[226,237,251],green:[26,127,75],amber:[166,80,10]};
+ const fill=c=>doc.setFillColor(c[0],c[1],c[2]),draw=c=>doc.setDrawColor(c[0],c[1],c[2]),txt=c=>doc.setTextColor(c[0],c[1],c[2]);
+ const fo=(S.forages||[]).find(x=>x.id===m.h.forage),dt=m.h.date?new Date(m.h.date+'T12:00').toLocaleDateString('fr-FR'):new Date().toLocaleDateString('fr-FR');
+ let y=0;
+ function head(first){fill(C.blue);doc.rect(0,0,W,first?34:15,'F');txt([255,255,255]);doc.setFont('helvetica','bold');
+  if(first){doc.setFontSize(19);doc.text('Verhaeghe Irrigation',M,13);doc.setFont('helvetica','normal');doc.setFontSize(12);doc.text('Rapport d\'intervention chantier – Station de pompage',M,21);
+   doc.setFontSize(10);doc.text([m.h.client,m.h.site].filter(Boolean).join(' · ')||'',M,28);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text(dt,W-M,13,{align:'right'});y=44}
+  else{doc.setFontSize(11);doc.text('Verhaeghe Irrigation – Rapport d\'intervention',M,9.8);doc.setFont('helvetica','normal');doc.text(dt,W-M,9.8,{align:'right'});y=24}}
+ const need=hh=>{if(y+hh>H-18){doc.addPage();head(false)}};
+ function section(t){need(22);fill(C.band);doc.roundedRect(M,y,CW,9,2,2,'F');fill(C.blue);doc.rect(M,y,2,9,'F');
+  txt(C.deep);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text(t.toUpperCase(),M+6,y+6.2);y+=12}
+ // grille de cases libellé / valeur
+ function grid(items,cols){items=items.filter(([,v])=>v!=null&&String(v).trim()!=='');if(!items.length){txt(C.mute);doc.setFont('helvetica','normal');doc.setFontSize(10);need(8);doc.text('Non renseigné',M+2,y+4);y+=9;return}
+  cols=cols||2;const g=3,w=(CW-g*(cols-1))/cols;
+  for(let i=0;i<items.length;i+=cols){const row=items.slice(i,i+cols);doc.setFontSize(12);
+   const lines=row.map(([,v])=>{doc.setFont('helvetica','bold');return doc.splitTextToSize(String(v),w-6)});const hh=9+Math.max(...lines.map(l=>l.length))*5.4;need(hh+3);
+   row.forEach(([l],j)=>{const x=M+j*(w+g);fill(C.soft);doc.roundedRect(x,y,w,hh,2,2,'F');draw(C.line);doc.setLineWidth(.25);
+    txt(C.mute);doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.text(l.toUpperCase(),x+3,y+5);
+    txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text(lines[j],x+3,y+11.2)});y+=hh+3}y+=3}
+ const val=(k,u)=>m.r[k]?m.r[k]+(u?' '+u.replace('³','3').replace('²','2'):''):'';
+ head(true);
+ section('Chantier');
+ grid([['Client',m.h.client],['Site / lieu',m.h.site],['Date',dt],['Technicien',m.h.tech],...(fo?[['Forage',fo.n||'Forage'],['GPS',fo.lat&&fo.lon?(+fo.lat).toFixed(5)+', '+(+fo.lon).toFixed(5):'']]:[])]);
+ section('Installation');
+ grid([...VAR_F.map(([k,l])=>['Variateur – '+l.replace(/ \(kW\)/,''),k==='vpuiss'?val(k,'kW'):m.r[k]]),...POMPE_F.map(([k,l])=>['Pompe – '+l.replace(/ \(kW\)/,''),k==='ppuiss'?val(k,'kW'):m.r[k]])],3);
+ REL.forEach(([g,F])=>{section('Relevés – '+g);grid(F.map(([k,l,u])=>[l,val(k,u)]),3)});
+ section('Observations');
+ {doc.setFont('helvetica','normal');doc.setFontSize(11.5);const L=doc.splitTextToSize(m.obs||'Aucune observation.',CW-8),hh=Math.max(16,L.length*5.6+8);need(hh+4);
+  fill(C.soft);doc.roundedRect(M,y,CW,hh,2,2,'F');txt(m.obs?C.ink:C.mute);doc.text(L,M+4,y+7.5);y+=hh+8}
+ // signatures
+ need(40);const sw=(CW-6)/2;[['Signature technicien',m.h.tech],['Signature client',m.h.client]].forEach(([t,n],j)=>{const x=M+j*(sw+6);draw(C.line);doc.setLineWidth(.4);doc.rect(x,y,sw,32);
+  txt(C.mute);doc.setFont('helvetica','bold');doc.setFontSize(9);doc.text(t.toUpperCase(),x+3,y+5.5);if(n){doc.setFont('helvetica','normal');doc.setFontSize(10);txt(C.ink);doc.text(n,x+3,y+11)}});y+=36;
+ const n=doc.getNumberOfPages();for(let i=1;i<=n;i++){doc.setPage(i);draw(C.line);doc.setLineWidth(.2);doc.line(M,H-12,W-M,H-12);doc.setFont('helvetica','normal');doc.setFontSize(8);txt(C.mute);
+  doc.text('Verhaeghe Irrigation – rapport généré le '+new Date().toLocaleString('fr-FR',{dateStyle:'short',timeStyle:'short'}),M,H-7.5);doc.text(`Page ${i} / ${n}`,W-M,H-7.5,{align:'right'})}
+ const slug=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^A-Za-z0-9]+/g,'-').replace(/^-|-$/g,'').slice(0,30);
+ const name='rapport-'+(slug(m.h.client)||'intervention')+'-'+(m.h.date||dKey(Date.now()))+'.pdf';
+ await deliverPdf(null,doc.output(),name,$('#mesPdfSt'))}
+async function deliverPdf(k,bytes,name,stEl){const st=stEl||document.querySelector(`.memobox[data-k=${k}]`).querySelector('[data-r=pdfst]');
  const say=(html)=>{st.hidden=false;st.innerHTML=html};
  const viaLink=async(why)=>{if(!assets){say(`<b style="color:var(--bad)">Le PDF n'a pas pu être enregistré${why?' ('+esc(why)+')':''}.</b> Utilisez « WhatsApp », « E-mail » ou « Copier ».`);return}
   say('Création d\'un lien vers le PDF…');try{const r=await assets.upload(new Blob([bytes],{type:'application/pdf'}),{type:'application/pdf'});
@@ -1384,7 +1423,7 @@ async function deliverPdf(k,bytes,name){const root=document.querySelector(`.memo
  catch(e){if(e&&e.code==='declined')say('Téléchargement annulé. <button class="ghost small" data-r="pdflink">Obtenir un lien vers le PDF</button>'),st.querySelector('[data-r=pdflink]').onclick=()=>viaLink();else viaLink(e&&e.code)}}
 let dl=null;
 if(window.AndroidApp){dl={save:async({filename,data})=>{const a=new Uint8Array(await data.arrayBuffer());let s='';for(let i=0;i<a.length;i+=8192)s+=String.fromCharCode.apply(null,a.subarray(i,i+8192));
- const r=AndroidApp.saveFile(btoa(s),filename,'application/pdf');if(r!=='ok')throw {code:'unavailable',message:r};return {status:'saved'}}};document.documentElement.classList.add('android')}window.__memoTest={pdf:memoPdf,setDl:v=>dl=v,all:v=>MB.e.all=v};
+ const r=AndroidApp.saveFile(btoa(s),filename,'application/pdf');if(r!=='ok')throw {code:'unavailable',message:r};return {status:'saved'}}};document.documentElement.classList.add('android')}window.__memoTest={rpdf:rapportPdf,pdf:memoPdf,setDl:v=>dl=v,all:v=>MB.e.all=v};
 
 
 /* ---------- Assistant (chatbot) ---------- */
