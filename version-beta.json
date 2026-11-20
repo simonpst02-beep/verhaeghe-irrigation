@@ -1,5 +1,5 @@
 {
-  "version": "2.3",
-  "code": 15,
-  "notes": "Version bêta : code d'activation personnel demandé une seule fois au premier lancement (application réservée aux membres Verhaeghe)."
+  "version": "2.4",
+  "code": 16,
+  "notes": "Version bêta : les mises à jour et les licences passent par le nouveau dépôt public de distribution (le code source pourra être privé)."
 }

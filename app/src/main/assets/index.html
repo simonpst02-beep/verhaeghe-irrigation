@@ -739,7 +739,7 @@ html.lockd #lic{display:flex}
 /* ---------- Licence : code d'activation personnel (appli Android uniquement) ---------- */
 (function(){
  if(!window.AndroidApp)return;
- const KEY='vi_licence',REPO='simonpst02-beep/verhaeghe-irrigation',RECHECK=6*36e5,MAXOFF=30*864e5;
+ const KEY='vi_licence',SRCS=['simonpst02-beep/verhaeghe-irrigation-maj','simonpst02-beep/verhaeghe-irrigation'],RECHECK=6*36e5,MAXOFF=30*864e5;
  const H=document.documentElement,$=s=>document.querySelector(s);
  // SHA-256 (sans dépendance)
  function sha256(bytes){const K=[0x428a2f98,0x71374491,0xb5c0fbcf,0xe9b5dba5,0x3956c25b,0x59f111f1,0x923f82a4,0xab1c5ed5,0xd807aa98,0x12835b01,0x243185be,0x550c7dc3,0x72be5d74,0x80deb1fe,0x9bdc06a7,0xc19bf174,0xe49b69c1,0xefbe4786,0x0fc19dc6,0x240ca1cc,0x2de92c6f,0x4a7484aa,0x5cb0a9dc,0x76f988da,0x983e5152,0xa831c66d,0xb00327c8,0xbf597fc7,0xc6e00bf3,0xd5a79147,0x06ca6351,0x14292967,0x27b70a85,0x2e1b2138,0x4d2c6dfc,0x53380d13,0x650a7354,0x766a0abb,0x81c2c92e,0x92722c85,0xa2bfe8a1,0xa81a664b,0xc24b8b70,0xc76c51a3,0xd192e819,0xd6990624,0xf40e3585,0x106aa070,0x19a4c116,0x1e376c08,0x2748774c,0x34b0bcb5,0x391c0cb3,0x4ed8aa4a,0x5b9cca4f,0x682e6ff3,0x748f82ee,0x78a5636f,0x84c87814,0x8cc70208,0x90befffa,0xa4506ceb,0xbef9a3f7,0xc67178f2];
@@ -755,8 +755,10 @@ html.lockd #lic{display:flex}
  function hashCode(c){let x=sha256(new TextEncoder().encode('verhaeghe-licence:'+norm(c)));for(let i=0;i<20000;i++)x=sha256(x);return [...x].map(b=>b.toString(16).padStart(2,'0')).join('')}
  window.__licHash=hashCode;
  async function list(){
-  try{const r=await fetch(`https://api.github.com/repos/${REPO}/contents/licences.json?ref=main&t=${Date.now()}`,{cache:'no-store',headers:{Accept:'application/vnd.github.raw+json'}});if(r.ok)return await r.json()}catch(e){}
-  const r=await fetch(`https://raw.githubusercontent.com/${REPO}/main/licences.json?t=${Date.now()}`,{cache:'no-store'});if(!r.ok)throw new Error('liste');return r.json()}
+  for(const R of SRCS){
+   try{const r=await fetch(`https://api.github.com/repos/${R}/contents/licences.json?ref=main&t=${Date.now()}`,{cache:'no-store',headers:{Accept:'application/vnd.github.raw+json'}});if(r.ok)return await r.json()}catch(e){}
+   try{const r=await fetch(`https://raw.githubusercontent.com/${R}/main/licences.json?t=${Date.now()}`,{cache:'no-store'});if(r.ok)return await r.json()}catch(e){}}
+  throw new Error('liste')}
  const get=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}};
  const save=v=>{try{v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY)}catch(e){}};
  const showLic=(msg,err)=>{H.classList.add('lockd');if(msg)$('#licMsg').innerHTML=msg;$('#licErr').textContent=err||''};
@@ -1551,16 +1553,21 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.3 bêta',APP_CODE=15,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.4 bêta',APP_CODE=16,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
-const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
+const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
 const BETA_URL=`https://raw.githubusercontent.com/${REPO}/refs/heads/preparation/version-beta.json`,BETA_APK=`https://github.com/${REPO}/releases/download/preparation/Verhaeghe-Irrigation.apk`;
 let upUrl=APK_URL;
 // Lecture directe sur GitHub (API, sans le cache de 5 min de raw.githubusercontent), avec repli sur raw
-async function verJson(file,ref,rawUrl){
- try{const r=await fetch(`https://api.github.com/repos/${REPO}/contents/${file}?ref=${ref}&t=${Date.now()}`,{cache:'no-store',headers:{Accept:'application/vnd.github.raw+json'}});if(r.ok)return await r.json()}catch(e){}
- const r=await fetch(rawUrl+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;return r.json()}
+// Dépôt public de distribution en premier, ancien dépôt en secours (période de transition)
+const DIST='simonpst02-beep/verhaeghe-irrigation-maj',UPSRC=[DIST,REPO];
+async function verJson(file){
+ for(const R of UPSRC){const ref=R===DIST?'main':(file==='version-beta.json'?'refs/heads/preparation':'main');
+  try{const r=await fetch(`https://api.github.com/repos/${R}/contents/${file}?ref=${ref.replace('refs/heads/','')}&t=${Date.now()}`,{cache:'no-store',headers:{Accept:'application/vnd.github.raw+json'}});if(r.ok)return {...await r.json(),_repo:R}}catch(e){}
+  try{const r=await fetch(`https://raw.githubusercontent.com/${R}/${ref}/${file}?t=${Date.now()}`,{cache:'no-store'});if(r.ok)return {...await r.json(),_repo:R}}catch(e){}}
+ throw 0}
+const apkOf=(R,beta)=>`https://github.com/${R}/releases/download/${beta?(R===DIST?'beta':'preparation'):'derniere-version'}/Verhaeghe-Irrigation.apk`;
 {const set=(t)=>$('#upTxt').innerHTML=t;
  $('#upVer').textContent='v'+APP_VERSION;$('#abVer').textContent=APP_VERSION+' (code '+APP_CODE+')';
  $('#abType').textContent=IS_APK?'Application Android (APK)':'Version web (Claude)';
@@ -1573,8 +1580,8 @@ async function verJson(file,ref,rawUrl){
  if(!IS_APK){set('La version web se met à jour toute seule : vous avez toujours la dernière version. Pour le téléphone Android, l\'APK le plus récent se télécharge ici.');$('#upCheck').hidden=true;$('#upAutoW').hidden=true;const d=$('#upDl');d.hidden=false;d.href=APK_URL;d.lastChild.textContent='Télécharger l\'APK Android'}
  else set('Version installée : '+APP_VERSION+'. Touchez « Rechercher » pour vérifier s\'il existe une nouvelle version.');
  async function check(silent){if(!IS_APK)return;if(!silent)set('Recherche en cours…');
-  try{let v=await verJson('version.json','main',VER_URL);upUrl=APK_URL;
-   if(beta){try{const b=await verJson('version-beta.json','preparation',BETA_URL);if((+b.code||0)>(+v.code||0)){v={...b,version:b.version+' (bêta)'};upUrl=BETA_APK}}catch(x){}}
+  try{let v=await verJson('version.json');upUrl=apkOf(v._repo,false);
+   if(beta){try{const b=await verJson('version-beta.json');if((+b.code||0)>(+v.code||0)){v={...b,version:b.version+' (bêta)'};upUrl=apkOf(b._repo,true)}}catch(x){}}
    try{localStorage.setItem('dep_upknown',JSON.stringify(v))}catch(x){}
    if((+v.code||0)>APP_CODE){showUp(v);const canIn=!!(window.AndroidApp&&AndroidApp.downloadUpdate);const d=$('#upDl');d.hidden=canIn;d.href=upUrl;$('#upInst').hidden=!canIn;
     set(`<b style="color:var(--ok)">Nouvelle version ${esc(v.version)} disponible</b> (vous avez ${APP_VERSION}). ${canIn?'Touchez « Installer la mise à jour » : le téléchargement se fait dans l\'appli, puis Android propose l\'installation.':'Téléchargez-la puis ouvrez le fichier pour l\'installer par-dessus.'} Vos données sont conservées.`);

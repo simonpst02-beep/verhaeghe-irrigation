@@ -11,6 +11,8 @@ permissions:
 jobs:
   apk:
     runs-on: ubuntu-latest
+    env:
+      DIST_TOKEN: ${{ secrets.DIST_TOKEN }}
     steps:
       - uses: actions/checkout@v4
 
@@ -88,3 +90,40 @@ jobs:
             Verhaeghe-Irrigation.apk
             Verhaeghe-Irrigation.aab
             Verhaeghe-Irrigation.apk.sha256
+
+      # ---- Dépôt public de distribution (le code source peut rester privé) ----
+      - name: Distribution publique – version officielle
+        if: github.ref_name == 'main' && env.DIST_TOKEN != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: simonpst02-beep/verhaeghe-irrigation-maj
+          token: ${{ secrets.DIST_TOKEN }}
+          tag_name: derniere-version
+          name: Verhaeghe Irrigation – dernière version
+          body: Version officielle de l'application Verhaeghe Irrigation (APK Android).
+          files: Verhaeghe-Irrigation.apk
+          make_latest: true
+
+      - name: Distribution publique – version bêta
+        if: github.ref_name == 'preparation' && env.DIST_TOKEN != ''
+        uses: softprops/action-gh-release@v2
+        with:
+          repository: simonpst02-beep/verhaeghe-irrigation-maj
+          token: ${{ secrets.DIST_TOKEN }}
+          tag_name: beta
+          name: Verhaeghe Irrigation – version bêta
+          prerelease: true
+          make_latest: false
+          body: Version de test de l'application Verhaeghe Irrigation.
+          files: Verhaeghe-Irrigation.apk
+
+      - name: Distribution publique – fichiers de version et licences
+        if: env.DIST_TOKEN != ''
+        run: |
+          git clone -q "https://x-access-token:${DIST_TOKEN}@github.com/simonpst02-beep/verhaeghe-irrigation-maj.git" dist
+          if [ "${{ github.ref_name }}" = "main" ]; then cp version.json dist/; else cp version-beta.json dist/; fi
+          [ -f licences.json ] && cp licences.json dist/ || true
+          cd dist
+          git config user.name "Verhaeghe Irrigation (build)"; git config user.email "build@verhaeghe-irrigation.invalid"
+          git add -A
+          git diff --cached --quiet || (git commit -qm "Mise à jour depuis ${{ github.ref_name }} (${GITHUB_SHA::7})" && git push -q)
