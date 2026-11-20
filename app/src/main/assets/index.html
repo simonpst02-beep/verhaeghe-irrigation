@@ -898,7 +898,7 @@ const CK=[
 ];
 const REL=[["Puits",[["pprof","Profondeur du puits","m"],["pdiam","Diamètre du tubage","mm"],["pns","Niveau statique","m"],["pnd","Niveau dynamique","m"],["ppp","Profondeur de la pompe","m"],["pdeb","Débit du puits","m³/h"]]],
 ["Électrique",[["evmarque","Marque variateur","","varMarques"],["evtype","Type variateur","",""],["ev","Tension variateur","V"],["ea","Intensité variateur","A"],["efmin","Réglage fréquence minimum","Hz"],["ecable","Section de câble","mm²"],["eboit","Type de boîtier de commande","",""]]],
-["Hydraulique",[["pr","P refoulement","bar"],["pon","P enclenchement","bar"],["poff","P déclenchement","bar"],["pg","Pré-gonflage ballon","bar"],["deb","Débit","m³/h"],["h","Compteur horaire","h"]]]];
+["Hydraulique",[["hpam","Pression amont","bar"],["hpav","Pression aval","bar"],["deb","Débit","m³/h"],["hcpt","Compteur","m³"]]]];
 const RELF=REL.flatMap(g=>g[1]);
 // Étapes masquées (gardées pour les anciennes fiches) : Sécurité, Hydraulique, Électrique, Essais des sécurités, Clôture
 const CK_HIDE=new Set([0,1,2,5,6]);
