@@ -1,5 +1,5 @@
 {
-  "version": "1.3",
-  "code": 4,
-  "notes": "Accueil allégé : la carte « Mise en service en cours » est retirée."
+  "version": "1.4",
+  "code": 5,
+  "notes": "Mémo enrouleurs : dimension PE en saisie libre, avec des tailles rapides à toucher."
 }
