@@ -23,12 +23,36 @@ import android.widget.Toast;
 import androidx.core.content.FileProvider;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import android.provider.Settings;
 import java.io.OutputStream;
 
 public class MainActivity extends Activity {
     private WebView web;
     private ValueCallback<Uri[]> fileCallback;
     private static final int PICK_FILE = 42;
+    private static final int INSTALL_PERM = 43;
+    private File pendingApk;
+
+    private void js(String code) { runOnUiThread(() -> web.evaluateJavascript(code, null)); }
+
+    private void installApk(File apk) {
+        if (Build.VERSION.SDK_INT >= 26 && !getPackageManager().canRequestPackageInstalls()) {
+            pendingApk = apk;
+            js("window.__upState&&window.__upState('perm')");
+            Intent s = new Intent(Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES, Uri.parse("package:" + getPackageName()));
+            startActivityForResult(s, INSTALL_PERM);
+            return;
+        }
+        Uri u = FileProvider.getUriForFile(this, "fr.verhaeghe.irrigation.files", apk);
+        Intent i = new Intent(Intent.ACTION_VIEW);
+        i.setDataAndType(u, "application/vnd.android.package-archive");
+        i.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_ACTIVITY_NEW_TASK);
+        js("window.__upState&&window.__upState('install')");
+        startActivity(i);
+    }
 
     @Override
     protected void onCreate(Bundle state) {
@@ -75,6 +99,11 @@ public class MainActivity extends Activity {
 
     @Override
     protected void onActivityResult(int req, int res, Intent data) {
+        if (req == INSTALL_PERM) {
+            if (pendingApk != null && (Build.VERSION.SDK_INT < 26 || getPackageManager().canRequestPackageInstalls())) installApk(pendingApk);
+            else js("window.__upState&&window.__upState('denied')");
+            return;
+        }
         if (req == PICK_FILE && fileCallback != null) {
             Uri[] out = null;
             if (res == RESULT_OK && data != null) {
@@ -135,6 +164,45 @@ public class MainActivity extends Activity {
             } catch (Exception e) {
                 return "erreur: " + e.getMessage();
             }
+        }
+
+        /** Télécharge le nouvel APK dans l'appli (progression envoyée à la page) puis lance l'installation. */
+        @JavascriptInterface
+        public void downloadUpdate(String url) {
+            new Thread(() -> {
+                try {
+                    String cur = url;
+                    HttpURLConnection c = null;
+                    for (int k = 0; k < 6; k++) {
+                        c = (HttpURLConnection) new URL(cur).openConnection();
+                        c.setInstanceFollowRedirects(false);
+                        c.setConnectTimeout(20000);
+                        c.setReadTimeout(30000);
+                        int code = c.getResponseCode();
+                        if (code >= 300 && code < 400) { cur = new URL(new URL(cur), c.getHeaderField("Location")).toString(); c.disconnect(); continue; }
+                        if (code != 200) throw new Exception("HTTP " + code);
+                        break;
+                    }
+                    long total = c.getContentLengthLong();
+                    File dir = new File(getCacheDir(), "maj");
+                    dir.mkdirs();
+                    File out = new File(dir, "Verhaeghe-Irrigation.apk");
+                    try (InputStream in = c.getInputStream(); FileOutputStream fo = new FileOutputStream(out)) {
+                        byte[] buf = new byte[65536];
+                        long got = 0; int n, last = -1;
+                        while ((n = in.read(buf)) > 0) {
+                            fo.write(buf, 0, n); got += n;
+                            int pct = total > 0 ? (int) (got * 100 / total) : -1;
+                            if (pct != last) { last = pct; js("window.__upProgress&&window.__upProgress(" + pct + "," + got + ")"); }
+                        }
+                    }
+                    js("window.__upState&&window.__upState('downloaded')");
+                    runOnUiThread(() -> installApk(out));
+                } catch (Exception e) {
+                    String m = String.valueOf(e.getMessage()).replace("'", " ");
+                    js("window.__upState&&window.__upState('error','" + m + "')");
+                }
+            }).start();
         }
 
         @JavascriptInterface

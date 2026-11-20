@@ -349,6 +349,7 @@ nav a.nmag{flex:1}
 .upbar{display:flex;align-items:center;gap:10px;background:#fff4e5;color:#1e2a36;border-radius:14px;padding:10px 12px;margin:0 0 14px;box-shadow:var(--sh);font-weight:600;font-size:14.5px}.upbar[hidden]{display:none}.upbar b{color:#d9480f}.upbar a{margin-left:auto;white-space:nowrap;background:#ff6a1a;color:#fff;border-radius:10px;padding:8px 12px;text-decoration:none;font-weight:800}.updot[hidden]{display:none}
 .prm{margin-bottom:14px}.prm h3{font-size:21px;margin-bottom:10px}.prm .ptlh h3{margin:0}
 .vtag{font-weight:800;background:var(--blueSoft);color:var(--blue);border-radius:10px;padding:4px 10px;font-size:14px}
+.upprog{display:flex;align-items:center;gap:10px;margin-top:12px}.upprog div{flex:1;height:10px;border-radius:6px;background:var(--line);overflow:hidden}.upprog b{display:block;height:100%;width:0;background:var(--ok);transition:width .2s}.upprog span{font-weight:800;font-variant-numeric:tabular-nums;min-width:48px;text-align:right}
 .upnotes{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--okSoft);font-size:14.5px}
 .prmth button{font-size:15px}
 .about{display:grid;grid-template-columns:7em minmax(0,1fr);gap:6px 12px;margin:0;font-size:15px}.about dt{color:var(--mute)}.about dd{margin:0;font-weight:600}
@@ -664,7 +665,8 @@ nav a.nmag{flex:1}
  <div class="card prm" id="prmUp">
   <div class="ptlh"><h3>Mise à jour</h3><span class="vtag" id="upVer"></span></div>
   <p class="tag" id="upTxt" style="margin:0 0 12px"></p>
-  <div class="tools"><button id="upCheck"><svg class="i"><use href="#i-search"/></svg>Rechercher une mise à jour</button><a class="shb" id="upDl" hidden target="_blank" rel="noopener"><svg class="i"><use href="#i-file"/></svg>Télécharger la nouvelle version</a></div>
+  <div class="tools"><button id="upCheck"><svg class="i"><use href="#i-search"/></svg>Rechercher une mise à jour</button><a class="shb" id="upDl" hidden target="_blank" rel="noopener"><svg class="i"><use href="#i-file"/></svg>Télécharger la nouvelle version</a><button class="or" id="upInst" hidden><svg class="i"><use href="#i-file"/></svg>Installer la mise à jour</button></div>
+  <div class="upprog" id="upProg" hidden><div><b id="upFill"></b></div><span id="upPct">0 %</span></div>
   <label class="allb" id="upAutoW" style="margin-top:12px"><input type="checkbox" id="upAuto" checked> Vérifier automatiquement au démarrage</label>
   <div class="upnotes" id="upNotes" hidden></div>
  </div>
@@ -913,7 +915,7 @@ function render(k){if(k==='magasin'){drawMg();drawQ();return}if(pmTab==='tb'&&$(
 
 /* ---------- Navigation ---------- */
 const VIEWS=['accueil','enrouleurs','pompage','heures','photos','magasin','parametres'];
-function route(){if($('#upBar'))$('#upBar').style.display=(location.hash==='#parametres')?'none':'';const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
+function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
  for(const x of VIEWS)$('#v-'+x).classList.toggle('cur',x===v);
  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('cur',a.dataset.v===v));
  if(v==='accueil')drawHome();scrollTo({top:0})}
@@ -1417,7 +1419,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='1.4',APP_CODE=5,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='1.5',APP_CODE=6,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
@@ -1432,8 +1434,8 @@ const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
  async function check(silent){if(!IS_APK)return;if(!silent)set('Recherche en cours…');
   try{const r=await fetch(VER_URL+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)throw 0;const v=await r.json();
    try{localStorage.setItem('dep_upknown',JSON.stringify(v))}catch(x){}
-   if((+v.code||0)>APP_CODE){showUp(v);const d=$('#upDl');d.hidden=false;d.href=APK_URL;
-    set(`<b style="color:var(--ok)">Nouvelle version ${esc(v.version)} disponible</b> (vous avez ${APP_VERSION}). Téléchargez-la puis ouvrez le fichier pour l'installer par-dessus : vos données sont conservées.`);
+   if((+v.code||0)>APP_CODE){showUp(v);const canIn=!!(window.AndroidApp&&AndroidApp.downloadUpdate);const d=$('#upDl');d.hidden=canIn;d.href=APK_URL;$('#upInst').hidden=!canIn;
+    set(`<b style="color:var(--ok)">Nouvelle version ${esc(v.version)} disponible</b> (vous avez ${APP_VERSION}). ${canIn?'Touchez « Installer la mise à jour » : le téléchargement se fait dans l\'appli, puis Android propose l\'installation.':'Téléchargez-la puis ouvrez le fichier pour l\'installer par-dessus.'} Vos données sont conservées.`);
     if(v.notes){const n=$('#upNotes');n.hidden=false;n.innerHTML='<b>Nouveautés</b><br>'+esc(v.notes).replace(/\n/g,'<br>')}
     if(silent)toast('Mise à jour '+v.version+' disponible : voir Paramètres')}
    else if(!silent){set(`<b style="color:var(--ok)">✓ Vous avez la dernière version (${APP_VERSION}).</b>`);$('#upDl').hidden=true}}
@@ -1442,6 +1444,10 @@ const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
 }
  if(IS_APK){try{const k=JSON.parse(localStorage.getItem('dep_upknown')||'null');if(k&&(+k.code||0)>APP_CODE)showUp(k)}catch(x){}}
  $('#upCheck').addEventListener('click',()=>check(false));
+ $('#upInst').addEventListener('click',()=>{if(!(window.AndroidApp&&AndroidApp.downloadUpdate))return;$('#upInst').disabled=true;$('#upProg').hidden=false;$("#upFill").style.width='0';$('#upPct').textContent='0 %';set('Téléchargement de la mise à jour…');AndroidApp.downloadUpdate(APK_URL)});
+ window.__upProgress=(pct,got)=>{if(pct>=0){$("#upFill").style.width=pct+'%';$('#upPct').textContent=pct+' %'}else{$('#upPct').textContent=(got/1048576).toFixed(1).replace('.',',')+' Mo'}};
+ window.__upState=(s,m)=>{const M={downloaded:'Téléchargement terminé.',perm:'Autorisez « Installer des applis inconnues » pour Verhaeghe Irrigation, puis revenez dans l\'appli.',install:'<b style="color:var(--ok)">Android ouvre l\'installation : touchez « Mettre à jour ».</b> Vos données sont conservées.',denied:'<b style="color:var(--bad)">Autorisation refusée.</b> Touchez à nouveau « Installer la mise à jour » et autorisez l\'installation.',error:'<b style="color:var(--bad)">Téléchargement impossible</b> ('+esc(m||'')+'). Vérifiez la connexion et réessayez.'};
+  set(M[s]||s);if(s==='downloaded'){$("#upFill").style.width='100%';$('#upPct').textContent='100 %'}if(s!=='downloaded')$('#upInst').disabled=false};
  if(IS_APK){setInterval(()=>{if($('#upAuto').checked)check(true)},6*36e5);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&$('#upAuto').checked){const l=+(localStorage.getItem('dep_uplast')||0);if(Date.now()-l>36e5){localStorage.setItem('dep_uplast',Date.now());check(true)}}})}
  if(IS_APK&&auto)setTimeout(()=>check(true),2500);
  // affichage

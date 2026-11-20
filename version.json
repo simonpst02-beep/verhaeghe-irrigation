@@ -1,5 +1,5 @@
 {
-  "version": "1.4",
-  "code": 5,
-  "notes": "Mémo enrouleurs : dimension PE en saisie libre, avec des tailles rapides à toucher."
+  "version": "1.5",
+  "code": 6,
+  "notes": "Mise à jour directement dans l'appli : « Installer la mise à jour » télécharge la nouvelle version avec une barre de progression, puis Android propose l'installation."
 }
