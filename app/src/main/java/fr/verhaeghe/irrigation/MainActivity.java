@@ -41,6 +41,9 @@ public class MainActivity extends Activity {
         s.setDatabaseEnabled(true);
         s.setAllowFileAccess(true);
         s.setMediaPlaybackRequiresUserGesture(false);
+        s.setTextZoom(100); // mise en page stable même si la taille de police Android est agrandie
+        s.setLoadWithOverviewMode(true);
+        s.setUseWideViewPort(true);
         web.addJavascriptInterface(new Bridge(), "AndroidApp");
         web.setWebViewClient(new WebViewClient() {
             @Override

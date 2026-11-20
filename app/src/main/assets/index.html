@@ -377,6 +377,68 @@ nav a.nmag{flex:1}
  .tile{min-height:132px;padding:15px}.tile h3{font-size:20px}
 }
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+
+/* ===== Mise en page compacte téléphone ===== */
+@media(max-width:480px){
+ body{font-size:15px}
+ .hero{padding:10px 12px 14px}
+ .hero .row{gap:8px}
+ .brand{gap:8px;min-width:0;flex:1}
+ .brand b{width:34px;height:34px;border-radius:11px;flex:none}.brand b svg{width:19px;height:19px}
+ .bn{min-width:0}.bn span{font-size:16.5px!important;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.bn small{font-size:11px!important;white-space:nowrap;margin-top:2px}
+ .sync{display:none}
+ .hr{gap:6px;flex:none}
+ .theme{padding:2px}.theme button{width:32px;min-height:32px}.theme button svg{width:17px;height:17px}
+ .gearb{width:34px;height:34px}.gearb svg{width:19px;height:19px}
+ .hero svg.wave{height:40px}
+ main{padding:14px 12px 100px}
+ .head{margin-bottom:12px}.head h2{font-size:24px!important}.head p{font-size:14px;margin-top:2px}
+ .card{padding:14px;border-radius:18px}
+ .warn{font-size:14px;padding:10px 12px;border-radius:12px;margin-bottom:12px}.warn svg{width:20px;height:20px}
+ h3{letter-spacing:-.01em}
+ /* accueil */
+ .hello h2{font-size:26px;white-space:nowrap}.clock span{font-size:32px}.clock small{font-size:11.5px}
+ .dl{margin:4px 0 14px;gap:8px}.dl p{font-size:14px}
+ .wx{min-height:38px;padding:4px 12px;font-size:14px}.wxe{min-height:38px;width:38px}
+ .tiles{gap:10px}.tile{min-height:108px;padding:13px;gap:10px;border-radius:18px}
+ .tile .ic{width:42px;height:42px;border-radius:14px}.tile .ic svg{width:23px;height:23px}
+ .tile h3{font-size:17px}.tile span{font-size:12.5px;line-height:1.35}.tile .n{font-size:24px;top:12px;right:14px}
+ .pth h3,.resume h3,.todo h3{font-size:18px!important}
+ /* enrouleurs */
+ .brands{gap:6px}.brands button{min-height:58px;padding:6px 2px!important;border-radius:14px;font-size:15px}
+ .brands button small{font-size:10px;line-height:1.2}.brands svg.enr{width:32px;height:27px}
+ .binfo h3{font-size:18px!important}
+ .seg{padding:3px;border-radius:12px}.seg button{min-height:38px;font-size:13.5px!important;padding:4px 8px}
+ .seg button svg{width:16px;height:16px}
+ .ptabs{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px}.ptabs button{grid-column:span 2;padding:4px 4px!important;font-size:13px!important;white-space:nowrap}.ptabs button:nth-child(n+4){grid-column:span 3}
+ .search input{min-height:42px;font-size:15px}.search svg{top:10px;width:20px;height:20px}
+ .sym{gap:8px}.sym button{min-height:66px;padding:11px 12px;font-size:15px;border-radius:15px;gap:11px}
+ .sym button .ic{width:38px;height:38px;border-radius:11px}.sym button .ic svg{width:20px;height:20px}.sym button small{font-size:12px}
+ .det h2{font-size:24px}.blk h3{font-size:17px}.steps label{font-size:15px;padding:10px 0}.num{width:28px;height:28px;font-size:13px}
+ /* formulaires */
+ input,select,textarea{min-height:44px;padding:9px 11px;border-radius:11px}
+ label{font-size:13px}
+ button{min-height:44px;font-size:15px;padding:8px 14px;border-radius:11px}
+ .tools{gap:6px}
+ /* listes */
+ .it{padding:10px 6px 10px 12px;border-radius:14px}.it b{font-size:15.5px}.qty{font-size:18px;min-width:32px}
+ .st{min-height:32px;font-size:12px;padding:3px 9px}
+ .mgr{padding:10px 8px 10px 12px}.mgh{padding:0 10px 6px 17px}
+ .fo{padding:13px}.fo h3{font-size:18px}.fo .gps{font-size:15.5px}
+ .kpis{gap:8px}.kpi{padding:12px;border-radius:16px}.kpi b{font-size:24px}
+ .ptype span{min-height:56px;font-size:13.5px}.ptimes input{font-size:15px}
+ .pttot{gap:8px}.pttot b{font-size:19px}.pttot div{padding:10px;border-radius:14px}
+ .route .rb b{font-size:14.5px}.route .ri{width:34px;height:34px}.route li:not(:last-child)::before{left:16px;top:34px}
+ /* barre du bas */
+ nav{padding:4px 2px max(6px,env(safe-area-inset-bottom))!important;gap:0}
+ nav a{font-size:10.5px!important;padding:5px 0 4px!important;gap:2px;letter-spacing:-.2px;min-height:46px;border-radius:10px}
+ nav a svg{width:21px;height:21px}
+ .nsep{flex:0 0 6px!important;margin-left:2px!important;height:26px!important}
+ .botfab{bottom:84px;width:50px;height:50px}.botfab svg{width:25px;height:25px}
+ .stepnav{bottom:80px}
+ .toast{bottom:84px;font-size:14px}
+}
+@media(max-width:340px){.bn small{display:none}.tile span{display:none}.brands button small{display:none}}
 </style>
 </head>
 <body>
@@ -436,7 +498,6 @@ nav a.nmag{flex:1}
 </header>
 
 <main>
-<div class="upbar" id="upBar" hidden><svg class="i" style="color:#d9480f;width:22px;height:22px"><use href="#i-bell"/></svg><span><b>Mise à jour disponible</b> <span id="upBarV"></span></span><a href="#parametres">Voir</a></div>
 <section id="v-accueil">
  <div class="hello"><div class="hrow"><h2 id="hi">Bonjour</h2><div class="clock" aria-live="off"><span id="clk">--:--</span><small id="clkS"></small></div></div><div class="dl"><p id="today"></p><a class="wx" id="wx" target="_blank" rel="noopener"><span id="wxIco"><svg class="i"><use href="#i-cloud"/></svg></span><span id="wxTxt">Météo</span><svg class="i" style="width:16px;height:16px;opacity:.6"><use href="#i-ext"/></svg></a><button class="ghost wxe" id="wxEdit" aria-label="Changer la commune" title="Changer la commune"><svg class="i" style="width:18px;height:18px"><use href="#i-pen"/></svg></button></div>
  <form id="wxForm" class="wxf" hidden><input id="wxCity" placeholder="Votre commune (ex. Arras)" aria-label="Commune pour la météo"><button>OK</button></form></div>
@@ -1356,7 +1417,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='1.1',APP_CODE=2,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='1.2',APP_CODE=3,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
@@ -1378,7 +1439,7 @@ const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
    else if(!silent){set(`<b style="color:var(--ok)">✓ Vous avez la dernière version (${APP_VERSION}).</b>`);$('#upDl').hidden=true}}
   catch(e){if(!silent)set('<b style="color:var(--bad)">Impossible de vérifier</b> : pas de connexion internet ? Réessayez plus tard.')}}
  function showUp(v){$('#upDot').hidden=false;document.querySelector('.gearb').classList.add('has-up');document.querySelector('.gearb').setAttribute('aria-label','Paramètres – mise à jour '+v.version+' disponible');
-  const b=$('#upBar');b.hidden=false;$('#upBarV').textContent='version '+v.version+' (vous avez '+APP_VERSION+')'}
+}
  if(IS_APK){try{const k=JSON.parse(localStorage.getItem('dep_upknown')||'null');if(k&&(+k.code||0)>APP_CODE)showUp(k)}catch(x){}}
  $('#upCheck').addEventListener('click',()=>check(false));
  if(IS_APK){setInterval(()=>{if($('#upAuto').checked)check(true)},6*36e5);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&$('#upAuto').checked){const l=+(localStorage.getItem('dep_uplast')||0);if(Date.now()-l>36e5){localStorage.setItem('dep_uplast',Date.now());check(true)}}})}

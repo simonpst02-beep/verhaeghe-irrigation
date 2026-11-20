@@ -1,5 +1,5 @@
 {
-  "version": "1.1",
-  "code": 2,
-  "notes": "Nouvel écran Paramètres (roue dentée en haut à droite) : recherche de mise à jour, thème, commune météo, sauvegarde et import des données."
+  "version": "1.2",
+  "code": 3,
+  "notes": "Interface plus compacte et mieux ajustée au téléphone (en-tête sur une ligne, barre du bas, onglets Pompage).\nLa mise en page ne grossit plus avec la taille de police d'Android.\nNotification de mise à jour sur la roue dentée, sans bandeau."
 }
