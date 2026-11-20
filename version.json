@@ -1,5 +1,5 @@
 {
-  "version": "1.5",
-  "code": 6,
-  "notes": "Mise à jour directement dans l'appli : « Installer la mise à jour » télécharge la nouvelle version avec une barre de progression, puis Android propose l'installation."
+  "version": "1.6",
+  "code": 7,
+  "notes": "Intervention chantier (ex mise en service) : choix du forage, Installation (variateur + pompe), relevés Puits / Électrique / Hydraulique.\nRapport d'intervention en PDF.\nL'assistant peut remplir la fiche et créer le rapport ; dans l'appli Android, il fonctionne avec une clé API (Paramètres → Assistant)."
 }
