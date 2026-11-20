@@ -896,7 +896,8 @@ const CK=[
 ["Clôture",["Site rangé et nettoyé","Explications au client","Documentation remise","PV de mise en service signé"]],
 ["Variateur Danfoss",["Données plaque moteur : 1-20 puissance, 1-22 tension, 1-23 fréquence, 1-24 courant, 1-25 vitesse nominale","AMA lancée et terminée : 1-29 = [1] AMA activée compl.","Limites de vitesse : 4-12 vitesse mini [Hz] et 4-14 vitesse maxi [Hz]","Rampes : 3-41 temps d'accélération et 3-42 temps de décélération","Capteur de pression sur l'entrée 54 mis à l'échelle (6-24 / 6-25) et unité réglée (20-12)","Consigne de pression : 20-21 Consigne 1","Régulation PID : 20-93 gain proportionnel et 20-94 temps intégral, pression stable à différents débits","Mode veille réglé (groupe 22-4* : 22-40, 22-41, 22-44)","Protection marche à sec activée : 22-26 (détection faible puissance 22-21)","Paramètres notés ou copiés dans le panneau (LCP)"]]
 ];
-const REL=[["Électrique",[["u12","U L1-L2","V"],["u23","U L2-L3","V"],["u31","U L3-L1","V"],["iso","Isolement","MΩ"],["in","In plaque","A"],["th","Réglage thermique","A"],["i1","I L1","A"],["i2","I L2","A"],["i3","I L3","A"]]],
+const REL=[["Puits",[["pprof","Profondeur du puits","m"],["pdiam","Diamètre du tubage","mm"],["pns","Niveau statique","m"],["pnd","Niveau dynamique","m"],["ppp","Profondeur de la pompe","m"],["pdeb","Débit du puits","m³/h"]]],
+["Électrique",[["u12","U L1-L2","V"],["u23","U L2-L3","V"],["u31","U L3-L1","V"],["iso","Isolement","MΩ"],["in","In plaque","A"],["th","Réglage thermique","A"],["i1","I L1","A"],["i2","I L2","A"],["i3","I L3","A"]]],
 ["Hydraulique",[["pr","P refoulement","bar"],["pon","P enclenchement","bar"],["poff","P déclenchement","bar"],["pg","Pré-gonflage ballon","bar"],["deb","Débit","m³/h"],["h","Compteur horaire","h"]]]];
 const RELF=REL.flatMap(g=>g[1]);
 // Étapes masquées (gardées pour les anciennes fiches) : Sécurité, Hydraulique, Électrique, Essais des sécurités, Clôture
@@ -906,7 +907,9 @@ const CK_ORDER=[3,4];
 CK_HIDE.add(7);
 const VAR_F=[["vmarque","Marque","Danfoss, Schneider, ABB…","varMarques"],["vtype","Type / modèle","VLT AQUA Drive FC 202…",""],["vpuiss","Puissance (kW)","11",""],["vfiltre","Filtre","",""]];
 const POMPE_F=[["pmarque","Marque","Rovatti, Grundfos, KSB…","pompeMarques"],["ptype","Type / modèle","SP 46-8…",""],["ppuiss","Puissance (kW)","11",""]];
-const STEPS=[{n:"Chantier"},{n:"Installation",vf:true},{n:"Sous tension",gi:3},{n:"Démarrage",gi:4},{n:"Relevés"},{n:"Rapport"}];
+CK_HIDE.add(3);CK_HIDE.add(4); // Sous tension et Démarrage retirés
+CK_ORDER.length=0;
+const STEPS=[{n:"Chantier"},{n:"Installation",vf:true},{n:"Relevés"},{n:"Rapport"}];
 const STAT=["À prévoir","Commandé","Reçu"];
 
 /* ---------- Stockage ---------- */
@@ -1077,10 +1080,11 @@ function alerts(){const In=num(cur.r.in),a=[];
  if(In)['i1','i2','i3'].forEach((k,i)=>{if(num(cur.r[k])>In)a.push('I L'+(i+1)+' dépasse l\'intensité plaque')});
  if(In&&num(cur.r.th)>In*1.05)a.push('Réglage thermique supérieur à l\'intensité plaque');
  if(cur.r.iso&&num(cur.r.iso)<1)a.push('Isolement faible (< 1 MΩ) : ne pas démarrer');return a}
+const stepDone=(s,i)=>s.vf?[...VAR_F,...POMPE_F].some(([k])=>cur.r[k]):s.gi!=null?gDone(s.gi):i===0?!!cur.h.client:i===STEPS.length-2?RELF.some(([k])=>cur.r[k]):false;
 function drawStepper(){
  $('#stepper').innerHTML=STEPS.map((s,i)=>{const done=s.vf?[...VAR_F,...POMPE_F].some(([k])=>cur.r[k]):s.gi!=null?gDone(s.gi):i===0?!!cur.h.client:i===STEPS.length-2?RELF.some(([k])=>cur.r[k]):false;
   return `<button data-st="${i}" class="${i===step?'cur':''} ${done?'done':''}">${done?'✓ ':''}${esc(s.n)}</button>`}).join('');
- const {ok,tot}=count();$('#progBar').style.width=(ok/tot*100)+'%';$('#progTxt').textContent=ok+' / '+tot;
+ const tot=STEPS.length-1,ok=STEPS.slice(0,-1).filter((s,i)=>stepDone(s,i)).length;$('#progBar').style.width=(ok/tot*100)+'%';$('#progTxt').textContent=ok+' / '+tot+' étapes';
  const c=$('#stepper .cur');if(c)c.scrollIntoView({block:'nearest',inline:'center'})}
 function drawStep(){if(!(step>=0&&step<STEPS.length))step=0;const s=STEPS[step];let h='';
  if(step===0){const F=[...(S.forages||[])].sort((a,b)=>(a.c||'').localeCompare(b.c||'','fr')||(a.n||'').localeCompare(b.n||'','fr'));const fo=F.find(f=>f.id===cur.h.forage);
@@ -1093,6 +1097,7 @@ function drawStep(){if(!(step>=0&&step<STEPS.length))step=0;const s=STEPS[step];
   <datalist id="varMarques"><option value="Danfoss"><option value="Schneider Electric (Altivar)"><option value="ABB"><option value="Grundfos"><option value="Siemens"><option value="Wilo"><option value="Lowara"><option value="WEG"></datalist>
   <datalist id="pompeMarques"><option value="Rovatti"><option value="Grundfos"><option value="KSB"><option value="Caprari"><option value="Lowara"><option value="Wilo"><option value="Ebara"><option value="Pedrollo"><option value="Xylem / Flygt"></datalist>`}
  else if(s.gi!=null){const [g,it]=CK[s.gi];h=`<h3 style="font-size:23px;margin-bottom:6px">${esc(g)}</h3><div class="ckl">${it.map((x,ii)=>`<label><input type="checkbox" data-k="${s.gi}-${ii}"${cur.ck[s.gi+'-'+ii]?' checked':''}><span>${esc(x)}</span></label>`).join('')}</div><button class="ghost ckAll" data-all="${s.gi}">${ic('check')}Tout cocher</button>`}
+ else if(s.n==='Relevés'&&(()=>{const f=(S.forages||[]).find(x=>x.id===cur.h.forage);if(f)[['pprof','prof'],['pdiam','diam'],['pns','ns'],['pnd','nd'],['ppp','pp'],['pdeb','q']].forEach(([a,b])=>{if(!cur.r[a]&&f[b])cur.r[a]=f[b]});return false})());
  else if(s.n==='Relevés')h=`<h3 style="font-size:23px;margin-bottom:14px">Relevés</h3>${REL.map(([g,f])=>`<div class="rgroup">${g}</div><div class="grid">${f.map(([k,l,u])=>`<label>${l}<span class="unit"><input data-r="${k}" inputmode="decimal" value="${esc(cur.r[k])}"><em>${u}</em></span></label>`).join('')}</div>`).join('')}<div id="relAlert"></div>`;
  else h=`<h3 style="font-size:23px;margin-bottom:14px">Observations et rapport</h3><label>Observations<textarea id="mesObs" placeholder="Réserves, travaux à prévoir, remarques client…">${esc(cur.obs)}</textarea></label><div id="relAlert"></div><div class="tools"><button id="mesSave">${ic('check')}Enregistrer l'intervention</button><button class="ghost" id="mesCopy">${ic('copy')}Copier le rapport</button></div>`;
  $('#stepBody').innerHTML=h;$('#prev').disabled=step===0;$('#next').style.visibility=step===STEPS.length-1?'hidden':'visible';
@@ -1209,7 +1214,7 @@ function drawPtHome(){if(!$('#ptHome'))return;const o=totals(dKey(Date.now())),n
 function drawTb(){const F=S.forages||[],num=v=>parseFloat(String(v||'').replace(',','.'));
  const prof=F.map(f=>num(f.prof)).filter(isFinite),deb=F.map(f=>num(f.q)).filter(isFinite);
  const pm=memoOf('p'),todo=pm.filter(x=>!x.s).length,cmd=pm.filter(x=>x.s===1).length;
- const mesOk=S.mes.filter(m=>CK.every(([,it],gi)=>CK_HIDE.has(gi)||it.every((_,ii)=>m.ck&&m.ck[gi+'-'+ii]))).length;
+ const mesOk=S.mes.filter(m=>m.r&&RELF.some(([k])=>m.r[k])).length;
  const k=(go,l,v,sm)=>`<button class="kpi" data-goto="${go}"><span>${l}</span><b>${v}</b><small>${sm}</small></button>`;
  $('#tbKpi').innerHTML=k('for','Forages',F.length,F.length?new Set(F.map(f=>(f.c||'').toLowerCase()).filter(Boolean)).size+' client(s)':'Aucun enregistré')
   +k('for','Profondeur moy.',prof.length?Math.round(prof.reduce((a,b)=>a+b,0)/prof.length)+' m':'–',prof.length?'max '+Math.max(...prof)+' m':'non renseignée')
