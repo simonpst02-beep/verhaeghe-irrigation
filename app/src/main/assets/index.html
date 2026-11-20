@@ -509,7 +509,6 @@ nav a.nmag{flex:1}
  </div>
  <div class="card" id="homeFo" style="margin-top:16px"></div>
  <div class="card pth" id="ptHome"></div>
- <div class="card resume" id="resume"></div>
  <div class="card todo" id="todo"></div>
 </section>
 
@@ -925,7 +924,7 @@ function drawHome(){drawPtHome();drawHomeFo();
  $('#today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
  const todo=S.memo.filter(x=>!x.s);
  $('#nP').textContent=PANNES.length;$('#nM').textContent=S.mes.length||'';$('#nT').textContent=todo.length||'';$('#nF').textContent=S.photos.length||'';
- if(cur){const {ok,tot}=count(),p=tot?ok/tot:0,C=2*Math.PI*26;
+ if(cur&&$('#resume')){const {ok,tot}=count(),p=tot?ok/tot:0,C=2*Math.PI*26;
   $('#resume').innerHTML=`<svg class="ring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="26" fill="none" stroke="var(--line)" stroke-width="7"/><circle cx="32" cy="32" r="26" fill="none" stroke="var(--ok)" stroke-width="7" stroke-linecap="round" stroke-dasharray="${C*p} ${C}" transform="rotate(-90 32 32)"/><text x="32" y="37" text-anchor="middle" font-size="15" font-weight="700" fill="currentColor">${Math.round(p*100)}%</text></svg>
   <div class="t"><h3 style="font-size:21px">Mise en service en cours</h3><span class="tag">${esc(cur.h.client||'Client non renseigné')} · ${ok} / ${tot} contrôles</span></div><button onclick="location.hash='pompage'">Reprendre${ic('next')}</button>`}
  $('#todo').innerHTML=`<h3>Pièces à prévoir</h3>`+(todo.length?`<ul>${todo.slice(0,5).map(x=>`<li><span><b>${esc(x.q)} ×</b> ${esc(x.d)}</span><span class="tag">${esc([domOf(x)==='pmp'?'Pompage':(x.m||'Enrouleur'),x.c].filter(Boolean).join(' · '))}</span></li>`).join('')}</ul>${todo.length>5?`<p class="tag">+ ${todo.length-5} autres</p>`:''}`:`<p class="tag" style="margin:0">Rien à prévoir pour l'instant.</p>`)}
@@ -1417,7 +1416,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='1.2',APP_CODE=3,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='1.3',APP_CODE=4,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/${REPO}/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
