@@ -413,7 +413,7 @@ nav a.nmag{flex:1}
  .binfo h3{font-size:18px!important}
  .seg{padding:3px;border-radius:12px}.seg button{min-height:38px;font-size:13.5px!important;padding:4px 8px}
  .seg button svg{width:16px;height:16px}
- .ptabs{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px}.ptabs button{grid-column:span 2;padding:4px 4px!important;font-size:13px!important;white-space:nowrap}.ptabs button:nth-child(n+4){grid-column:span 3}
+ .ptabs{display:grid!important;grid-template-columns:repeat(6,minmax(0,1fr));gap:3px}.ptabs button{grid-column:span 2;padding:4px 4px!important;font-size:13px!important;white-space:nowrap}.ptabs button:nth-child(-n+2){grid-column:span 3}
  .search input{min-height:42px;font-size:15px}.search svg{top:10px;width:20px;height:20px}
  .sym{gap:8px}.sym button{min-height:66px;padding:11px 12px;font-size:15px;border-radius:15px;gap:11px}
  .sym button .ic{width:38px;height:38px;border-radius:11px}.sym button .ic svg{width:20px;height:20px}.sym button small{font-size:12px}
@@ -506,7 +506,7 @@ nav a.nmag{flex:1}
  <form id="wxForm" class="wxf" hidden><input id="wxCity" placeholder="Votre commune (ex. Arras)" aria-label="Commune pour la météo"><button>OK</button></form></div>
  <div class="tiles">
   <a class="tile" href="#enrouleurs"><span class="n" id="nP"></span><div class="ic c1"><svg class="i"><use href="#i-reel"/></svg></div><div><h3>Enrouleurs</h3><span>Diagnostic par symptôme</span></div></a>
-  <a class="tile" href="#pompage"><span class="n" id="nM"></span><div class="ic c2"><svg class="i"><use href="#i-pump"/></svg></div><div><h3>Station de pompage</h3><span>Diagnostic et mise en service</span></div></a>
+  <a class="tile" href="#pompage"><span class="n" id="nM"></span><div class="ic c2"><svg class="i"><use href="#i-pump"/></svg></div><div><h3>Station de pompage</h3><span>Interventions, forages, diagnostic</span></div></a>
   <a class="tile" href="#heures"><span class="n" id="nT"></span><div class="ic c3"><svg class="i"><use href="#i-clock"/></svg></div><div><h3>Heures</h3><span>Trajets et interventions</span></div></a>
   <a class="tile" href="#photos"><span class="n" id="nF"></span><div class="ic c4"><svg class="i"><use href="#i-cam"/></svg></div><div><h3>Photos</h3><span>Par chantier</span></div></a>
  </div>
@@ -544,8 +544,8 @@ nav a.nmag{flex:1}
 </section>
 
 <section id="v-pompage">
- <div class="head"><div><h2>Station de pompage</h2><p>Diagnostic des pannes et mise en service.</p></div></div>
- <div class="seg ptabs" id="pmTabs" role="tablist"><button data-pt="tb">Tableau de bord</button><button data-pt="for">Forages</button><button data-pt="mes">Mise en service</button><button data-pt="memo">Mémo</button><button data-pt="diag">Diagnostic</button></div>
+ <div class="head"><div><h2>Station de pompage</h2><p>Interventions chantier, forages, mémo et diagnostic.</p></div></div>
+ <div class="seg ptabs" id="pmTabs" role="tablist"><button data-pt="tb">Tableau de bord</button><button data-pt="mes">Intervention Chantier</button><button data-pt="for">Forages</button><button data-pt="memo">Mémo</button><button data-pt="diag">Diagnostic</button></div>
  <div id="pmDiag">
   <div id="pmList">
    <div class="warn"><svg class="i"><use href="#i-warn"/></svg><span>Avant d'intervenir sur l'armoire ou la pompe : consigner, vérifier l'absence de tension, isoler et vidanger la partie hydraulique.</span></div>
@@ -586,7 +586,7 @@ nav a.nmag{flex:1}
   <div id="foList"></div>
  </div>
  <div id="pmMes" hidden>
- <div class="ptlh" style="margin-bottom:10px"><h3 style="font-size:22px">Mise en service pas à pas</h3><button class="ghost" id="mesNew"><svg class="i"><use href="#i-plus"/></svg>Nouvelle fiche</button></div>
+ <div class="ptlh" style="margin-bottom:10px"><h3 style="font-size:22px">Intervention chantier</h3><button class="ghost" id="mesNew"><svg class="i"><use href="#i-plus"/></svg>Nouvelle fiche</button></div>
  <div class="stepper" id="stepper"></div>
  <div class="pbar"><div><b id="progBar"></b></div><span id="progTxt"></span></div>
  <div class="card" id="stepBody"></div>
@@ -1085,7 +1085,7 @@ function drawStepper(){
 function drawStep(){if(!(step>=0&&step<STEPS.length))step=0;const s=STEPS[step];let h='';
  if(step===0){const F=[...(S.forages||[])].sort((a,b)=>(a.c||'').localeCompare(b.c||'','fr')||(a.n||'').localeCompare(b.n||'','fr'));const fo=F.find(f=>f.id===cur.h.forage);
   h=`<h3 style="font-size:23px;margin-bottom:14px">Informations chantier</h3>
-  <label style="margin-bottom:12px">Forage<select id="mesFo"><option value="">${F.length?'— Choisir un forage —':'Aucun forage enregistré (Pompage → Forages)'}</option>${F.map(f=>`<option value="${esc(f.id)}"${f.id===cur.h.forage?' selected':''}>${esc([f.n||'Forage',f.c,f.v].filter(Boolean).join(' – '))}</option>`).join('')}</select></label>
+  <label style="margin-bottom:12px">Forage<select id="mesFo"><option value="">${F.length?'— Choisir un forage —':'Aucun forage (à créer dans Forages)'}</option>${F.map(f=>`<option value="${esc(f.id)}"${f.id===cur.h.forage?' selected':''}>${esc([f.n||'Forage',f.c,f.v].filter(Boolean).join(' – '))}</option>`).join('')}</select></label>
   ${fo?`<div class="fosel"><span class="pinb">${ic('pin')}</span><div><b>${esc(fo.n||'Forage')}</b><div class="tag">${fo.lat}, ${fo.lon}${fo.prof?' · '+esc(fo.prof)+' m':''}${fo.q?' · '+esc(fo.q)+' m³/h':''}${fo.pompe?' · '+esc(fo.pompe):''}</div></div><a class="shb" href="https://www.google.com/maps/dir/?api=1&destination=${fo.lat},${fo.lon}" target="_blank" rel="noopener">${ic('car')}Itinéraire</a></div>`:''}
   <div class="grid">${HEAD.map(([k,l,t])=>`<label>${l}<input data-h="${k}" type="${t||'text'}" value="${esc(cur.h[k])}"></label>`).join('')}</div>`}
  else if(s.vf){const fld=(F)=>F.map(([k,l,ph,dl])=>k==='vfiltre'?`<label>${l}<select data-r="vfiltre"><option value="">— Choisir —</option>${['Avec','Sans'].map(o=>`<option${cur.r.vfiltre===o?' selected':''}>${o}</option>`).join('')}</select></label>`:`<label>${l}<input data-r="${k}" ${/puiss/.test(k)?'inputmode="decimal"':''} ${dl?`list="${dl}"`:''} placeholder="${ph}" value="${esc(cur.r[k])}"></label>`).join('');
@@ -1110,13 +1110,13 @@ $('#stepBody').addEventListener('click',async e=>{
  if(e.target.closest('#mesSave')){cur.t=Date.now();await put('mes',JSON.parse(JSON.stringify(cur)));toast('Intervention enregistrée')}
  if(e.target.closest('#mesCopy'))copy(report(cur))});
 $('#mesNew').addEventListener('click',()=>{cur=blank();step=0;drawStep();toast('Nouvelle fiche')});
-function report(m){const L=['MISE EN SERVICE STATION DE POMPAGE'];{const f=(S.forages||[]).find(x=>x.id===m.h.forage);if(f)L.push('Forage : '+(f.n||'Forage')+(f.c?' ('+f.c+')':'')+' – GPS '+f.lat+', '+f.lon)}HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
+function report(m){const L=['INTERVENTION CHANTIER – STATION DE POMPAGE'];{const f=(S.forages||[]).find(x=>x.id===m.h.forage);if(f)L.push('Forage : '+(f.n||'Forage')+(f.c?' ('+f.c+')':'')+' – GPS '+f.lat+', '+f.lon)}HEAD.forEach(([k,l])=>m.h[k]&&L.push(l+' : '+m.h[k]));
  CK_ORDER.forEach(gi=>{const [g,it]=CK[gi];L.push('','— '+g);it.forEach((x,ii)=>L.push((m.ck[gi+'-'+ii]?'[x] ':'[ ] ')+x))});
  if([...VAR_F,...POMPE_F].some(([k])=>m.r[k])){L.push('','— Installation');[['Variateur',VAR_F],['Pompe',POMPE_F]].forEach(([t,F])=>{if(F.some(([k])=>m.r[k]))L.push(t+' : '+F.filter(([k])=>m.r[k]).map(([k,l])=>l.toLowerCase()+' '+m.r[k]).join(', '))})}
  const r=RELF.filter(([k])=>m.r[k]);if(r.length){L.push('','— Relevés');r.forEach(([k,l,u])=>L.push(l+' : '+m.r[k]+' '+u))}
  if(m.obs)L.push('','— Observations',m.obs);return L.join('\n')}
 function drawMesList(){const l=[...S.mes].sort((a,b)=>b.t-a.t);
- $('#mesList').innerHTML=l.length?'<h3>Interventions enregistrées</h3>'+l.map(m=>`<button data-open="${esc(m.id)}"><span><b>${esc(m.h?.client||'Sans nom')}</b> <span class="tag">${esc(m.h?.site||'')}</span></span><span class="tag">${esc(m.h?.date||'')}</span></button>`).join(''):''}
+ $('#mesList').innerHTML=l.length?'<h3>Interventions chantier enregistrées</h3>'+l.map(m=>`<button data-open="${esc(m.id)}"><span><b>${esc(m.h?.client||'Sans nom')}</b> <span class="tag">${esc(m.h?.site||'')}</span></span><span class="tag">${esc(m.h?.date||'')}</span></button>`).join(''):''}
 $('#mesList').addEventListener('click',e=>{const b=e.target.closest('[data-open]');if(!b)return;const m=S.mes.find(x=>x.id===b.dataset.open);
  if(m){cur=JSON.parse(JSON.stringify(m));cur.ck=cur.ck||{};cur.r=cur.r||{};cur.h=cur.h||{};step=0;drawStep();scrollTo({top:0});toast('Fiche ouverte')}});
 drawStep();
@@ -1213,7 +1213,7 @@ function drawTb(){const F=S.forages||[],num=v=>parseFloat(String(v||'').replace(
  const k=(go,l,v,sm)=>`<button class="kpi" data-goto="${go}"><span>${l}</span><b>${v}</b><small>${sm}</small></button>`;
  $('#tbKpi').innerHTML=k('for','Forages',F.length,F.length?new Set(F.map(f=>(f.c||'').toLowerCase()).filter(Boolean)).size+' client(s)':'Aucun enregistré')
   +k('for','Profondeur moy.',prof.length?Math.round(prof.reduce((a,b)=>a+b,0)/prof.length)+' m':'–',prof.length?'max '+Math.max(...prof)+' m':'non renseignée')
-  +k('mes','Mises en service',S.mes.length,S.mes.length?mesOk+' complète(s)':'Aucune enregistrée')
+  +k('mes','Interventions chantier',S.mes.length,S.mes.length?mesOk+' complète(s)':'Aucune enregistrée')
   +k('memo','Pièces pompage',todo,cmd?cmd+' commandée(s)':'à prévoir');
  $('#tbFo').innerHTML=foMini(3)}
 function foMini(n){const L=[...(S.forages||[])].sort((a,b)=>(b.maj||b.t)-(a.maj||a.t)).slice(0,n);
