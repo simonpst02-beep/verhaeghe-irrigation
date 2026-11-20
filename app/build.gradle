@@ -12,8 +12,8 @@ android {
         applicationId 'fr.verhaeghe.irrigation'
         minSdk 24
         targetSdk 35
-        versionCode 8
-        versionName '1.7'
+        versionCode 9
+        versionName '1.8'
     }
     signingConfigs {
         release {
@@ -28,7 +28,8 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            signingConfig((ksFile.exists() && ksPass) ? signingConfigs.release : signingConfigs.debug)
+            if (!(ksFile.exists() && ksPass)) throw new GradleException('Clé de signature Verhaeghe introuvable : construction arrêtée (jamais de clé de test).')
+            signingConfig signingConfigs.release
         }
     }
     lint { abortOnError false; checkReleaseBuilds false }
