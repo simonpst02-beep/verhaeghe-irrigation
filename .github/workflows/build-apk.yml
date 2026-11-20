@@ -46,8 +46,9 @@ jobs:
           cp app/build/outputs/apk/release/app-release.apk Verhaeghe-Irrigation.apk
           cp app/build/outputs/bundle/release/app-release.aab Verhaeghe-Irrigation.aab
           sha256sum Verhaeghe-Irrigation.apk | tee Verhaeghe-Irrigation.apk.sha256
-          unzip -p Verhaeghe-Irrigation.apk META-INF/*.RSA >/dev/null 2>&1 || true
-          keytool -printcert -jarfile Verhaeghe-Irrigation.apk | grep -q "Verhaeghe" || (echo "::error::APK non signé avec la clé Verhaeghe" && exit 1)
+          AS=$(ls -d $ANDROID_HOME/build-tools/*/ | sort -V | tail -1)apksigner
+          $AS verify --print-certs Verhaeghe-Irrigation.apk | tee signature.txt
+          grep -q "Verhaeghe" signature.txt || (echo "::error::APK non signé avec la clé Verhaeghe" && exit 1)
 
       - name: Garder les fichiers (onglet Actions)
         uses: actions/upload-artifact@v4
