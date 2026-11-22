@@ -52,14 +52,6 @@ jobs:
           $AS verify --print-certs Verhaeghe-Irrigation.apk | tee signature.txt
           grep -q "Verhaeghe" signature.txt || (echo "::error::APK non signé avec la clé Verhaeghe" && exit 1)
 
-      - name: Garder les fichiers (onglet Actions)
-        uses: actions/upload-artifact@v4
-        with:
-          name: Verhaeghe-Irrigation-${{ github.ref_name }}
-          path: |
-            Verhaeghe-Irrigation.apk
-            Verhaeghe-Irrigation.aab
-            Verhaeghe-Irrigation.apk.sha256
 
       - name: Publier la version (branche main)
         if: github.ref_name == 'main'
