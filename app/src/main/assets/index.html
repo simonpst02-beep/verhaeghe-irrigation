@@ -495,6 +495,17 @@ html.lockd #lic{display:flex}
 .pfin{width:100%;margin-top:14px;min-height:54px;font-size:17px;font-weight:700;background:var(--blue)}
 .k-inter .pfin{background:var(--teal)}.k-pause .pfin{background:light-dark(#5d6d80,#53657a)}
 .req{color:var(--bad);font-weight:800}
+#nav a[hidden],.tiles a[hidden],.card[hidden],.nsep[hidden]{display:none!important}
+.navsw{display:flex;flex-direction:column}
+.nsw{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;border-top:1px solid var(--line);font-size:16px;color:var(--ink);cursor:pointer}
+.nsw:first-child{border-top:0}
+.nsg{border-top:1px solid var(--line)}.nsg:first-child{border-top:0}.nsg>.nsw{border-top:0}
+.nsubs[hidden]{display:none}
+.nsw.sub{min-height:44px;padding-left:34px;font-size:14.5px;border-top:1px dashed var(--line)}.nsw.sub span{font-weight:500;color:var(--mute)}
+.nsw.sub input{width:42px;height:26px}.nsw.sub input::after{width:20px;height:20px}.nsw.sub input:checked::after{transform:translateX(16px)}.nsw span{display:flex;align-items:center;gap:10px;font-weight:600}.nsw span svg{color:var(--blue)}
+.nsw input{appearance:none;-webkit-appearance:none;width:50px;height:30px;min-height:0;padding:0;border-radius:15px;background:var(--line);border:0;position:relative;cursor:pointer;flex:none;transition:background .2s}
+.nsw input::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.nsw input:checked{background:var(--ok)}.nsw input:checked::after{transform:translateX(20px)}
 .supk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
 .supk div{background:var(--bg);border-radius:14px;padding:10px 12px;border-top:4px solid var(--line)}
 .supk b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}.supk span{font-size:12.5px;color:var(--mute);font-weight:600}
@@ -845,6 +856,11 @@ html.lockd #lic{display:flex}
   <label class="allb" style="margin:14px 0 0"><input type="checkbox" id="prmBot"> Afficher la bulle de l'assistant sur l'accueil</label>
  </div>
  <div class="card prm">
+  <h3>Menu et affichage</h3>
+  <p class="tag" style="margin:0 0 10px">Choisissez les onglets et, dans chacun, les parties à afficher. Ce qui est masqué garde ses données.</p>
+  <div class="navsw" id="prmNav"></div>
+ </div>
+ <div class="card prm">
   <h3>Sauvegarde des données</h3>
   <p class="tag" style="margin:0 0 12px" id="bkTxt">Enregistrez un fichier de sauvegarde (mémo, heures, forages, magasin, fiches, notes) pour le garder ou le transférer sur un autre téléphone.</p>
   <div class="tools"><button id="bkExp"><svg class="i"><use href="#i-file"/></svg>Exporter une sauvegarde</button><label class="shb" style="cursor:pointer"><svg class="i"><use href="#i-plus"/></svg>Importer une sauvegarde<input type="file" id="bkImp" accept="application/json,.json" hidden></label></div>
@@ -1159,9 +1175,36 @@ function render(k){if(k==='magasin'){drawMg();drawQ();return}if(pmTab==='tb'&&$(
 
 /* ---------- Navigation ---------- */
 const VIEWS=['accueil','enrouleurs','pompage','heures','photos','magasin','parametres'];
+/* Menu : onglets activables dans les Paramètres */
+const NAVS=[['enrouleurs','Enrouleurs','reel'],['pompage','Station de pompage','pump'],['heures','Heures','clock'],['photos','Photos','cam'],['magasin','Magasin','box']];
+let navOff=[];try{navOff=JSON.parse(localStorage.getItem('dep_navoff')||'[]')}catch(e){}
+function applyNav(){NAVS.forEach(([k])=>{const off=navOff.includes(k);document.querySelectorAll(`#nav a[data-v="${k}"],.tiles a[href="#${k}"]`).forEach(e=>e.hidden=off)});
+ const hf=$('#homeFo'),ph=$('#ptHome'),ns=document.querySelector('.nsep');if(hf)hf.hidden=navOff.includes('pompage');if(ph)ph.hidden=navOff.includes('heures');if(ns)ns.hidden=navOff.includes('magasin');
+ const sw=$('#prmNav');if(sw&&!sw.children.length){const sub=k=>(BLK[k]||[]).map(([b,l])=>`<label class="nsw sub"><span>${l}</span><input type="checkbox" data-blk="${b}"></label>`).join('');
+  sw.innerHTML=`<div class="nsg"><div class="nsw"><span>${ic('home')}Accueil</span></div>${sub('accueil')}</div>`+NAVS.map(([k,l,i])=>`<div class="nsg" data-g="${k}"><label class="nsw"><span>${ic(i)}${l}</span><input type="checkbox" data-nav="${k}"></label><div class="nsubs">${sub(k)}</div></div>`).join('')}
+ document.querySelectorAll('[data-nav]').forEach(c=>{c.checked=!navOff.includes(c.dataset.nav);const s=c.closest('.nsg').querySelector('.nsubs');if(s)s.hidden=!c.checked});
+ document.querySelectorAll('[data-blk]').forEach(c=>c.checked=!blkOff.includes(c.dataset.blk));applyBlk()}
+/* Parties affichées à l'intérieur des onglets */
+const BLK={accueil:[['h_clock','Horloge','#v-accueil .clock'],['h_wx','Météo','#wx,#wxEdit,#wxForm'],['h_fo','Encadré Forages','#homeFo'],['h_pt','Encadré Heures du jour','#ptHome'],['h_todo','Pièces à prévoir','#todo']],
+ enrouleurs:[['e_info','Fiche de la marque','#brandInfo'],['e_memo','Onglet Mémo','#btabs [data-t=memo]'],['e_pdf','Onglet PDF','#btabs [data-t=pdf]']],
+ pompage:[['p_tb','Tableau de bord','#pmTabs [data-pt=tb]'],['p_mes','Intervention chantier','#pmTabs [data-pt=mes]'],['p_for','Forages','#pmTabs [data-pt=for]'],['p_memo','Mémo','#pmTabs [data-pt=memo]']],
+ heures:[['t_prep','Étape Préparation','.ptsec.k-prep'],['t_pause','Étape Pause','.ptsec.k-pause'],['t_ret','Étape Trajet retour','.ptsec.k-retour'],['t_grp','Groupe / techniciens','.ptgrp,#ptTechs'],['t_tot','Totaux du jour','#ptTot,#ptBar'],['t_route','Trajets entre interventions','#rtCard'],['t_det','Détail de la journée','#detCard'],['t_exp','Boutons copier / exporter / partager','#v-heures .ptools,#ptExpSt'],['t_ot','Historique des OT','#otCard'],['t_wk','Semaine','#wkCard'],['t_sup','Heures supplémentaires','#supCard']],
+ photos:[['f_chips','Filtres par chantier','#pChips']],
+ magasin:[['m_q','Recherche rapide','#qlook']]};
+let blkOff=[];try{blkOff=JSON.parse(localStorage.getItem('dep_blkoff')||'[]')}catch(e){}
+const blkHidden=k=>blkOff.includes(k);
+{const id=(sel,v)=>{const e=$(sel);if(e){const c=e.closest('.card');if(c&&!c.id)c.id=v}};id('#ptRoute','rtCard');id('#ptList','detCard');id('#ptWeek','wkCard')}
+function applyBlk(){let st=$('#blkCss');if(!st){st=document.createElement('style');st.id='blkCss';document.head.appendChild(st)}
+ st.textContent=Object.values(BLK).flat().filter(([k])=>blkOff.includes(k)).map(([,,s])=>s.split(',').map(x=>x.trim()+'{display:none!important}').join('')).join('\n');
+ if((blkHidden('e_memo')&&btab==='memo')||(blkHidden('e_pdf')&&btab==='pdf')){btab='diag';try{localStorage.setItem('dep_btab','diag')}catch(e){}drawBTabs()}
+ const pm={tb:'p_tb',mes:'p_mes',for:'p_for',memo:'p_memo'};if(pm[pmTab]&&blkHidden(pm[pmTab])){pmTab='diag';try{localStorage.setItem('dep_pmtab','diag')}catch(e){}drawPmTabs()}}
+document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closest('[data-blk]');if(!c)return;const k=c.dataset.blk;
+ blkOff=c.checked?blkOff.filter(x=>x!==k):[...new Set([...blkOff,k])];try{localStorage.setItem('dep_blkoff',JSON.stringify(blkOff))}catch(x){}applyBlk()});
+document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closest('[data-nav]');if(!c)return;const k=c.dataset.nav;
+ navOff=c.checked?navOff.filter(x=>x!==k):[...new Set([...navOff,k])];try{localStorage.setItem('dep_navoff',JSON.stringify(navOff))}catch(x){}applyNav();toast((NAVS.find(n=>n[0]===k)||[])[1]+(c.checked?' affiché':' masqué'))});
 function botFabUpd(){const f=$('#botFab'),x=$('#botFabX');if(!f)return;let off=false;try{off=localStorage.getItem('dep_botoff')==='1'}catch(e){}
  const v=location.hash.slice(1)||'accueil',show=(v==='accueil'||!VIEWS.includes(v))&&!off&&$('#bot').hidden;f.hidden=!show;x.hidden=!show}
-function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
+function route(){if(navOff.includes(location.hash.slice(1))){location.hash='accueil';return}applyNav();const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
  for(const x of VIEWS)$('#v-'+x).classList.toggle('cur',x===v);
  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('cur',a.dataset.v===v));
  if(v==='accueil')drawHome();botFabUpd();scrollTo({top:0})}
@@ -1406,7 +1449,8 @@ async function ptValidate(){
  {const miss=[['#ptOt','le N° OT'],['#ptCl','le client']].filter(([i])=>!$(i).value.trim());
   if(miss.length){miss.forEach(([i])=>$(i).classList.add('need'));const f=$(miss[0][0]);f.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>f.focus(),300);return toast('Renseignez d\'abord '+miss.map(m=>m[1]).join(' et '))}}
  const L=[];
- for(const k of PTK){if(!fS(k).value&&!fE(k).value)continue;
+ const SK={prep:'t_prep',pause:'t_pause',retour:'t_ret'};
+ for(const k of PTK){if(blkHidden(SK[k]))continue;if(!fS(k).value&&!fE(k).value)continue;
   if(!fS(k).value){fS(k).focus();return toast(PTL[k]+' : indiquez l\'heure de début')}
   if(!fE(k).value){fE(k).focus();return toast(PTL[k]+' : indiquez l\'heure de fin')}
   const s=toMs(ptDay,fS(k).value),en=toMs(ptDay,fE(k).value);
@@ -1414,7 +1458,7 @@ async function ptValidate(){
   L.push({k,s,en})}
  if(!L.length){fS('prep').focus();return toast('Saisissez les heures d\'au moins une étape')}
  if(L.some(x=>daySegs(ptDay).some(y=>y.end&&x.s<y.end&&x.en>y.start)))toast('Attention : chevauche une autre ligne');
- const ot=$('#ptOt').value.trim(),ch=$('#ptCh').value.trim(),cl=$('#ptCl').value.trim(),rq=$('#ptRq').value.trim(),grp=$('#ptGrp').checked;
+ const ot=$('#ptOt').value.trim(),ch=$('#ptCh').value.trim(),cl=$('#ptCl').value.trim(),rq=$('#ptRq').value.trim(),grp=$('#ptGrp').checked&&!blkHidden('t_grp');
  for(const x of L)await put('pointage',{id:uid(),day:ptDay,type:x.k==='retour'?'trajet':x.k,...(x.k==='trajet'?{sens:'aller'}:x.k==='retour'?{sens:'retour'}:{}),start:x.s,end:x.en,c:[ch,cl].filter(Boolean).join(' – '),ot,ch,cl,rq:x.k==='inter'||L.length===1?rq:'',grp,techs:grp?[...ptSel]:[],t:Date.now()});
  const tot=L.filter(x=>x.k!=='pause').reduce((t,x)=>t+x.en-x.s,0);
  PTK.forEach(k=>{fS(k).value='';fE(k).value=''});ptDurUpd();
@@ -1903,7 +1947,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.8',APP_CODE=32,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.8.1',APP_CODE=33,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
