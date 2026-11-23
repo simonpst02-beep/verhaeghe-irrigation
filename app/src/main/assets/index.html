@@ -495,6 +495,8 @@ html.lockd #lic{display:flex}
 .pfin{width:100%;margin-top:14px;min-height:54px;font-size:17px;font-weight:700;background:var(--blue)}
 .k-inter .pfin{background:var(--teal)}.k-pause .pfin{background:light-dark(#5d6d80,#53657a)}
 .req{color:var(--bad);font-weight:800}
+html:not(.android) .andr{display:none}
+#licForm #licName{margin-bottom:10px;text-transform:none!important;letter-spacing:normal!important}
 #nav a[hidden],.tiles a[hidden],.card[hidden],.nsep[hidden]{display:none!important}
 .navsw{display:flex;flex-direction:column}
 .nsw{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;border-top:1px solid var(--line);font-size:16px;color:var(--ink);cursor:pointer}
@@ -639,7 +641,8 @@ html.lockd #lic{display:flex}
 
 <div id="lic"><form class="lbox" id="licForm" autocomplete="off">
  <div class="lhd"><b><svg class="i"><use href="#i-drop"/></svg></b><div><h2>Verhaeghe Irrigation</h2><small>Application réservée aux membres Verhaeghe</small></div></div>
- <p id="licMsg" style="margin:0">Entrez votre code d'activation personnel (il vous a été remis par Verhaeghe Irrigation). Il n'est demandé qu'une seule fois sur ce téléphone.</p>
+ <p id="licMsg" style="margin:0">Entrez votre prénom puis votre code d'activation personnel (il vous a été remis par Verhaeghe Irrigation). Il n'est demandé qu'une seule fois sur ce téléphone.</p>
+ <input id="licName" placeholder="Votre prénom" autocomplete="given-name" autocapitalize="words" aria-label="Votre prénom">
  <input id="licCode" placeholder="VHG-XXXX-XXXX-XXXX" autocapitalize="characters" spellcheck="false">
  <button id="licBtn" type="submit">Activer l'application</button>
  <p class="lerr" id="licErr"></p>
@@ -868,7 +871,7 @@ html.lockd #lic{display:flex}
  </div>
  <div class="card prm">
   <h3>À propos</h3>
-  <dl class="about"><dt>Application</dt><dd>Verhaeghe Irrigation – Assistant technique terrain</dd><dt>Version</dt><dd id="abVer"></dd><dt>Type</dt><dd id="abType"></dd><dt>Données</dt><dd id="abData"></dd><dt>Licence</dt><dd id="abLic">—</dd></dl>
+  <dl class="about"><dt>Application</dt><dd>Verhaeghe Irrigation – Assistant technique terrain</dd><dt>Version</dt><dd id="abVer"></dd><dt>Type</dt><dd id="abType"></dd><dt>Données</dt><dd id="abData"></dd><dt>Licence</dt><dd id="abLic">—</dd><dt class="andr">Prénom</dt><dd class="andr"><input id="abName" placeholder="Votre prénom" autocomplete="given-name" style="min-height:40px;padding:6px 10px;max-width:220px"></dd></dl>
  </div>
 </section>
 
@@ -926,6 +929,7 @@ html.lockd #lic{display:flex}
    try{const r=await fetch(`https://raw.githubusercontent.com/${R}/main/config.json?t=${Date.now()}`,{cache:'no-store'});if(r.ok){const c=await r.json();try{localStorage.setItem('vi_cfg',JSON.stringify(c))}catch(e){}return c}}catch(e){}}
   try{return JSON.parse(localStorage.getItem('vi_cfg')||'{}')}catch(e){return {}}}
  async function sheet(url,q){const r=await fetch(url+(url.includes('?')?'&':'?')+new URLSearchParams({...q,t:Date.now()}),{cache:'no-store'});if(!r.ok)throw new Error('reseau');return r.json()}
+ const toastP=t=>{try{toast(t)}catch(e){}};
  const ERR={inconnu:'Code inconnu. Vérifiez-le ou demandez votre code à Verhaeghe Irrigation.',desactive:'Ce code a été désactivé.',autre_tel:'Ce code est déjà utilisé sur un autre téléphone. Demandez à l\'administrateur de le libérer.',libere:'Ce téléphone a été déconnecté de la licence. Entrez à nouveau votre code.',serveur:'Le registre des licences ne répond pas. Réessayez plus tard.'};
  async function list(){
   for(const R of SRCS){
@@ -935,16 +939,17 @@ html.lockd #lic{display:flex}
  const get=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}};
  const save=v=>{try{v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY)}catch(e){}};
  const showLic=(msg,err)=>{H.classList.add('lockd');if(msg)$('#licMsg').innerHTML=msg;$('#licErr').textContent=err||''};
- const about=l=>{const d=$('#abLic');if(d)d.textContent=l?('Activée – '+(l.n||'membre Verhaeghe')):'—'};
+ const about=l=>{const d=$('#abLic');if(d)d.textContent=l?('Activée – '+(l.n||l.p||'membre Verhaeghe')):'—';const a=$('#abName');if(a&&document.activeElement!==a)a.value=l&&l.p||'';try{if(l&&l.p)localStorage.setItem('vi_prenom',l.p)}catch(e){}window.__hiName&&window.__hiName()};
+ const pren=()=>($('#licName').value||'').trim().replace(/\s+/g,' ');
  let lic=get();
  if(!lic)showLic();
  else if(Date.now()-(lic.chk||0)>MAXOFF)showLic('Cela fait plus de 30 jours que la licence n\'a pas pu être vérifiée. <b>Connectez-vous à internet</b> puis entrez à nouveau votre code.');
  document.addEventListener('DOMContentLoaded',()=>{about(lic);try{$('#licDev').textContent=devShort()}catch(e){}
-  $('#licForm').addEventListener('submit',async e=>{e.preventDefault();const c=$('#licCode').value;if(norm(c).length<8)return showLic(null,'Code incomplet.');
+  $('#licForm').addEventListener('submit',async e=>{e.preventDefault();const c=$('#licCode').value;if(pren().length<2){$('#licName').focus();return showLic(null,'Indiquez votre prénom.')}if(norm(c).length<8)return showLic(null,'Code incomplet.');
    const b=$('#licBtn');b.disabled=true;b.textContent='Vérification…';$('#licErr').textContent='';
    try{await new Promise(r=>setTimeout(r,30));const h=hashCode(c),C=await cfg();
-    const ok=n=>{lic={h,n:n||'',t:Date.now(),chk:Date.now(),mode:C.licenceUrl?'sheet':'json'};save(lic);about(lic);H.classList.remove('lockd');$('#licCode').value=''};
-    if(C.licenceUrl){const r=await sheet(C.licenceUrl,{a:'act',code:norm(c),dev:devId(),model:devModel()});if(r.ok)ok(r.n);else showLic(null,ERR[r.err]||ERR.serveur)}
+    const ok=n=>{lic={h,n:n||'',p:pren(),t:Date.now(),chk:Date.now(),mode:C.licenceUrl?'sheet':'json'};save(lic);about(lic);H.classList.remove('lockd');$('#licCode').value=''};
+    if(C.licenceUrl){const r=await sheet(C.licenceUrl,{a:'act',code:norm(c),dev:devId(),model:devModel(),prenom:pren()});if(r.ok)ok(r.n);else showLic(null,ERR[r.err]||ERR.serveur)}
     else{const L=await list(),f=(L.codes||[]).find(x=>x.h===h);
      if(!f)showLic(null,ERR.inconnu);else if(f.actif===false)showLic(null,ERR.desactive);else ok(f.n)}}
    catch(x){showLic(null,'Pas de connexion internet : l\'activation nécessite internet (une seule fois).')}
@@ -952,11 +957,14 @@ html.lockd #lic{display:flex}
   // contrôle en arrière-plan (code désactivé à distance)
   const check=async()=>{lic=get();if(!lic||Date.now()-(lic.chk||0)<RECHECK)return;
    try{const C=await cfg();let st;
-    if(C.licenceUrl){const r=await sheet(C.licenceUrl,{a:'chk',h:lic.h,dev:devId(),model:devModel(),mig:lic.mode==='sheet'?'':'1'});if(r.err==='serveur')return;st=r.ok?{n:r.n}:{err:r.err};if(r.ok)lic.mode='sheet'}
+    if(C.licenceUrl){const r=await sheet(C.licenceUrl,{a:'chk',h:lic.h,dev:devId(),model:devModel(),prenom:lic.p||'',mig:lic.mode==='sheet'?'':'1'});if(r.err==='serveur')return;st=r.ok?{n:r.n}:{err:r.err};if(r.ok)lic.mode='sheet'}
     else{const L=await list(),f=(L.codes||[]).find(x=>x.h===lic.h);st=!f?{err:'inconnu'}:f.actif===false?{err:'desactive'}:{n:f.n}}
     if(st.err){save(null);lic=null;about(null);showLic(st.err==='libere'?ERR.libere:st.err==='autre_tel'?'<b>Ce code est maintenant utilisé sur un autre téléphone.</b> Contactez Verhaeghe Irrigation.':'<b>Votre accès a été désactivé.</b> Contactez Verhaeghe Irrigation pour obtenir un nouveau code.')}
     else{lic.chk=Date.now();lic.n=st.n||lic.n;save(lic);about(lic);if(H.classList.contains('lockd')&&!$('#licErr').textContent)H.classList.remove('lockd')}}catch(e){}};
   check();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
+  // prénom modifiable dans Paramètres › À propos : enregistré et envoyé au registre des licences
+  $('#abName').addEventListener('change',async e=>{const v=e.target.value.trim().replace(/\s+/g,' ');lic=get();if(!lic)return;lic.p=v;save(lic);about(lic);
+   try{const C=await cfg();if(C.licenceUrl)await sheet(C.licenceUrl,{a:'chk',h:lic.h,dev:devId(),model:devModel(),prenom:v,mig:lic.mode==='sheet'?'':'1'});toastP('Prénom enregistré')}catch(x){toastP('Prénom enregistré sur le téléphone (envoi au registre à la prochaine connexion)')}});
  });
 })();
 </script>
@@ -1211,8 +1219,9 @@ function route(){if(navOff.includes(location.hash.slice(1))){location.hash='accu
 window.addEventListener('hashchange',route);
 
 /* ---------- Accueil ---------- */
+window.__hiName=()=>{try{if($('#v-accueil').classList.contains('cur'))drawHome()}catch(e){}};
 function drawHome(){drawPtHome();drawHomeFo();
- const h=new Date().getHours();$('#hi').textContent=h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir';
+ const h=new Date().getHours();let pn='';try{pn=localStorage.getItem('vi_prenom')||''}catch(e){}$('#hi').textContent=(h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir')+(pn?' '+pn:'');
  $('#today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
  const todo=S.memo.filter(x=>!x.s);
  $('#nP').textContent=PANNES.length;$('#nM').textContent=S.mes.length||'';$('#nT').textContent=todo.length||'';$('#nF').textContent=S.photos.length||'';
@@ -1947,7 +1956,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.8.1',APP_CODE=33,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.8.2',APP_CODE=34,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
