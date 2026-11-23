@@ -495,6 +495,12 @@ html.lockd #lic{display:flex}
 .pfin{width:100%;margin-top:14px;min-height:54px;font-size:17px;font-weight:700;background:var(--blue)}
 .k-inter .pfin{background:var(--teal)}.k-pause .pfin{background:light-dark(#5d6d80,#53657a)}
 .req{color:var(--bad);font-weight:800}
+.supk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.supk div{background:var(--bg);border-radius:14px;padding:10px 12px;border-top:4px solid var(--line)}
+.supk b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}.supk span{font-size:12.5px;color:var(--mute);font-weight:600}
+.supk .hs{border-top-color:var(--or)}.supk .hs b{color:var(--or)}
+@media(max-width:420px){.supk b{font-size:17px}}
+.sup td.p{color:var(--or);font-weight:800}.sup tr.we td:first-child{color:var(--or)}
 .pval{width:100%;margin-top:16px;min-height:60px;font-size:18px;background:var(--teal)}
 .pfin.off{opacity:.45;filter:grayscale(.6);cursor:not-allowed}
 #ptLockMsg[hidden]{display:none}
@@ -735,6 +741,9 @@ html.lockd #lic{display:flex}
   <div class="search" style="margin-bottom:6px"><svg class="i"><use href="#i-search"/></svg><input id="otQ" placeholder="N° OT, chantier, client, technicien…" aria-label="Rechercher un OT"></div>
   <div id="otList"></div></div>
  <div class="card" style="margin-top:14px"><h3 style="font-size:21px;margin-bottom:8px" id="ptWT">Semaine</h3><div id="ptWeek"></div></div>
+ <div class="card" style="margin-top:14px" id="supCard"><div class="ptlh"><h3>Heures supplémentaires</h3><span class="tag" id="supM"></span></div>
+  <p class="tag" style="margin:0 0 12px">Base : 8 h par jour du lundi au vendredi. Au-delà de 8 h un jour de semaine, et toutes les heures du samedi et du dimanche, comptent en heures supplémentaires. Les pauses ne comptent pas.</p>
+  <div id="supBox"></div></div>
 </section>
 
 <section id="v-magasin">
@@ -1371,6 +1380,21 @@ $('#ptVal').addEventListener('click',ptValidate);
 document.querySelectorAll('.ptsec').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();ptValidate()}));
 drawTechs();ptLock();
 
+/* Heures supplémentaires du mois : base 8 h du lundi au vendredi */
+const BASE_J=8*36e5;
+function supDay(d){const w=new Date(d+'T12:00').getDay(),t=totals(d).tot,we=w===0||w===6;return {t,we,s:we?t:Math.max(0,t-BASE_J)}}
+function drawSup(){if(!$('#supBox'))return;const m=ptDay.slice(0,7),D=[...new Set(S.pointage.filter(x=>x.day.startsWith(m)).map(x=>x.day))].sort();
+ $('#supM').textContent=new Date(m+'-15T12:00').toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+ const R=D.map(d=>({d,...supDay(d)})).filter(x=>x.t>0),tot=R.reduce((a,x)=>a+x.t,0),hs=R.reduce((a,x)=>a+x.s,0),nj=R.filter(x=>!x.we).length;
+ // détail par semaine (lundi → dimanche)
+ const W={};R.forEach(x=>{const k=weekDays(x.d)[0];(W[k]=W[k]||{t:0,s:0}).t+=x.t;W[k].s+=x.s});
+ const rows=R.filter(x=>x.s>0);
+ $('#supBox').innerHTML=!R.length?`<p class="empty" style="margin:0">Aucune heure notée ce mois-ci.</p>`:
+  `<div class="supk"><div><b>${hm(tot)}</b><span>Travaillées</span></div><div><b>${nj} j</b><span>Jours en semaine</span></div><div class="hs"><b>${hm(hs)}</b><span>Heures sup.</span></div></div>`+
+  `<table class="wk sup"><thead><tr><th>Semaine du</th><th>Travaillé</th><th>Heures sup.</th></tr></thead><tbody>${Object.entries(W).map(([k,v])=>`<tr><td>${new Date(k+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</td><td>${hm(v.t)}</td><td class="${v.s?'p':''}">${v.s?'+ '+hm(v.s):'–'}</td></tr>`).join('')}</tbody><tfoot><tr><td>Mois</td><td>${hm(tot)}</td><td class="p">${hs?'+ '+hm(hs):'–'}</td></tr></tfoot></table>`+
+  (rows.length?`<details style="margin-top:10px"><summary class="tag" style="cursor:pointer;min-height:40px;display:flex;align-items:center">Voir les ${rows.length} jour${rows.length>1?'s':''} avec heures sup.</summary><table class="wk sup"><tbody>${rows.map(x=>`<tr class="${x.we?'we':''}"><td><button data-day="${x.d}">${new Date(x.d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}</button></td><td>${hm(x.t)}</td><td class="p">+ ${hm(x.s)}</td></tr>`).join('')}</tbody></table></details>`:'')}
+$('#supBox').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(b){ptDay=b.dataset.day;drawPt();scrollTo({top:0,behavior:'smooth'})}});
+
 /* Historique des OT */
 function otGroups(){const G={};S.pointage.forEach(x=>{const k=otKey(x.ot);if(!k)return;(G[k]=G[k]||{k,n:x.ot.trim(),L:[]}).L.push(x)});
  return Object.values(G).map(g=>{g.L.sort((a,b)=>a.start-b.start);const o={prep:0,trajet:0,inter:0,pause:0};g.L.forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));g.o=o;
@@ -1405,7 +1429,7 @@ function drawPt(){const today=dKey(Date.now()),isT=ptDay===today;
  const L=daySegs(ptDay);
  $('#ptList').innerHTML=L.length?L.map(x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"><div class="ix"><input data-f="ot" value="${esc(x.ot||'')}" placeholder="N° OT" aria-label="N° OT" list="otNums">${x.cl&&x.ch?`<span>Client <b>${esc(x.cl)}</b></span>`:''}${(x.techs||[]).length?`<span>Équipe <b>${esc(x.techs.join(', '))}</b></span>`:''}${x.rq?`<span>${esc(x.rq)}</span>`:''}</div></div>`).join('')
   :`<p class="empty" style="margin:0">Aucun pointage ce jour.</p>`;
- drawPtTotals();drawRoute();drawWeek();drawOt()}
+ drawPtTotals();drawRoute();drawWeek();drawOt();drawSup()}
 
 function drawRoute(){const L=daySegs(ptDay);const I=L.filter(x=>x.type==='inter');
  if(!I.length){$('#ptRoute').innerHTML=`<p class="tag" style="margin:0">Pointez au moins une intervention pour voir les trajets entre chantiers.</p>`;$('#rtSum').textContent='';return}
@@ -1821,7 +1845,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.7.5',APP_CODE=27,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.7.6',APP_CODE=28,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
