@@ -1360,7 +1360,7 @@ $('#ptOt').addEventListener('change',()=>{const k=otKey($('#ptOt').value);if(!k)
 
 const PTK=['prep','trajet','inter','pause','retour'],fS=k=>$('#ptS-'+k),fE=k=>$('#ptE-'+k);
 function ptDurUpd(k){if(!k)return PTK.forEach(ptDurUpd);const s=fS(k).value,e=fE(k).value;$('#ptD-'+k).value=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):''}
-function ptDefaults(){if($('#ptForm').dataset.day!==ptDay){PTK.forEach(k=>{fS(k).value='';fE(k).value=''});$('#ptForm').dataset.day=ptDay}ptDurUpd()}
+function ptDefaults(){ptDurUpd()}
 const ptLock=()=>{const ok=!!($('#ptOt').value.trim()&&$('#ptCl').value.trim());document.querySelectorAll('#ptForm .pfin').forEach(b=>{b.classList.toggle('off',!ok);b.setAttribute('aria-disabled',ok?'false':'true')});$('#ptLockMsg').hidden=ok};
 ['#ptOt','#ptCl'].forEach(i=>{$(i).addEventListener('input',e=>{if(e.target.value.trim())e.target.classList.remove('need');ptLock()});$(i).addEventListener('change',ptLock)});
 PTK.forEach(k=>{fS(k).addEventListener('input',()=>ptDurUpd(k));fE(k).addEventListener('input',()=>ptDurUpd(k))});
@@ -1380,11 +1380,20 @@ async function ptValidate(){
  for(const x of L)await put('pointage',{id:uid(),day:ptDay,type:x.k==='retour'?'trajet':x.k,...(x.k==='trajet'?{sens:'aller'}:x.k==='retour'?{sens:'retour'}:{}),start:x.s,end:x.en,c:[ch,cl].filter(Boolean).join(' – '),ot,ch,cl,rq:x.k==='inter'||L.length===1?rq:'',grp,techs:grp?[...ptSel]:[],t:Date.now()});
  const tot=L.filter(x=>x.k!=='pause').reduce((t,x)=>t+x.en-x.s,0);
  PTK.forEach(k=>{fS(k).value='';fE(k).value=''});ptDurUpd();
- $('#ptOt').value='';$('#ptCh').value='';$('#ptCl').value='';$('#ptRq').value='';ptLock();
+ $('#ptOt').value='';$('#ptCh').value='';$('#ptCl').value='';$('#ptRq').value='';ptLock();ptDraftSave();
  toast('Intervention validée · OT '+ot+' · '+hm(tot))}
 $('#ptVal').addEventListener('click',ptValidate);
 document.querySelectorAll('.ptsec').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();ptValidate()}));
 drawTechs();ptLock();
+/* Brouillon : la saisie en cours reste enregistrée (même appli fermée) jusqu'à la validation */
+const PTD_F=['ptOt','ptCl','ptCh','ptRq'];
+function ptDraftSave(){const d={f:{},t:{}};PTD_F.forEach(i=>d.f[i]=$('#'+i).value);PTK.forEach(k=>d.t[k]=[fS(k).value,fE(k).value]);
+ const empty=!Object.values(d.f).some(Boolean)&&!Object.values(d.t).some(v=>v[0]||v[1]);try{empty?localStorage.removeItem('dep_ptdraft'):localStorage.setItem('dep_ptdraft',JSON.stringify(d))}catch(e){}}
+function ptDraftLoad(){let d=null;try{d=JSON.parse(localStorage.getItem('dep_ptdraft')||'null')}catch(e){}if(!d)return;
+ PTD_F.forEach(i=>{if(d.f&&d.f[i]!=null)$('#'+i).value=d.f[i]});PTK.forEach(k=>{const v=d.t&&d.t[k];if(v){fS(k).value=v[0]||'';fE(k).value=v[1]||''}});ptDurUpd();ptLock()}
+$('#ptForm').addEventListener('input',ptDraftSave);$('#ptForm').addEventListener('change',ptDraftSave);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')ptDraftSave()});
+ptDraftLoad();
 
 /* Heures supplémentaires du mois : base 8 h du lundi au vendredi */
 const BASE_J=8*36e5;
@@ -1851,7 +1860,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.7.7',APP_CODE=29,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.7.8',APP_CODE=30,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
