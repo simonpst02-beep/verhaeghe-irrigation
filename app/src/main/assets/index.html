@@ -764,7 +764,7 @@ html:not(.android) .andr{display:none}
    <div class="tdda"><input id="ptTechN" placeholder="Ajouter un technicien" aria-label="Nom du technicien"><button type="button" class="ghost" id="ptTechAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div>
   </details>
   <p class="ptlbl" style="margin-top:18px">Heures</p>
-  <p class="warn" id="ptLockMsg" style="margin:0 0 4px"><svg class="i"><use href="#i-warn"/></svg>Renseignez le N° OT et le client pour valider.</p>
+  <p class="warn" id="ptLockMsg" style="margin:0 0 4px"><svg class="i"><use href="#i-warn"/></svg>Renseignez le N° OT ou le client pour valider.</p>
   <form class="ptsec k-prep" data-sec="prep">
    <div class="psh"><span class="pic"><svg class="i"><use href="#i-box"/></svg></span><h3>Préparation</h3><b class="pdu" id="ptH-prep"></b></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-prep"></label><label>Fin<input type="time" id="ptE-prep"></label><label>Durée<input id="ptD-prep" readonly tabindex="-1" placeholder="–"></label></div>
@@ -786,7 +786,7 @@ html:not(.android) .andr{display:none}
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-retour"></label><label>Fin<input type="time" id="ptE-retour"></label><label>Durée<input id="ptD-retour" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
  <button type="button" class="pfin pval" id="ptVal"><svg class="i"><use href="#i-check"/></svg>Valider l'intervention</button>
- <p class="tag" style="margin:10px 0 0">* Obligatoires. Remplissez seulement les étapes faites, puis validez.</p>
+ <p class="tag" style="margin:10px 0 0">* N° OT ou client obligatoire. Remplissez seulement les étapes faites, puis validez.</p>
 </div>
  <div class="pttot" id="ptTot"></div>
  <div class="ptbar" id="ptBar"></div>
@@ -1453,12 +1453,12 @@ $('#ptOt').addEventListener('change',()=>{const k=otKey($('#ptOt').value);if(!k)
 const PTK=['prep','trajet','inter','pause','retour'],fS=k=>$('#ptS-'+k),fE=k=>$('#ptE-'+k);
 function ptDurUpd(k){if(!k)return PTK.forEach(ptDurUpd);const s=fS(k).value,e=fE(k).value,v=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):'';$('#ptD-'+k).value=v;const h=$('#ptH-'+k);if(h)h.textContent=v}
 function ptDefaults(){ptDurUpd()}
-const ptLock=()=>{const ok=!!($('#ptOt').value.trim()&&$('#ptCl').value.trim());document.querySelectorAll('#ptForm .pfin').forEach(b=>{b.classList.toggle('off',!ok);b.setAttribute('aria-disabled',ok?'false':'true')});$('#ptLockMsg').hidden=ok};
+const ptLock=()=>{const ok=!!($('#ptOt').value.trim()||$('#ptCl').value.trim());if(ok)['#ptOt','#ptCl'].forEach(i=>$(i).classList.remove('need'));document.querySelectorAll('#ptForm .pfin').forEach(b=>{b.classList.toggle('off',!ok);b.setAttribute('aria-disabled',ok?'false':'true')});$('#ptLockMsg').hidden=ok};
 ['#ptOt','#ptCl'].forEach(i=>{$(i).addEventListener('input',e=>{if(e.target.value.trim())e.target.classList.remove('need');ptLock()});$(i).addEventListener('change',ptLock)});
 PTK.forEach(k=>{fS(k).addEventListener('input',()=>ptDurUpd(k));fE(k).addEventListener('input',()=>ptDurUpd(k))});
 async function ptValidate(){
- {const miss=[['#ptOt','le N° OT'],['#ptCl','le client']].filter(([i])=>!$(i).value.trim());
-  if(miss.length){miss.forEach(([i])=>$(i).classList.add('need'));const f=$(miss[0][0]);f.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>f.focus(),300);return toast('Renseignez d\'abord '+miss.map(m=>m[1]).join(' et '))}}
+ {const miss=$('#ptOt').value.trim()||$('#ptCl').value.trim()?[]:[['#ptOt','le N° OT'],['#ptCl','le client']];
+  if(miss.length){miss.forEach(([i])=>$(i).classList.add('need'));const f=$(miss[0][0]);f.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>f.focus(),300);return toast('Renseignez au moins le N° OT ou le client')}}
  const L=[];
  const SK={prep:'t_prep',pause:'t_pause',retour:'t_ret'};
  for(const k of PTK){if(blkHidden(SK[k]))continue;if(!fS(k).value&&!fE(k).value)continue;
@@ -1474,7 +1474,7 @@ async function ptValidate(){
  const tot=L.filter(x=>x.k!=='pause').reduce((t,x)=>t+x.en-x.s,0);
  PTK.forEach(k=>{fS(k).value='';fE(k).value=''});ptDurUpd();
  $('#ptOt').value='';$('#ptCh').value='';$('#ptCl').value='';$('#ptRq').value='';ptLock();ptDraftSave();
- toast('Intervention validée · OT '+ot+' · '+hm(tot))}
+ toast('Intervention validée · '+(ot?'OT '+ot:cl)+' · '+hm(tot))}
 $('#ptVal').addEventListener('click',ptValidate);
 document.querySelectorAll('.ptsec').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();ptValidate()}));
 drawTechs();ptLock();
@@ -1536,7 +1536,7 @@ function drawPt(){const today=dKey(Date.now()),isT=ptDay===today;
  $('#ptDate').value=ptDay;$('#ptToday').hidden=isT;ptDefaults();
  const L=daySegs(ptDay);
  const row=x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"><div class="ix"><input data-f="ot" value="${esc(x.ot||'')}" placeholder="N° OT" aria-label="N° OT" list="otNums">${x.cl&&x.ch?`<span>Client <b>${esc(x.cl)}</b></span>`:''}${(x.techs||[]).length?`<span>Équipe <b>${esc(x.techs.join(', '))}</b></span>`:''}${x.rq?`<span>${esc(x.rq)}</span>`:''}</div></div>`;
- const keyOf=x=>otKey(x.ot)||('#'+x.id),G=[];L.forEach(x=>{const k=keyOf(x);let g=G.find(y=>y.k===k);if(!g)G.push(g={k,L:[]});g.L.push(x)});
+ const keyOf=x=>otKey(x.ot)||(x.cl?'CL:'+x.cl.trim().toUpperCase():'#'+x.id),G=[];L.forEach(x=>{const k=keyOf(x);let g=G.find(y=>y.k===k);if(!g)G.push(g={k,L:[]});g.L.push(x)});
  const old=G.slice(0,-1),last=G.slice(-1),nOld=old.length;
  $('#ptList').innerHTML=!L.length?`<p class="empty" style="margin:0">Aucun pointage ce jour.</p>`:
   (nOld?'<p class="ptlast">Dernière intervention</p>':'')+last.flatMap(g=>g.L).map(row).join('')+
@@ -1585,9 +1585,9 @@ $('#ptAdd').addEventListener('click',async()=>{const L=daySegs(ptDay),last=L[L.l
 const dayTxt=d=>{
  const L=daySegs(d),o=totals(d),nm=stepName,R=[];
  R.push("RELEVÉ D'HEURES – "+new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase(),'');
- const keys=[...new Set(L.map(x=>otKey(x.ot)||'—'))];
- keys.forEach(k=>{const S=L.filter(x=>(otKey(x.ot)||'—')===k),f=S.find(x=>x.cl||x.ch)||S[0];
-  R.push('━━━━━━━━━━━━━━━━━━━━',k==='—'?'SANS N° OT':'▶ OT N° '+S[0].ot.trim(),'━━━━━━━━━━━━━━━━━━━━');if(f.cl)R.push('  Client   : '+f.cl);if(f.ch)R.push('  Chantier : '+f.ch);
+ const gk=x=>otKey(x.ot)||(x.cl?'CL:'+x.cl.trim().toUpperCase():'—'),keys=[...new Set(L.map(gk))];
+ keys.forEach(k=>{const S=L.filter(x=>gk(x)===k),f=S.find(x=>x.cl||x.ch)||S[0];
+  R.push('━━━━━━━━━━━━━━━━━━━━',k==='—'?'SANS N° OT':k.startsWith('CL:')?'▶ '+S[0].cl.trim()+' (sans N° OT)':'▶ OT N° '+S[0].ot.trim(),'━━━━━━━━━━━━━━━━━━━━');if(f.cl)R.push('  Client   : '+f.cl);if(f.ch)R.push('  Chantier : '+f.ch);
   const tq=[...new Set(S.flatMap(x=>x.techs||[]))];if(tq.length)R.push('  Équipe   : '+tq.join(', '));
   S.forEach(x=>R.push(`  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}   ${nm(x).padEnd(14)} ${hm(durOf(x))}`));
   const rq=[...new Set(S.map(x=>x.rq).filter(Boolean))];if(rq.length)R.push('  Remarque : '+rq.join(' / '));R.push('')});
@@ -1958,7 +1958,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.8.3',APP_CODE=35,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.8.4',APP_CODE=36,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
