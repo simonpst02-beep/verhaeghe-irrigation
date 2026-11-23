@@ -456,6 +456,69 @@ html.lockd #lic{display:flex}
 #lic input{width:100%;font-size:17px;letter-spacing:1px;text-transform:uppercase;text-align:center;margin:12px 0}
 #lic button{width:100%;justify-content:center}
 #lic .lerr{color:#c0392b;font-weight:700;margin:10px 0 0;min-height:1em}
+
+/* pointage : OT, chantier, client, groupe, boutons de fin */
+.ptlbl{font-size:13px;font-weight:800;color:var(--mute);text-transform:uppercase;letter-spacing:.05em;margin:0 0 6px}
+.ptinfo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.ptinfo .w{grid-column:1/-1}
+@media(max-width:480px){.ptinfo{grid-template-columns:minmax(0,1fr)}}
+#ptRq{min-height:64px}
+#ptOt{font-weight:800;letter-spacing:.02em}
+.ptgrp{margin:16px 0 8px}
+.tdd{border:1.5px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:4px}
+.tdd[hidden]{display:none}
+.tdd summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;font-weight:600;color:var(--ink)}
+.tdd summary::-webkit-details-marker{display:none}
+.tdd summary::after{content:'▾';color:var(--mute);font-size:18px}.tdd[open] summary::after{content:'▴'}
+.tddl{padding:4px 6px 4px 12px;border-top:1px solid var(--line);max-height:260px;overflow:auto}
+.tddl .tr{display:flex;align-items:center;gap:6px;min-height:46px}
+.tddl .tr label{flex:1;display:flex;align-items:center;gap:12px;color:var(--ink);font-size:16px;cursor:pointer;min-height:46px}
+.tddl .tr input{width:22px;height:22px;min-height:0;accent-color:var(--blue);margin:0;flex:none}
+.tddl .tr button{min-height:40px;width:40px}
+.tdda{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}.tdda button{flex:none}
+.ptend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.ptend button{flex-direction:column;gap:4px;min-height:64px;padding:8px 4px;font-size:15px;font-weight:700;background:var(--card);border:2px solid var(--line);color:var(--ink);text-align:center;line-height:1.15}
+.ptend .k-trajet.cur{background:var(--blue);border-color:var(--blue);color:#fff}
+.ptend .k-inter.cur{background:var(--teal);border-color:var(--teal);color:#fff}
+.ptend .k-pause.cur{background:var(--mute);border-color:var(--mute);color:#fff}
+@media(max-width:420px){.ptend button{font-size:13.5px;min-height:58px}}
+.seg2 .ix{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13.5px;color:var(--mute)}
+.seg2 .ix input{width:140px;min-height:36px;padding:4px 10px;font-size:14px;font-weight:700}
+.seg2 .ix b{color:var(--ink);font-weight:700}
+.ptmain>.psh h3{font-size:23px}
+.ptsec{margin-top:12px;padding:14px;border-radius:16px;background:var(--bg);border-left:6px solid var(--blue)}.ptsec.k-inter{border-left-color:var(--teal)}.ptsec.k-pause{border-left-color:var(--mute)}
+.ptsec .psh h3{font-size:19px}.ptsec .psh{margin-bottom:10px}.ptsec .psh .pic{width:36px;height:36px;border-radius:11px}
+.psh{display:flex;align-items:center;gap:10px;margin-bottom:12px}.psh h3{font-size:21px}
+.psh .pic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);flex:none}
+.k-inter .psh .pic{background:light-dark(#dff6f3,#123a37);color:var(--teal)}.k-pause .psh .pic{background:var(--line);color:var(--mute)}
+.ptimes input[readonly]{font-weight:800;background:var(--card)}
+.pfin{width:100%;margin-top:14px;min-height:54px;font-size:17px;font-weight:700;background:var(--blue)}
+.k-inter .pfin{background:var(--teal)}.k-pause .pfin{background:light-dark(#5d6d80,#53657a)}
+.ptsec.k-prep{border-left-color:var(--or)}.k-prep .psh .pic{background:var(--orSoft);color:var(--or)}.k-prep .pfin{background:var(--or)}
+.seg2.k-prep{border-left-color:var(--or)}.pttot .k-prep,.otk .k-prep{border-top-color:var(--or)}.pttot .k-tot{border-top-color:var(--ink)!important}
+.pttot{grid-template-columns:repeat(5,minmax(0,1fr))!important}@media(max-width:600px){.pttot{grid-template-columns:repeat(2,minmax(0,1fr))!important}.pttot .k-tot{grid-column:1/-1}}
+.otk{grid-template-columns:repeat(4,minmax(0,1fr))!important}@media(max-width:480px){.otk{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+/* historique OT */
+.ot{border-top:1px solid var(--line)}
+.ot summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 2px;min-height:56px}
+.ot summary::-webkit-details-marker{display:none}
+.ot .oth{flex:1;line-height:1.3}.ot .oth b{font-size:17px}.ot .oth .tag{display:block}
+.ot .otv{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--teal)}
+.ot summary::after{content:'▾';color:var(--mute)}.ot[open] summary::after{content:'▴'}
+.otb{padding:0 2px 14px}
+.otk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.otk div{background:var(--bg);border-radius:12px;padding:8px 10px;border-top:4px solid var(--line)}
+.otk b{display:block;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}.otk span{font-size:12.5px;color:var(--mute);font-weight:600}
+.otk .k-trajet{border-top-color:var(--blue)}.otk .k-inter{border-top-color:var(--teal)}.otk .k-pause{border-top-color:var(--mute)}
+.otm{margin:0 0 8px;font-size:15px}.otm b{color:var(--mute);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
+.otl{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums;margin-bottom:10px}
+.otl td{padding:7px 4px;border-bottom:1px solid var(--line);white-space:nowrap}.otl td:last-child{text-align:right;font-weight:700}
+.otl td.w{white-space:normal;color:var(--mute)}
+/* assistant : croix pour masquer la bulle */
+.botfabx{position:fixed;z-index:36;left:60px;bottom:64px;width:28px;height:28px;min-height:0;padding:0;border-radius:50%;background:var(--card);color:var(--ink);border:1.5px solid var(--line);font-size:13px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.botfabx[hidden]{display:none}
+@media(max-width:640px){.botfabx{left:52px;bottom:136px}}
+.bm .bta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.bm .bta button{min-height:36px;padding:6px 12px;font-size:13.5px;border-radius:18px}
 </style>
 </head>
 <body>
@@ -617,31 +680,55 @@ html.lockd #lic{display:flex}
  </div>
 </section>
 
-<datalist id="chantiers"></datalist><datalist id="enrRefs"></datalist><datalist id="peDims"></datalist>
+<datalist id="chantiers"></datalist><datalist id="clients"></datalist><datalist id="otNums"></datalist><datalist id="enrRefs"></datalist><datalist id="peDims"></datalist>
 
 <section id="v-heures">
  <div class="head"><div><h2>Pointage</h2><p>Notez librement vos heures de trajet, d'intervention et de pause.</p></div></div>
  <div class="daynav"><button class="ghost ico2" id="ptPrev" aria-label="Jour précédent"><svg class="i"><use href="#i-back"/></svg></button><input type="date" id="ptDate" aria-label="Jour affiché"><button class="ghost ico2" id="ptNext" aria-label="Jour suivant"><svg class="i"><use href="#i-next"/></svg></button><button class="ghost" id="ptToday">Aujourd'hui</button></div>
- <form class="card ptadd" id="ptForm">
-  <h3 style="font-size:21px;margin-bottom:10px">Noter mes heures</h3>
-  <div class="ptype" role="radiogroup" aria-label="Type">
-   <label class="k-trajet"><input type="radio" name="ptT" value="trajet" checked><span><svg class="i"><use href="#i-car"/></svg>Trajet</span></label>
-   <label class="k-inter"><input type="radio" name="ptT" value="inter"><span><svg class="i"><use href="#i-tool"/></svg>Intervention</span></label>
-   <label class="k-pause"><input type="radio" name="ptT" value="pause"><span><svg class="i"><use href="#i-cup"/></svg>Pause</span></label>
+<div class="card ptmain" id="ptForm">
+ <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Intervention</h3></div>
+  <div class="ptinfo">
+   <label class="w">N° OT<input id="ptOt" list="otNums" placeholder="Numéro d'ordre de travail" autocomplete="off"></label>
+   <label>Chantier<input id="ptCh" list="chantiers" placeholder="Lieu, parcelle…"></label>
+   <label>Client<input id="ptCl" list="clients" placeholder="EARL Dupont…"></label>
+   <label class="w">Remarque<textarea id="ptRq" rows="2" placeholder="Travaux faits, pièces, suite à donner…"></textarea></label>
   </div>
-  <div class="grid ptimes">
-   <label>Début<input type="time" id="ptS" required></label>
-   <label>Fin<input type="time" id="ptE" required></label>
-   <label>Durée<input id="ptDur" readonly tabindex="-1" placeholder="–"></label>
-  </div>
-  <label style="margin-top:12px">Chantier / client / remarque<input id="ptC" list="chantiers" placeholder="EARL Dupont…"></label>
-  <div class="tools"><button type="submit"><svg class="i"><use href="#i-plus"/></svg>Ajouter à la journée</button></div>
- </form>
+  <label class="allb ptgrp"><input type="checkbox" id="ptGrp"> Groupe (intervention à plusieurs)</label>
+  <details class="tdd" id="ptTechs" hidden><summary><span id="ptTechsS">Choisir les techniciens</span></summary>
+   <div class="tddl" id="ptTechL"></div>
+   <div class="tdda"><input id="ptTechN" placeholder="Ajouter un technicien" aria-label="Nom du technicien"><button type="button" class="ghost" id="ptTechAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div>
+  </details>
+  <p class="ptlbl" style="margin-top:18px">Heures</p>
+  <form class="ptsec k-prep" data-sec="prep">
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-box"/></svg></span><h3>Préparation</h3></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-prep"></label><label>Fin<input type="time" id="ptE-prep"></label><label>Durée<input id="ptD-prep" readonly tabindex="-1" placeholder="–"></label></div>
+   <button type="submit" class="pfin"><svg class="i"><use href="#i-box"/></svg>Fin de préparation</button>
+  </form>
+  <form class="ptsec k-trajet" data-sec="trajet">
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-car"/></svg></span><h3>Trajet</h3></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-trajet"></label><label>Fin<input type="time" id="ptE-trajet"></label><label>Durée<input id="ptD-trajet" readonly tabindex="-1" placeholder="–"></label></div>
+   <button type="submit" class="pfin"><svg class="i"><use href="#i-car"/></svg>Fin de trajet</button>
+  </form>
+  <form class="ptsec k-inter" data-sec="inter">
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Sur place</h3></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-inter"></label><label>Fin<input type="time" id="ptE-inter"></label><label>Durée<input id="ptD-inter" readonly tabindex="-1" placeholder="–"></label></div>
+   <button type="submit" class="pfin"><svg class="i"><use href="#i-tool"/></svg>Fin d'intervention</button>
+  </form>
+  <form class="ptsec k-pause" data-sec="pause">
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-cup"/></svg></span><h3>Pause</h3></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-pause"></label><label>Fin<input type="time" id="ptE-pause"></label><label>Durée<input id="ptD-pause" readonly tabindex="-1" placeholder="–"></label></div>
+   <button type="submit" class="pfin"><svg class="i"><use href="#i-cup"/></svg>Fin de pause</button>
+  </form>
+ <p class="tag" style="margin:10px 0 0">Sans heure de fin, c'est l'heure actuelle qui est prise. « Fin d'intervention » clôt l'OT et vide les champs pour le suivant.</p>
+</div>
  <div class="pttot" id="ptTot"></div>
  <div class="ptbar" id="ptBar"></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Trajets entre interventions</h3><span class="tag" id="rtSum"></span></div><div id="ptRoute"></div></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Détail de la journée</h3><button class="ghost" id="ptAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div><div id="ptList"></div>
   <div class="tools"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier la journée</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div></div>
+ <div class="card" style="margin-top:14px" id="otCard"><div class="ptlh"><h3>Historique des OT</h3><span class="tag" id="otSum"></span></div>
+  <div class="search" style="margin-bottom:6px"><svg class="i"><use href="#i-search"/></svg><input id="otQ" placeholder="N° OT, chantier, client, technicien…" aria-label="Rechercher un OT"></div>
+  <div id="otList"></div></div>
  <div class="card" style="margin-top:14px"><h3 style="font-size:21px;margin-bottom:8px" id="ptWT">Semaine</h3><div id="ptWeek"></div></div>
 </section>
 
@@ -699,6 +786,7 @@ html.lockd #lic{display:flex}
   <h3>Affichage</h3>
   <div class="seg prmth" id="prmTh"><button data-pth="light">Clair</button><button data-pth="dark">Sombre</button><button data-pth="auto">Automatique</button></div>
   <label style="margin-top:12px">Commune pour la météo<input id="prmCity" placeholder="Amiens, Abbeville…"></label>
+  <label class="allb" style="margin:14px 0 0"><input type="checkbox" id="prmBot"> Afficher la bulle de l'assistant sur l'accueil</label>
  </div>
  <div class="card prm">
   <h3>Sauvegarde des données</h3>
@@ -728,7 +816,7 @@ html.lockd #lic{display:flex}
 <p class="fine">Fiches génériques : se référer toujours à la notice du constructeur (pressions, réglages, couples de serrage).</p>
 </main>
 <div class="lb" id="lb"><img id="lbImg" alt=""><div id="lbCap"></div><div class="tools"><button class="ghost" id="lbClose">Fermer</button><button class="del" id="lbDel"><svg class="i"><use href="#i-trash"/></svg>Supprimer</button></div></div>
-<button class="botfab" id="botFab" aria-label="Ouvrir l'assistant" hidden><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><circle cx="9" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12.5" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="10.5" r="1.2" fill="currentColor" stroke="none"/></svg></button>
+<button class="botfabx" id="botFabX" aria-label="Masquer l'assistant" title="Masquer l'assistant" hidden>✕</button><button class="botfab" id="botFab" aria-label="Ouvrir l'assistant" hidden><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><circle cx="9" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12.5" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="10.5" r="1.2" fill="currentColor" stroke="none"/></svg></button>
 <div class="bot" id="bot" role="dialog" aria-label="Assistant Verhaeghe" hidden>
  <div class="bothd"><span class="botav"><svg class="i"><use href="#i-drop"/></svg></span><div><b>Assistant Verhaeghe</b><small>Dépannage, pièces, forages, heures</small></div><button class="ico" id="botNew" aria-label="Nouvelle conversation" title="Nouvelle conversation"><svg class="i"><use href="#i-plus"/></svg></button><button class="ico" id="botX" aria-label="Fermer">✕</button></div>
  <div class="botmsgs" id="botMsgs"></div>
@@ -1015,10 +1103,12 @@ function render(k){if(k==='magasin'){drawMg();drawQ();return}if(pmTab==='tb'&&$(
 
 /* ---------- Navigation ---------- */
 const VIEWS=['accueil','enrouleurs','pompage','heures','photos','magasin','parametres'];
+function botFabUpd(){const f=$('#botFab'),x=$('#botFabX');if(!f)return;let off=false;try{off=localStorage.getItem('dep_botoff')==='1'}catch(e){}
+ const v=location.hash.slice(1)||'accueil',show=(v==='accueil'||!VIEWS.includes(v))&&!off&&$('#bot').hidden;f.hidden=!show;x.hidden=!show}
 function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
  for(const x of VIEWS)$('#v-'+x).classList.toggle('cur',x===v);
  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('cur',a.dataset.v===v));
- if(v==='accueil')drawHome();scrollTo({top:0})}
+ if(v==='accueil')drawHome();botFabUpd();scrollTo({top:0})}
 window.addEventListener('hashchange',route);
 
 /* ---------- Accueil ---------- */
@@ -1216,7 +1306,7 @@ drawStep();
 
 
 /* ---------- Pointage ---------- */
-const PT={trajet:'Trajet',inter:'Intervention',pause:'Pause'};
+const PT={prep:'Préparation',trajet:'Trajet',inter:'Intervention',pause:'Pause'};
 const dKey=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
 const hm=ms=>{const m=Math.round(ms/6e4);return Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')};
 const hms=ms=>{const s=Math.floor(ms/1e3);return Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
@@ -1225,31 +1315,84 @@ let ptDay=dKey(Date.now());
 const running=()=>S.pointage.find(x=>!x.end);
 const durOf=x=>x.end?Math.max(0,x.end-x.start):0;
 const daySegs=d=>S.pointage.filter(x=>x.day===d).sort((a,b)=>a.start-b.start);
-function totals(d){const o={trajet:0,inter:0,pause:0};daySegs(d).forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));o.tot=o.trajet+o.inter;return o}
+function totals(d){const o={prep:0,trajet:0,inter:0,pause:0};daySegs(d).forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));o.tot=o.prep+o.trajet+o.inter;return o}
 
 const toMs=(d,v)=>new Date(d+'T'+v).getTime();
-function ptDefaults(){const L=daySegs(ptDay).filter(x=>x.end),last=L[L.length-1];
- if(!$('#ptS').value||$('#ptForm').dataset.day!==ptDay){$('#ptS').value=last?tOf(last.end):'08:00';$('#ptE').value='';$('#ptForm').dataset.day=ptDay}ptDurUpd()}
-function ptDurUpd(){const s=$('#ptS').value,e=$('#ptE').value;$('#ptDur').value=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):''}
-$('#ptS').addEventListener('input',ptDurUpd);$('#ptE').addEventListener('input',ptDurUpd);
-$('#ptForm').addEventListener('submit',async e=>{e.preventDefault();const s=toMs(ptDay,$('#ptS').value),en=toMs(ptDay,$('#ptE').value);
+/* Techniciens (liste gardée sur cet appareil) */
+let TECHS=[],ptSel=[];try{TECHS=JSON.parse(localStorage.getItem('dep_techs')||'[]');ptSel=JSON.parse(localStorage.getItem('dep_ptsel')||'[]')}catch(e){}
+const saveTechs=()=>{try{localStorage.setItem('dep_techs',JSON.stringify(TECHS));localStorage.setItem('dep_ptsel',JSON.stringify(ptSel))}catch(e){}};
+function drawTechs(){ptSel=ptSel.filter(n=>TECHS.includes(n));
+ $('#ptTechL').innerHTML=TECHS.length?TECHS.map((n,i)=>`<div class="tr"><label><input type="checkbox" data-tech="${i}"${ptSel.includes(n)?' checked':''}>${esc(n)}</label><button type="button" class="ico" data-tdel="${i}" aria-label="Retirer ${esc(n)} de la liste">✕</button></div>`).join(''):`<p class="tag" style="margin:10px 0">Aucun technicien enregistré : ajoutez-les ci-dessous.</p>`;
+ $('#ptTechsS').textContent=ptSel.length?ptSel.join(', '):'Choisir les techniciens';
+ $('#ptTechs').hidden=!$('#ptGrp').checked}
+function addTech(){const n=$('#ptTechN').value.trim().replace(/\s+/g,' ');if(!n)return;if(!TECHS.some(x=>x.toLowerCase()===n.toLowerCase())){TECHS.push(n);TECHS.sort((a,b)=>a.localeCompare(b,'fr'))}const k=TECHS.find(x=>x.toLowerCase()===n.toLowerCase());if(!ptSel.includes(k))ptSel.push(k);$('#ptTechN').value='';saveTechs();drawTechs()}
+$('#ptTechAdd').addEventListener('click',addTech);
+$('#ptTechN').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addTech()}});
+$('#ptTechL').addEventListener('change',e=>{const c=e.target.closest('[data-tech]');if(!c)return;const n=TECHS[+c.dataset.tech];ptSel=c.checked?[...new Set([...ptSel,n])]:ptSel.filter(x=>x!==n);saveTechs();drawTechs()});
+$('#ptTechL').addEventListener('click',e=>{const b=e.target.closest('[data-tdel]');if(!b)return;e.preventDefault();const n=TECHS[+b.dataset.tdel];TECHS=TECHS.filter(x=>x!==n);ptSel=ptSel.filter(x=>x!==n);saveTechs();drawTechs();toast(n+' retiré de la liste')});
+{let g=false;try{g=localStorage.getItem('dep_ptgrp')==='1'}catch(e){}$('#ptGrp').checked=g}
+$('#ptGrp').addEventListener('change',e=>{try{localStorage.setItem('dep_ptgrp',e.target.checked?'1':'0')}catch(x){}drawTechs();if(e.target.checked&&!TECHS.length)$('#ptTechs').open=true});
+
+/* OT déjà connu : reprend chantier et client */
+const otKey=v=>String(v||'').trim().toUpperCase();
+$('#ptOt').addEventListener('change',()=>{const k=otKey($('#ptOt').value);if(!k)return;const p=[...S.pointage].filter(x=>otKey(x.ot)===k).sort((a,b)=>b.start-a.start)[0];if(!p)return;
+ if(!$('#ptCh').value&&p.ch)$('#ptCh').value=p.ch;if(!$('#ptCl').value&&p.cl)$('#ptCl').value=p.cl});
+
+const PTK=['prep','trajet','inter','pause'],fS=k=>$('#ptS-'+k),fE=k=>$('#ptE-'+k);
+function ptDurUpd(k){if(!k)return PTK.forEach(ptDurUpd);const s=fS(k).value,e=fE(k).value;$('#ptD-'+k).value=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):''}
+function ptDefaults(){const L=daySegs(ptDay).filter(x=>x.end),last=L[L.length-1],d=last?tOf(last.end):'08:00';
+ if($('#ptForm').dataset.day!==ptDay){PTK.forEach(k=>{fS(k).value=d;fE(k).value=''});$('#ptForm').dataset.day=ptDay}
+ PTK.forEach(k=>{if(!fS(k).value)fS(k).value=d});ptDurUpd()}
+PTK.forEach(k=>{fS(k).addEventListener('input',()=>ptDurUpd(k));fE(k).addEventListener('input',()=>ptDurUpd(k))});
+async function ptSave(type){
+ if(!fS(type).value)return toast('Indiquez l\'heure de début');
+ if(!fE(type).value){if(ptDay!==dKey(Date.now()))return toast('Indiquez l\'heure de fin');fE(type).value=tOf(Date.now());ptDurUpd(type)}
+ const s=toMs(ptDay,fS(type).value),en=toMs(ptDay,fE(type).value),endV=fE(type).value;
  if(!(en>s))return toast('L\'heure de fin doit être après le début');
- const type=document.querySelector('[name=ptT]:checked').value;
  if(daySegs(ptDay).some(x=>x.end&&s<x.end&&en>x.start))toast('Attention : chevauche une autre ligne');
- await put('pointage',{id:uid(),day:ptDay,type,start:s,end:en,c:$('#ptC').value.trim(),t:Date.now()});
- $('#ptS').value=$('#ptE').value;$('#ptE').value='';ptDurUpd();
- const nx=type==='trajet'?'inter':'trajet';document.querySelector(`[name=ptT][value=${nx}]`).checked=true;if(type!=='trajet')$('#ptC').value='';
- toast(PT[type]+(type==='trajet'?' ajouté : ':' ajoutée : ')+hm(en-s))});
-function drawPtTotals(){const o=totals(ptDay),all=o.trajet+o.inter+o.pause||1;
- $('#ptTot').innerHTML=[['trajet','Trajet',o.trajet],['inter','Intervention',o.inter],['pause','Pause',o.pause],['tot','Total travaillé',o.tot]].map(([k,l,v])=>`<div class="k-${k}"><b>${hm(v)}</b><span>${l}</span></div>`).join('');
- $('#ptBar').innerHTML=`<i style="width:${o.trajet/all*100}%;background:var(--blue)"></i><i style="width:${o.inter/all*100}%;background:var(--teal)"></i><i style="width:${o.pause/all*100}%;background:var(--mute)"></i>`;
+ const ot=$('#ptOt').value.trim(),ch=$('#ptCh').value.trim(),cl=$('#ptCl').value.trim(),rq=type==='inter'?$('#ptRq').value.trim():'',grp=$('#ptGrp').checked;
+ await put('pointage',{id:uid(),day:ptDay,type,start:s,end:en,c:[ch,cl].filter(Boolean).join(' – '),ot,ch,cl,rq,grp,techs:grp?[...ptSel]:[],t:Date.now()});
+ PTK.forEach(k=>{fS(k).value=endV;fE(k).value=''});ptDurUpd();
+ if(type==='inter'){$('#ptOt').value='';$('#ptCh').value='';$('#ptCl').value='';$('#ptRq').value=''}
+ toast(PT[type]+(type==='trajet'?' enregistré : ':' enregistrée : ')+hm(en-s)+(ot?' · OT '+ot:''))}
+document.querySelectorAll('.ptsec').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();ptSave(f.dataset.sec)}));
+drawTechs();
+
+/* Historique des OT */
+function otGroups(){const G={};S.pointage.forEach(x=>{const k=otKey(x.ot);if(!k)return;(G[k]=G[k]||{k,n:x.ot.trim(),L:[]}).L.push(x)});
+ return Object.values(G).map(g=>{g.L.sort((a,b)=>a.start-b.start);const o={prep:0,trajet:0,inter:0,pause:0};g.L.forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));g.o=o;
+  const last=k=>[...g.L].reverse().find(x=>x[k])?.[k]||'';g.ch=last('ch');g.cl=last('cl');if(!g.ch&&!g.cl)g.ch=last('c');
+  g.rq=[...new Set(g.L.map(x=>x.rq).filter(Boolean))];g.techs=[...new Set(g.L.flatMap(x=>x.techs||[]))];g.days=[...new Set(g.L.map(x=>x.day))];g.lastT=g.L[g.L.length-1].start;return g})
+  .sort((a,b)=>b.lastT-a.lastT)}
+const dShort=d=>new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+const otTxt=g=>[`OT N° ${g.n}`,g.ch&&'Chantier : '+g.ch,g.cl&&'Client : '+g.cl,g.techs.length&&'Équipe : '+g.techs.join(', '),
+ ...g.L.map(x=>`${new Date(x.day+'T12:00').toLocaleDateString('fr-FR')}  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${PT[x.type]}  ${hm(durOf(x))}`),
+ `Préparation : ${hm(g.o.prep)} · Trajet : ${hm(g.o.trajet)} · Intervention : ${hm(g.o.inter)} · Pause : ${hm(g.o.pause)}`,`Total travaillé : ${hm(g.o.prep+g.o.trajet+g.o.inter)}`,g.rq.length&&'Remarques : '+g.rq.join(' / ')].filter(Boolean).join('\n');
+function drawOt(){if(!$('#otList'))return;const q=($('#otQ').value||'').trim().toLowerCase(),A=otGroups();
+ const L=q?A.filter(g=>[g.n,g.ch,g.cl,g.techs.join(' '),g.rq.join(' ')].join(' ').toLowerCase().includes(q)):A;
+ $('#otSum').textContent=A.length?A.length+' OT':'';
+ $('#otNums').innerHTML=A.slice(0,60).map(g=>`<option value="${esc(g.n)}">`).join('');
+ $('#clients').innerHTML=[...new Set(S.pointage.map(x=>x.cl).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('');
+ $('#otList').innerHTML=!A.length?`<p class="tag" style="margin:4px 0 0">Les heures notées avec un n° d'OT apparaîtront ici, regroupées par OT.</p>`:!L.length?`<p class="tag" style="margin:4px 0 0">Aucun OT ne correspond.</p>`:
+  L.map(g=>`<details class="ot"><summary><div class="oth"><b>OT n° ${esc(g.n)}</b><span class="tag">${g.days.map(dShort).join(', ')}${g.ch?' · '+esc(g.ch):''}${g.cl?' · '+esc(g.cl):''}</span></div><span class="otv">${hm(g.o.prep+g.o.trajet+g.o.inter)}</span></summary>
+   <div class="otb"><div class="otk"><div class="k-prep"><b>${hm(g.o.prep)}</b><span>Préparation</span></div><div class="k-trajet"><b>${hm(g.o.trajet)}</b><span>Trajet</span></div><div class="k-inter"><b>${hm(g.o.inter)}</b><span>Intervention</span></div><div class="k-pause"><b>${hm(g.o.pause)}</b><span>Pause</span></div></div>
+   ${g.ch?`<p class="otm"><b>Chantier</b>${esc(g.ch)}</p>`:''}${g.cl?`<p class="otm"><b>Client</b>${esc(g.cl)}</p>`:''}${g.techs.length?`<p class="otm"><b>Équipe</b>${esc(g.techs.join(', '))}</p>`:''}${g.rq.length?`<p class="otm"><b>Remarques</b>${g.rq.map(esc).join('<br>')}</p>`:''}
+   <table class="otl">${g.L.map(x=>`<tr><td>${dShort(x.day)}</td><td>${tOf(x.start)} – ${x.end?tOf(x.end):'…'}</td><td class="w">${PT[x.type]}</td><td>${hm(durOf(x))}</td></tr>`).join('')}</table>
+   <div class="tools"><button class="ghost" data-otc="${esc(g.k)}">${ic('copy')}Copier l'OT</button><button class="ghost" data-otd="${esc(g.days[g.days.length-1])}">${ic('clock')}Voir la journée</button></div></div></details>`).join('')}
+$('#otQ').addEventListener('input',drawOt);
+$('#otList').addEventListener('click',e=>{const c=e.target.closest('[data-otc]'),d=e.target.closest('[data-otd]');
+ if(c){const g=otGroups().find(x=>x.k===c.dataset.otc);if(g)copy(otTxt(g))}
+ if(d){ptDay=d.dataset.otd;drawPt();scrollTo({top:0,behavior:'smooth'})}});
+function drawPtTotals(){const o=totals(ptDay),all=o.prep+o.trajet+o.inter+o.pause||1;
+ $('#ptTot').innerHTML=[['prep','Préparation',o.prep],['trajet','Trajet',o.trajet],['inter','Intervention',o.inter],['pause','Pause',o.pause],['tot','Total travaillé',o.tot]].map(([k,l,v])=>`<div class="k-${k}"><b>${hm(v)}</b><span>${l}</span></div>`).join('');
+ $('#ptBar').innerHTML=`<i style="width:${o.prep/all*100}%;background:var(--or)"></i><i style="width:${o.trajet/all*100}%;background:var(--blue)"></i><i style="width:${o.inter/all*100}%;background:var(--teal)"></i><i style="width:${o.pause/all*100}%;background:var(--mute)"></i>`;
 }
 function drawPt(){const today=dKey(Date.now()),isT=ptDay===today;
  $('#ptDate').value=ptDay;$('#ptToday').hidden=isT;ptDefaults();
  const L=daySegs(ptDay);
- $('#ptList').innerHTML=L.length?L.map(x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"></div>`).join('')
+ $('#ptList').innerHTML=L.length?L.map(x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"><div class="ix"><input data-f="ot" value="${esc(x.ot||'')}" placeholder="N° OT" aria-label="N° OT" list="otNums">${x.cl&&x.ch?`<span>Client <b>${esc(x.cl)}</b></span>`:''}${(x.techs||[]).length?`<span>Équipe <b>${esc(x.techs.join(', '))}</b></span>`:''}${x.rq?`<span>${esc(x.rq)}</span>`:''}</div></div>`).join('')
   :`<p class="empty" style="margin:0">Aucun pointage ce jour.</p>`;
- drawPtTotals();drawRoute();drawWeek()}
+ drawPtTotals();drawRoute();drawWeek();drawOt()}
 
 function drawRoute(){const L=daySegs(ptDay);const I=L.filter(x=>x.type==='inter');
  if(!I.length){$('#ptRoute').innerHTML=`<p class="tag" style="margin:0">Pointez au moins une intervention pour voir les trajets entre chantiers.</p>`;$('#rtSum').textContent='';return}
@@ -1269,19 +1412,19 @@ function drawRoute(){const L=daySegs(ptDay);const I=L.filter(x=>x.type==='inter'
  $('#rtSum').textContent=`${I.length} intervention${I.length>1?'s':''}`;
  if(nTr){const between=[];I.forEach((x,i)=>{if(i){const t=trBetween(I[i-1].end||0,x.start).reduce((s,y)=>s+durOf(y),0);if(t)between.push(t)}});$('#rtSum').textContent=`${I.length} interventions · trajet moyen ${hm(between.reduce((a,b)=>a+b,0)/between.length)}`}}
 function weekDays(d){const x=new Date(d+'T12:00');const n=(x.getDay()+6)%7;x.setDate(x.getDate()-n);return [...Array(7)].map((_,i)=>{const y=new Date(x);y.setDate(x.getDate()+i);return dKey(y)})}
-function drawWeek(){const W=weekDays(ptDay);let s={trajet:0,inter:0,tot:0};
- const rows=W.map(d=>{const o=totals(d);s.trajet+=o.trajet;s.inter+=o.inter;s.tot+=o.tot;const dt=new Date(d+'T12:00');
-  return `<tr class="${d===ptDay?'cur':''}"><td><button data-day="${d}">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'})}</button></td><td>${o.trajet?hm(o.trajet):'–'}</td><td>${o.inter?hm(o.inter):'–'}</td><td>${o.tot?hm(o.tot):'–'}</td></tr>`}).join('');
+function drawWeek(){const W=weekDays(ptDay);let s={prep:0,trajet:0,inter:0,tot:0};
+ const rows=W.map(d=>{const o=totals(d);s.prep+=o.prep;s.trajet+=o.trajet;s.inter+=o.inter;s.tot+=o.tot;const dt=new Date(d+'T12:00');
+  return `<tr class="${d===ptDay?'cur':''}"><td><button data-day="${d}">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'})}</button></td><td>${o.prep?hm(o.prep):'–'}</td><td>${o.trajet?hm(o.trajet):'–'}</td><td>${o.inter?hm(o.inter):'–'}</td><td>${o.tot?hm(o.tot):'–'}</td></tr>`}).join('');
  const wn=$('#clkS')?'':'';
  $('#ptWT').textContent='Semaine du '+new Date(W[0]+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
- $('#ptWeek').innerHTML=`<table class="wk"><thead><tr><th>Jour</th><th>Trajet</th><th>Interv.</th><th>Total</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${hm(s.trajet)}</td><td>${hm(s.inter)}</td><td>${hm(s.tot)}</td></tr></tfoot></table>`}
+ $('#ptWeek').innerHTML=`<table class="wk"><thead><tr><th>Jour</th><th>Prép.</th><th>Trajet</th><th>Interv.</th><th>Total</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${hm(s.prep)}</td><td>${hm(s.trajet)}</td><td>${hm(s.inter)}</td><td>${hm(s.tot)}</td></tr></tfoot></table>`}
 const shift=n=>{const x=new Date(ptDay+'T12:00');x.setDate(x.getDate()+n);ptDay=dKey(x);drawPt()};
 $('#ptPrev').addEventListener('click',()=>shift(-1));$('#ptNext').addEventListener('click',()=>shift(1));
 $('#ptToday').addEventListener('click',()=>{ptDay=dKey(Date.now());drawPt()});
 $('#ptDate').addEventListener('change',e=>{if(e.target.value){ptDay=e.target.value;drawPt()}});
 $('#ptWeek').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(b){ptDay=b.dataset.day;drawPt()}});
 $('#ptList').addEventListener('change',async e=>{const row=e.target.closest('[data-id]'),f=e.target.dataset.f;if(!row||!f)return;const x=S.pointage.find(y=>y.id===row.dataset.id);if(!x)return;const n={...x};
- if(f==='type')n.type=e.target.value;else if(f==='c')n.c=e.target.value.trim();
+ if(f==='type')n.type=e.target.value;else if(f==='c')n.c=e.target.value.trim();else if(f==='ot')n.ot=e.target.value.trim();
  else{if(!e.target.value)return;const ms=new Date(x.day+'T'+e.target.value).getTime();n[f]=ms;if(n.end&&n.end<=n.start){toast('La fin doit être après le début');drawPt();return}}
  await put('pointage',n)});
 $('#ptList').addEventListener('click',async e=>{const b=e.target.closest('[data-pdel]');if(!b)return;
@@ -1289,7 +1432,7 @@ $('#ptList').addEventListener('click',async e=>{const b=e.target.closest('[data-
  await del('pointage',b.dataset.pdel)});
 $('#ptAdd').addEventListener('click',async()=>{const L=daySegs(ptDay),last=L[L.length-1];const s=last&&last.end?last.end:new Date(ptDay+'T08:00').getTime();
  await put('pointage',{id:uid(),day:ptDay,type:'inter',start:s,end:s+36e5,c:'',t:Date.now()});toast('Ligne ajoutée : ajustez les heures')});
-const dayTxt=d=>{const o=totals(d);const L=daySegs(d);return [`POINTAGE ${new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`,...L.map(x=>`${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${PT[x.type]}  ${hm(durOf(x))}${x.c?'  ('+x.c+')':''}`),`Trajet : ${hm(o.trajet)} · Intervention : ${hm(o.inter)} · Pause : ${hm(o.pause)}`,`Total travaillé : ${hm(o.tot)}`].join('\n')};
+const dayTxt=d=>{const o=totals(d);const L=daySegs(d);return [`POINTAGE ${new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`,...L.map(x=>`${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${PT[x.type]}  ${hm(durOf(x))}${x.ot?'  OT '+x.ot:''}${x.c?'  ('+x.c+')':''}${(x.techs||[]).length?'  ['+x.techs.join(', ')+']':''}${x.rq?'  – '+x.rq:''}`),`Préparation : ${hm(o.prep)} · Trajet : ${hm(o.trajet)} · Intervention : ${hm(o.inter)} · Pause : ${hm(o.pause)}`,`Total travaillé : ${hm(o.tot)}`].join('\n')};
 $('#ptCopy').addEventListener('click',()=>copy(dayTxt(ptDay)));
 $('#ptCopyW').addEventListener('click',()=>{const W=weekDays(ptDay).filter(d=>daySegs(d).length);if(!W.length)return toast('Semaine vide');let t=0;W.forEach(d=>t+=totals(d).tot);copy(W.map(dayTxt).join('\n\n')+`\n\nTOTAL SEMAINE : ${hm(t)}`)});
 
@@ -1543,10 +1686,34 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
    execute:async({designation,quantite,chantier,section})=>{const pm=String(section)==='pompage',d=String(designation||'').trim();if(!d)throw new Error('désignation vide');const ref=refFor(d,pm?'sta':'enr')?.ref||'';
     await put('memo',{id:uid(),d,r:ref,q:Math.max(1,Number(quantite)||1),c:String(chantier||''),s:0,t:Date.now(),dom:pm?'pmp':'enr',m:pm?'Pompage':bName(),from:'Assistant'});return {ajoute:d,reference:ref||'(pas au magasin)',memo:pm?'pompage':'enrouleurs'}}},
   {name:'lire_forages',description:'Liste les forages enregistrés : nom, client, commune, coordonnées GPS, profondeur, débit, pompe, accès.',execute:()=>(S.forages||[]).slice(0,40).map(f=>({nom:f.n,client:f.c,commune:f.v,gps:`${f.lat}, ${f.lon}`,profondeur_m:f.prof,debit_m3h:f.q,niveau_statique:f.ns,niveau_dynamique:f.nd,pompe:f.pompe,acces:f.r}))},
-  {name:'heures_semaine',description:'Totaux des heures (trajet, intervention, pause) par jour pour la semaine en cours, avec les chantiers.',execute:()=>weekDays(dKey(Date.now())).map(d=>{const o=totals(d);return {jour:d,trajet:hm(o.trajet),intervention:hm(o.inter),pause:hm(o.pause),total:hm(o.tot),chantiers:[...new Set(daySegs(d).filter(x=>x.type==='inter'&&x.c).map(x=>x.c))]}})}
+  {name:'historique_ot',description:'Historique des OT (ordres de travail) : numéro, chantier, client, équipe, remarques, heures de trajet / intervention / pause et lignes détaillées. recherche = n° OT, client ou chantier (facultatif).',inputSchema:{type:'object',properties:{recherche:{type:'string'}}},
+   execute:({recherche})=>{const q=String(recherche||'').toLowerCase();return otGroups().filter(g=>!q||[g.n,g.ch,g.cl].join(' ').toLowerCase().includes(q)).slice(0,20).map(otTxt)}},
+  {name:'heures_semaine',description:'Totaux des heures (trajet, intervention, pause) par jour pour la semaine en cours, avec les chantiers.',execute:()=>weekDays(dKey(Date.now())).map(d=>{const o=totals(d);return {jour:d,preparation:hm(o.prep),trajet:hm(o.trajet),intervention:hm(o.inter),pause:hm(o.pause),total:hm(o.tot),chantiers:[...new Set(daySegs(d).filter(x=>x.type==='inter'&&x.c).map(x=>x.c))]}})}
  ];
- const LBL={fiche_panne:'Lecture de la fiche panne',chercher_reference:'Recherche au magasin',lire_memo:'Lecture du mémo',ajouter_au_memo:'Ajout au mémo',lire_forages:'Lecture des forages',heures_semaine:'Lecture des heures'};
+ const LBL={fiche_panne:'Lecture de la fiche panne',chercher_reference:'Recherche au magasin',lire_memo:'Lecture du mémo',ajouter_au_memo:'Ajout au mémo',lire_forages:'Lecture des forages',heures_semaine:'Lecture des heures',historique_ot:'Lecture des OT'};
+ const nz=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+ const STOP=new Set('les des une est sont pas plus mon mes mais pour par avec sans qui que quoi quel quelle quels quelles comment pourquoi elle ils cette ces dans sur aux vous nous fait faire peut quand tout tous'.split(' '));
+ function localAnswer(q){const Q=nz(q),W=Q.split(/[^a-z0-9]+/).filter(w=>w.length>2&&!STOP.has(w)),st=W.map(w=>w.slice(0,Math.max(4,w.length-2)));
+  const hit=t=>{const T=nz(t);return st.reduce((n,w)=>n+(T.includes(w)?1:0),0)};let out='',btn='';
+  const otm=q.match(/\bOT\s*(?:n°|no|num[eé]ro)?\s*([A-Za-z0-9][\w\-/]*)/i);
+  if(otm){const g=otGroups().find(x=>x.k===otKey(otm[1]));if(g)return {t:'**OT n° '+g.n+'**\n'+otTxt(g).split('\n').slice(1).map(l=>'- '+l).join('\n')}}
+  if(/heure|pointage|semaine|journee/.test(Q)){const W7=weekDays(dKey(Date.now()));let tt=0;const L=W7.map(d=>{const o=totals(d);tt+=o.tot;return o.tot?`- ${dShort(d)} : préparation ${hm(o.prep)}, trajet ${hm(o.trajet)}, intervention ${hm(o.inter)}, total **${hm(o.tot)}**`:''}).filter(Boolean);
+   return {t:L.length?'**Vos heures de la semaine**\n'+L.join('\n')+'\n\nTotal semaine : **'+hm(tt)+'**':'Aucune heure notée cette semaine.'}}
+  if(/memo|commander|commande|prevoir/.test(Q)){const L=S.memo.filter(x=>!(x.s>0));return {t:L.length?'**Pièces à prévoir**\n'+L.slice(0,15).map(x=>`- ${x.q||1} × ${x.d}${x.r?' (réf. '+x.r+')':''}${x.c?' – '+x.c:''}`).join('\n'):'Rien à prévoir dans le mémo.'}}
+  if(!st.length)return null;
+  const pm=/pompe|pompage|station|forage|moteur|variateur|disjonct|pression/.test(Q);
+  const sc=[...PANNES.map((p,i)=>({p,i,e:1,n:hit(p.t)*3+hit(p.s+' '+p.k)*2+hit(p.c.join(' '))+(pm?0:.5)})),...PPANNES.map((p,i)=>({p,i,e:0,n:hit(p.t)*3+hit(p.s+' '+p.k)*2+hit(p.c.join(' '))+(pm?.5:0)}))].filter(x=>x.n>=2).sort((a,b)=>b.n-a.n);
+  if(sc.length){const {p,i,e}=sc[0];out+=`**${p.t}** (${e?'enrouleur':'station de pompage'})\nCauses possibles :\n${p.c.slice(0,5).map(x=>'- '+x).join('\n')}`;
+   if(p.v&&p.v.length)out+=`\n\nÀ vérifier :\n${p.v.slice(0,4).map(x=>'- '+x).join('\n')}`;
+   btn=`<button type="button" data-ofiche="${e?'e':'p'}${i}">${ic('file')}Ouvrir la fiche complète</button>`+sc.slice(1,3).map(x=>`<button type="button" class="ghost" data-ofiche="${x.e?'e':'p'}${x.i}">${esc(x.p.t)}</button>`).join('')}
+  const M=S.magasin.map(x=>({x,n:hit([x.d,x.ref,x.m,x.comp].join(' '))})).filter(o=>o.n>=Math.min(2,st.length)).sort((a,b)=>b.n-a.n).slice(0,5);
+  if(M.length)out+=(out?'\n\n':'')+'**Au magasin**\n'+M.map(({x})=>`- ${x.d}${x.ref?' – réf. '+x.ref:''} · stock ${x.s??0}${x.e?' · '+x.e:''}`).join('\n');
+  return out?{t:out,b:btn}:null}
+ box.addEventListener('click',e=>{const b=e.target.closest('[data-ofiche]');if(!b)return;const k=b.dataset.ofiche,i=+k.slice(1);$('#bot').hidden=true;botFabUpd();
+  if(k[0]==='e'){location.hash='enrouleurs';setTimeout(()=>openPanne(i),60)}else{pmTab='diag';try{localStorage.setItem('dep_pmtab','diag')}catch(x){}drawPmTabs();location.hash='pompage';setTimeout(()=>openPm(i),60)}});
  async function ask(){const q=$('#botQ').value.trim();if(!q||busy)return;$('#botQ').value='';fit();
+  if(!sample){box.querySelector('.botsug')?.remove();add('u',esc(q).replace(/\n/g,'<br>'));const r=localAnswer(q);
+   const a=add('a',r?md(r.t)+(r.b?`<div class="bta">${r.b}</div>`:''):md('Je n\'ai rien trouvé pour cette question. Hors connexion, je cherche dans les **fiches pannes**, le **magasin**, le **mémo**, vos **heures** et vos **OT**. Essayez avec des mots-clés, par ex. « courroie turbine », « pompe disjoncte » ou « OT 1234 ».'));return}
   box.querySelector('.botsug')?.remove();add('u',esc(q).replace(/\n/g,'<br>'));turns.push({role:'user',content:q});if(turns.length>16)turns=turns.slice(-16);while(turns[0]&&turns[0].role!=='user')turns.shift();
   const a=add('a think','Réflexion…');busy=true;ctl=new AbortController();const sb=$('#botSend');sb.classList.add('stop');sb.innerHTML='■';sb.setAttribute('aria-label','Arrêter');
   const used=[];const tools=TOOLS.map(t=>({...t,execute:(i,c)=>{used.push(LBL[t.name]);if(a.classList.contains('think'))a.textContent=LBL[t.name]+'…';return t.execute(i,c)}}));
@@ -1555,21 +1722,26 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
    a.classList.remove('think');a.innerHTML=md(text)+(used.length?`<span class="tool">✓ ${esc([...new Set(used)].join(' · '))}</span>`:'');turns.push({role:'assistant',content:text})}
   catch(e){a.classList.remove('think');const M={cancelled:'Réponse arrêtée.',not_granted:'L\'assistant n\'a pas été autorisé. Rechargez la page pour l\'autoriser.',rate_limited:'Trop de questions d\'un coup : réessayez dans un moment.',session_expired:'Reconnectez-vous à Claude.',refused:'Je ne peux pas répondre à cette demande.',sampling_disabled:'L\'assistant n\'est pas disponible pour ce compte.'};
    if(e&&e.text){a.innerHTML=md(e.text);turns.push({role:'assistant',content:e.text})}else{a.classList.add('err');a.textContent=M[e&&e.code]||'Réponse interrompue, réessayez.'}
-   if(e&&(e.code==='not_granted'||e.code==='sampling_disabled')){$('#botFab').hidden=true}}
+   if(e&&(e.code==='not_granted'||e.code==='sampling_disabled')){sample=null;offUi()}}
   finally{busy=false;sb.classList.remove('stop');sb.innerHTML=ic('next');sb.setAttribute('aria-label','Envoyer')}}
  const fit=()=>{const t=$('#botQ');t.style.height='auto';t.style.height=Math.min(120,t.scrollHeight)+'px'};
  $('#botQ').addEventListener('input',fit);
  $('#botQ').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask()}});
  $('#botForm').addEventListener('submit',e=>{e.preventDefault();if(busy){ctl&&ctl.abort();return}ask()});
- $('#botFab').addEventListener('click',()=>{$('#bot').hidden=false;$('#botFab').hidden=true;if(!box.children.length)welcome();setTimeout(()=>$('#botQ').focus(),50)});
- $('#botX').addEventListener('click',()=>{$('#bot').hidden=true;$('#botFab').hidden=false});
+ $('#botFab').addEventListener('click',()=>{$('#bot').hidden=false;botFabUpd();if(!box.children.length)welcome();setTimeout(()=>$('#botQ').focus(),50)});
+ $('#botX').addEventListener('click',()=>{$('#bot').hidden=true;botFabUpd()});
+ $('#botFabX').addEventListener('click',()=>{try{localStorage.setItem('dep_botoff','1')}catch(x){}$('#prmBot').checked=false;botFabUpd();toast('Assistant masqué : réactivez-le dans Paramètres')});
+ {let off=false;try{off=localStorage.getItem('dep_botoff')==='1'}catch(e){}$('#prmBot').checked=!off}
+ $('#prmBot').addEventListener('change',e=>{try{e.target.checked?localStorage.removeItem('dep_botoff'):localStorage.setItem('dep_botoff','1')}catch(x){}botFabUpd();toast(e.target.checked?'Assistant affiché sur l\'accueil':'Assistant masqué')});
+ const offUi=()=>{if(!sample)document.querySelector('.bothd small').textContent='Hors ligne : fiches, magasin, mémo, heures, OT'};
  $('#botNew').addEventListener('click',()=>{ctl&&ctl.abort();turns=[];welcome()});
- (async()=>{try{if(!window.claude||!claude.use)return;sample=await claude.use('sample');if(sample)$('#botFab').hidden=false}catch(e){}})();
+ offUi();botFabUpd();
+ (async()=>{try{if(!window.claude||!claude.use)return;sample=await claude.use('sample');if(sample)document.querySelector('.bothd small').textContent='Dépannage, pièces, forages, heures, OT'}catch(e){sample=null}offUi()})();
 }
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.6',APP_CODE=21,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.7',APP_CODE=22,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
@@ -1625,7 +1797,7 @@ const apkOf=(R,beta)=>`https://github.com/${R}/releases/download/${beta?(R===DIS
  // sauvegarde
  const KEYS=['memo','mes','notes','pointage','forages','magasin','docs','photos'];
  $('#bkExp').addEventListener('click',async()=>{const data={app:'verhaeghe-irrigation',version:APP_VERSION,date:new Date().toISOString(),data:{}};
-  KEYS.forEach(k=>data.data[k]=(S[k]||[]).filter(x=>k!=='photos'||!x.u||x.u.length<400000));
+  KEYS.forEach(k=>data.data[k]=(S[k]||[]).filter(x=>k!=='photos'||!x.u||x.u.length<400000));data.techs=TECHS;
   const txt=JSON.stringify(data),name='sauvegarde-verhaeghe-'+dKey(Date.now())+'.json';
   if(IS_APK){const r=AndroidApp.saveFile(btoa(unescape(encodeURIComponent(txt))),name,'application/json');$('#bkSt').textContent=r==='ok'?'✓ Sauvegarde enregistrée dans Téléchargements.':'Erreur : '+r;return}
   if(dl){try{await dl.save({filename:name,data:txt});$('#bkSt').textContent='✓ Sauvegarde enregistrée.'}catch(e){$('#bkSt').textContent=e&&e.code==='declined'?'Enregistrement annulé.':'Enregistrement impossible.'}}
@@ -1633,6 +1805,7 @@ const apkOf=(R,beta)=>`https://github.com/${R}/releases/download/${beta?(R===DIS
  $('#bkImp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;e.target.value='';
   try{const d=JSON.parse(await f.text());if(d.app!=='verhaeghe-irrigation'||!d.data)throw 0;let n=0;
    for(const k of KEYS){for(const it of (d.data[k]||[])){if(it&&it.id&&!S[k].some(x=>x.id===it.id)){await put(k,it);n++}}}
+   if(Array.isArray(d.techs)){d.techs.forEach(t=>{if(t&&!TECHS.includes(t))TECHS.push(t)});TECHS.sort((a,b)=>a.localeCompare(b,'fr'));saveTechs();drawTechs()}
    $('#bkSt').textContent=`✓ ${n} élément(s) importé(s). Les éléments déjà présents n'ont pas été dupliqués.`}
   catch(x){$('#bkSt').textContent='Fichier de sauvegarde non reconnu.'}});
 }
