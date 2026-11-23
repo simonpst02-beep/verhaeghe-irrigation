@@ -728,7 +728,9 @@ html.lockd #lic{display:flex}
  <div class="ptbar" id="ptBar"></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Trajets entre interventions</h3><span class="tag" id="rtSum"></span></div><div id="ptRoute"></div></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Détail de la journée</h3><button class="ghost" id="ptAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div><div id="ptList"></div>
-  <div class="tools"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier la journée</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div></div>
+  <div class="tools"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier la journée</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div>
+  <div class="tools"><button id="ptTxt"><svg class="i"><use href="#i-file"/></svg>Exporter en texte</button><button id="ptPdf"><svg class="i"><use href="#i-file"/></svg>Exporter en PDF</button></div>
+  <p class="tag" id="ptExpSt" hidden style="margin:10px 0 0"></p></div>
  <div class="card" style="margin-top:14px" id="otCard"><div class="ptlh"><h3>Historique des OT</h3><span class="tag" id="otSum"></span></div>
   <div class="search" style="margin-bottom:6px"><svg class="i"><use href="#i-search"/></svg><input id="otQ" placeholder="N° OT, chantier, client, technicien…" aria-label="Rechercher un OT"></div>
   <div id="otList"></div></div>
@@ -1443,7 +1445,17 @@ $('#ptList').addEventListener('click',async e=>{const b=e.target.closest('[data-
  await del('pointage',b.dataset.pdel)});
 $('#ptAdd').addEventListener('click',async()=>{const L=daySegs(ptDay),last=L[L.length-1];const s=last&&last.end?last.end:new Date(ptDay+'T08:00').getTime();
  await put('pointage',{id:uid(),day:ptDay,type:'inter',start:s,end:s+36e5,c:'',t:Date.now()});toast('Ligne ajoutée : ajustez les heures')});
-const dayTxt=d=>{const o=totals(d);const L=daySegs(d);return [`POINTAGE ${new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`,...L.map(x=>`${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${PT[x.type]}  ${hm(durOf(x))}${x.ot?'  OT '+x.ot:''}${x.c?'  ('+x.c+')':''}${(x.techs||[]).length?'  ['+x.techs.join(', ')+']':''}${x.rq?'  – '+x.rq:''}`),`Préparation : ${hm(o.prep)} · Trajet : ${hm(o.trajet)} · Intervention : ${hm(o.inter)} · Pause : ${hm(o.pause)}`,`Total travaillé : ${hm(o.tot)}`].join('\n')};
+const dayTxt=d=>{
+ const L=daySegs(d),o=totals(d),nm=x=>x.type==='inter'?'Sur place':PT[x.type],R=[];
+ R.push("RELEVÉ D'HEURES – "+new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase(),'');
+ const keys=[...new Set(L.map(x=>otKey(x.ot)||'—'))];
+ keys.forEach(k=>{const S=L.filter(x=>(otKey(x.ot)||'—')===k),f=S.find(x=>x.cl||x.ch)||S[0];
+  R.push('━━━━━━━━━━━━━━━━━━━━',k==='—'?'SANS N° OT':'▶ OT N° '+S[0].ot.trim(),'━━━━━━━━━━━━━━━━━━━━');if(f.cl)R.push('  Client   : '+f.cl);if(f.ch)R.push('  Chantier : '+f.ch);
+  const tq=[...new Set(S.flatMap(x=>x.techs||[]))];if(tq.length)R.push('  Équipe   : '+tq.join(', '));
+  S.forEach(x=>R.push(`  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}   ${nm(x).padEnd(12)} ${hm(durOf(x))}`));
+  const rq=[...new Set(S.map(x=>x.rq).filter(Boolean))];if(rq.length)R.push('  Remarque : '+rq.join(' / '));R.push('')});
+ R.push('TOTAUX DE LA JOURNÉE',`  Préparation : ${hm(o.prep)}`,`  Trajet      : ${hm(o.trajet)}`,`  Sur place   : ${hm(o.inter)}`,`  Pause       : ${hm(o.pause)}`,`  Total travaillé : ${hm(o.tot)}`);
+ return R.join('\n')};
 $('#ptCopy').addEventListener('click',()=>copy(dayTxt(ptDay)));
 $('#ptCopyW').addEventListener('click',()=>{const W=weekDays(ptDay).filter(d=>daySegs(d).length);if(!W.length)return toast('Semaine vide');let t=0;W.forEach(d=>t+=totals(d).tot);copy(W.map(dayTxt).join('\n\n')+`\n\nTOTAL SEMAINE : ${hm(t)}`)});
 
@@ -1665,7 +1677,58 @@ async function deliverPdf(k,bytes,name,stEl){const st=stEl||document.querySelect
  catch(e){if(e&&e.code==='declined')say('Téléchargement annulé. <button class="ghost small" data-r="pdflink">Obtenir un lien vers le PDF</button>'),st.querySelector('[data-r=pdflink]').onclick=()=>viaLink();else viaLink(e&&e.code)}}
 let dl=null;
 if(window.AndroidApp){dl={save:async({filename,data})=>{const a=new Uint8Array(await data.arrayBuffer());let s='';for(let i=0;i<a.length;i+=8192)s+=String.fromCharCode.apply(null,a.subarray(i,i+8192));
- const r=AndroidApp.saveFile(btoa(s),filename,'application/pdf');if(r!=='ok')throw {code:'unavailable',message:r};return {status:'saved'}}};document.documentElement.classList.add('android')}window.__memoTest={rpdf:rapportPdf,pdf:memoPdf,setDl:v=>dl=v,all:v=>MB.e.all=v};
+ const r=AndroidApp.saveFile(btoa(s),filename,'application/pdf');if(r!=='ok')throw {code:'unavailable',message:r};return {status:'saved'}}};document.documentElement.classList.add('android')}window.__dayPdf=dayPdf;window.__memoTest={rpdf:rapportPdf,pdf:memoPdf,setDl:v=>dl=v,all:v=>MB.e.all=v};
+
+
+/* ---------- Export de la journée : texte et PDF ---------- */
+async function dayTxtExport(d){if(!daySegs(d).length)return toast('Aucune heure ce jour');
+ const t=('VERHAEGHE IRRIGATION\n'+dayTxt(d)).replace(/\n/g,'\r\n')+'\r\n',name='heures-'+d+'.txt',st=$('#ptExpSt'),say=h=>{st.hidden=false;st.innerHTML=h};
+ try{if(window.AndroidApp){const r=AndroidApp.saveFile(btoa(unescape(encodeURIComponent(t))),name,'text/plain');if(r!=='ok')throw {code:r}}
+  else if(dl){await dl.save({filename:name,data:new Blob([t],{type:'text/plain'})})}
+  else throw {code:'none'};
+  say(`<b style="color:var(--ok)">✓ Fichier « ${esc(name)} » enregistré.</b> <span class="tag">Il est dans vos téléchargements.</span>`)}
+ catch(e){if(e&&e.code==='declined')return say('Enregistrement annulé.');copy(t);say('Enregistrement de fichier indisponible ici : le texte de la journée a été copié dans le presse-papier.')}}
+async function dayPdf(d){const L=daySegs(d);if(!L.length)return toast('Aucune heure ce jour');
+ const doc=new MiniPDF.jsPDF({unit:'mm',format:'a4'}),W=210,H=297,M=14,CW=W-2*M,o=totals(d);
+ const C={blue:[47,125,225],ink:[30,42,54],mute:[102,118,138],line:[196,207,219],head:[232,239,247],zebra:[247,249,252]};
+ const K={prep:[242,140,40],trajet:[47,125,225],inter:[20,163,154],pause:[102,118,138],tot:[30,42,54]};
+ const fill=c=>doc.setFillColor(c[0],c[1],c[2]),draw=c=>doc.setDrawColor(c[0],c[1],c[2]),txt=c=>doc.setTextColor(c[0],c[1],c[2]);
+ const dt=new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const nOt=new Set(L.map(x=>x.ot).filter(Boolean)).size;let y=0;
+ const cols=[['Horaire',27],['Étape',25],['Durée',17,'r'],['N° OT',23],['Client / chantier',49],['Remarque / équipe',41]],P=2,LH=4.2,FS=9;
+ function head(first){fill(C.blue);doc.rect(0,0,W,first?30:14,'F');txt([255,255,255]);doc.setFont('helvetica','bold');
+  if(first){doc.setFontSize(17);doc.text('Verhaeghe Irrigation',M,12);doc.setFont('helvetica','normal');doc.setFontSize(11);doc.text("Relevé d'heures du "+dt,M,19.5);
+   doc.setFontSize(9.5);doc.text(L.length+' ligne'+(L.length>1?'s':'')+(nOt?' · '+nOt+' OT':''),M,25.5);y=38}
+  else{doc.setFontSize(10);doc.text("Relevé d'heures du "+dt+' (suite)',M,9);y=22}}
+ function thead(){fill(C.head);draw(C.line);doc.setLineWidth(.3);doc.rect(M,y,CW,8,'FD');let x=M;txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(8.5);
+  cols.forEach(([t,w,a])=>{doc.text(t,a==='r'?x+w-P:x+P,y+5.4,a==='r'?{align:'right'}:undefined);x+=w});y+=8}
+ const need=h=>{if(y+h>H-16){doc.addPage();head(false);thead()}};
+ head(true);
+ // totaux
+ const T=[['prep','Préparation',o.prep],['trajet','Trajet',o.trajet],['inter','Sur place',o.inter],['pause','Pause',o.pause],['tot','Total travaillé',o.tot]],bw=(CW-4*3)/5;
+ T.forEach(([k,l,v],i)=>{const x=M+i*(bw+3);fill(C.zebra);draw(C.line);doc.setLineWidth(.3);doc.rect(x,y,bw,17,'FD');fill(K[k]);doc.rect(x,y,bw,1.6,'F');
+  txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text(hm(v),x+3,y+9.5);txt(C.mute);doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.text(l,x+3,y+14.3)});
+ y+=25;txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('Détail de la journée',M,y);y+=4;thead();
+ L.forEach((x,i)=>{doc.setFont('helvetica','normal');doc.setFontSize(FS);
+  const who=[x.cl&&x.ch?x.cl+' - '+x.ch:(x.cl||x.ch||x.c||'')].join(''),rem=[x.rq,(x.techs||[]).length?'Équipe : '+x.techs.join(', '):''].filter(Boolean).join(' / ');
+  const cells=[(tOf(x.start)+' - '+(x.end?tOf(x.end):'en cours')),PT[x.type]==='Intervention'?'Sur place':PT[x.type],hm(durOf(x)),x.ot||'',who,rem].map((v,j)=>doc.splitTextToSize(String(v||''),cols[j][1]-2*P));
+  const h=Math.max(...cells.map(c=>c.length))*LH+2*P;need(h);
+  if(i%2){fill(C.zebra);doc.rect(M,y,CW,h,'F')}fill(K[x.type]||C.line);doc.rect(M,y,1.3,h,'F');
+  let cx=M;cells.forEach((c,j)=>{const [,w,a]=cols[j];txt(j===2?C.ink:j===5?C.mute:C.ink);doc.setFont('helvetica',j===2||j===3?'bold':'normal');
+   doc.text(c,a==='r'?cx+w-P:cx+P+(j===0?1:0),y+P+3.1,a==='r'?{align:'right'}:undefined);cx+=w});
+  draw(C.line);doc.setLineWidth(.2);doc.line(M,y+h,M+CW,y+h);y+=h});
+ // récap par OT
+ const G=[...new Set(L.map(x=>otKey(x.ot)).filter(Boolean))];
+ if(G.length){y+=8;need(14);txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('Par OT',M,y);y+=6;
+  G.forEach(k=>{const S=L.filter(x=>otKey(x.ot)===k),t={};S.forEach(x=>t[x.type]=(t[x.type]||0)+durOf(x));const f=S[0];
+   const line=`OT ${f.ot}${f.cl?' · '+f.cl:''}${f.ch?' · '+f.ch:''}`,det=['prep','trajet','inter','pause'].filter(z=>t[z]).map(z=>(z==='inter'?'Sur place':PT[z])+' '+hm(t[z])).join(' · ');
+   need(12);txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text(doc.splitTextToSize(line,CW)[0],M,y);txt(C.mute);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(det,M,y+4.6);y+=11})}
+ // signature
+ y+=6;need(36);draw(C.line);doc.setLineWidth(.4);doc.rect(M,y,(CW-6)/2,30);txt(C.mute);doc.setFontSize(9);doc.text('Signature technicien',M+3,y+5.5);
+ doc.setFontSize(8);doc.text('Édité le '+new Date().toLocaleDateString('fr-FR')+' à '+tOf(Date.now())+' - Verhaeghe Irrigation',W-M,H-8,{align:'right'});
+ await deliverPdf(null,doc.output(),'heures-'+d+'.pdf',$('#ptExpSt'))}
+$('#ptTxt').addEventListener('click',()=>dayTxtExport(ptDay));
+$('#ptPdf').addEventListener('click',()=>dayPdf(ptDay).catch(e=>{console.error(e);toast('PDF impossible : '+(e&&e.message||e))}));
 
 
 /* ---------- Assistant (chatbot) ---------- */
@@ -1752,7 +1815,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.7.3',APP_CODE=25,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.7.4',APP_CODE=26,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
