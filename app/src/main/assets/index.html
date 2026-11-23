@@ -495,6 +495,7 @@ html.lockd #lic{display:flex}
 .pfin{width:100%;margin-top:14px;min-height:54px;font-size:17px;font-weight:700;background:var(--blue)}
 .k-inter .pfin{background:var(--teal)}.k-pause .pfin{background:light-dark(#5d6d80,#53657a)}
 .req{color:var(--bad);font-weight:800}
+.pval{width:100%;margin-top:16px;min-height:60px;font-size:18px;background:var(--teal)}
 .pfin.off{opacity:.45;filter:grayscale(.6);cursor:not-allowed}
 #ptLockMsg[hidden]{display:none}
 .ptinfo input.need{border-color:var(--bad);box-shadow:0 0 0 3px light-dark(#fde3e0,#4a1f1a)}
@@ -707,24 +708,21 @@ html.lockd #lic{display:flex}
   <form class="ptsec k-prep" data-sec="prep">
    <div class="psh"><span class="pic"><svg class="i"><use href="#i-box"/></svg></span><h3>Préparation</h3></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-prep"></label><label>Fin<input type="time" id="ptE-prep"></label><label>Durée<input id="ptD-prep" readonly tabindex="-1" placeholder="–"></label></div>
-   <button type="submit" class="pfin"><svg class="i"><use href="#i-box"/></svg>Fin de préparation</button>
   </form>
   <form class="ptsec k-trajet" data-sec="trajet">
    <div class="psh"><span class="pic"><svg class="i"><use href="#i-car"/></svg></span><h3>Trajet</h3></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-trajet"></label><label>Fin<input type="time" id="ptE-trajet"></label><label>Durée<input id="ptD-trajet" readonly tabindex="-1" placeholder="–"></label></div>
-   <button type="submit" class="pfin"><svg class="i"><use href="#i-car"/></svg>Fin de trajet</button>
   </form>
   <form class="ptsec k-inter" data-sec="inter">
    <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Sur place</h3></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-inter"></label><label>Fin<input type="time" id="ptE-inter"></label><label>Durée<input id="ptD-inter" readonly tabindex="-1" placeholder="–"></label></div>
-   <button type="submit" class="pfin"><svg class="i"><use href="#i-tool"/></svg>Valider l'intervention</button>
   </form>
   <form class="ptsec k-pause" data-sec="pause">
    <div class="psh"><span class="pic"><svg class="i"><use href="#i-cup"/></svg></span><h3>Pause</h3></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-pause"></label><label>Fin<input type="time" id="ptE-pause"></label><label>Durée<input id="ptD-pause" readonly tabindex="-1" placeholder="–"></label></div>
-   <button type="submit" class="pfin"><svg class="i"><use href="#i-cup"/></svg>Fin de pause</button>
   </form>
- <p class="tag" style="margin:10px 0 0">* N° OT et client obligatoires avant toute validation. Sans heure de fin, c'est l'heure actuelle qui est prise. « Valider l'intervention » clôt l'OT et vide les champs pour le suivant.</p>
+ <button type="button" class="pfin pval" id="ptVal"><svg class="i"><use href="#i-check"/></svg>Valider l'intervention</button>
+ <p class="tag" style="margin:10px 0 0">* N° OT et client obligatoires. Saisissez librement le début et la fin de chaque étape faite (laissez vides celles qui ne servent pas), puis validez : tout est enregistré d'un coup et les champs se vident pour l'OT suivant.</p>
 </div>
  <div class="pttot" id="ptTot"></div>
  <div class="ptbar" id="ptBar"></div>
@@ -1345,26 +1343,30 @@ $('#ptOt').addEventListener('change',()=>{const k=otKey($('#ptOt').value);if(!k)
 
 const PTK=['prep','trajet','inter','pause'],fS=k=>$('#ptS-'+k),fE=k=>$('#ptE-'+k);
 function ptDurUpd(k){if(!k)return PTK.forEach(ptDurUpd);const s=fS(k).value,e=fE(k).value;$('#ptD-'+k).value=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):''}
-function ptDefaults(){const L=daySegs(ptDay).filter(x=>x.end),last=L[L.length-1],d=last?tOf(last.end):'08:00';
- if($('#ptForm').dataset.day!==ptDay){PTK.forEach(k=>{fS(k).value=d;fE(k).value=''});$('#ptForm').dataset.day=ptDay}
- PTK.forEach(k=>{if(!fS(k).value)fS(k).value=d});ptDurUpd()}
+function ptDefaults(){if($('#ptForm').dataset.day!==ptDay){PTK.forEach(k=>{fS(k).value='';fE(k).value=''});$('#ptForm').dataset.day=ptDay}ptDurUpd()}
 const ptLock=()=>{const ok=!!($('#ptOt').value.trim()&&$('#ptCl').value.trim());document.querySelectorAll('#ptForm .pfin').forEach(b=>{b.classList.toggle('off',!ok);b.setAttribute('aria-disabled',ok?'false':'true')});$('#ptLockMsg').hidden=ok};
 ['#ptOt','#ptCl'].forEach(i=>{$(i).addEventListener('input',e=>{if(e.target.value.trim())e.target.classList.remove('need');ptLock()});$(i).addEventListener('change',ptLock)});
 PTK.forEach(k=>{fS(k).addEventListener('input',()=>ptDurUpd(k));fE(k).addEventListener('input',()=>ptDurUpd(k))});
-async function ptSave(type){
+async function ptValidate(){
  {const miss=[['#ptOt','le N° OT'],['#ptCl','le client']].filter(([i])=>!$(i).value.trim());
   if(miss.length){miss.forEach(([i])=>$(i).classList.add('need'));const f=$(miss[0][0]);f.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>f.focus(),300);return toast('Renseignez d\'abord '+miss.map(m=>m[1]).join(' et '))}}
- if(!fS(type).value)return toast('Indiquez l\'heure de début');
- if(!fE(type).value){if(ptDay!==dKey(Date.now()))return toast('Indiquez l\'heure de fin');fE(type).value=tOf(Date.now());ptDurUpd(type)}
- const s=toMs(ptDay,fS(type).value),en=toMs(ptDay,fE(type).value),endV=fE(type).value;
- if(!(en>s))return toast('L\'heure de fin doit être après le début');
- if(daySegs(ptDay).some(x=>x.end&&s<x.end&&en>x.start))toast('Attention : chevauche une autre ligne');
- const ot=$('#ptOt').value.trim(),ch=$('#ptCh').value.trim(),cl=$('#ptCl').value.trim(),rq=type==='inter'?$('#ptRq').value.trim():'',grp=$('#ptGrp').checked;
- await put('pointage',{id:uid(),day:ptDay,type,start:s,end:en,c:[ch,cl].filter(Boolean).join(' – '),ot,ch,cl,rq,grp,techs:grp?[...ptSel]:[],t:Date.now()});
- PTK.forEach(k=>{fS(k).value=endV;fE(k).value=''});ptDurUpd();
- if(type==='inter'){$('#ptOt').value='';$('#ptCh').value='';$('#ptCl').value='';$('#ptRq').value=''}
- ptLock();toast((type==='inter'?'Intervention validée : ':PT[type]+(type==='trajet'?' enregistré : ':' enregistrée : '))+hm(en-s)+(ot?' · OT '+ot:''))}
-document.querySelectorAll('.ptsec').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();ptSave(f.dataset.sec)}));
+ const L=[];
+ for(const k of PTK){if(!fS(k).value&&!fE(k).value)continue;
+  if(!fS(k).value){fS(k).focus();return toast(PT[k]+' : indiquez l\'heure de début')}
+  if(!fE(k).value){fE(k).focus();return toast(PT[k]+' : indiquez l\'heure de fin')}
+  const s=toMs(ptDay,fS(k).value),en=toMs(ptDay,fE(k).value);
+  if(!(en>s)){fE(k).focus();return toast(PT[k]+' : la fin doit être après le début')}
+  L.push({k,s,en})}
+ if(!L.length){fS('prep').focus();return toast('Saisissez les heures d\'au moins une étape')}
+ if(L.some(x=>daySegs(ptDay).some(y=>y.end&&x.s<y.end&&x.en>y.start)))toast('Attention : chevauche une autre ligne');
+ const ot=$('#ptOt').value.trim(),ch=$('#ptCh').value.trim(),cl=$('#ptCl').value.trim(),rq=$('#ptRq').value.trim(),grp=$('#ptGrp').checked;
+ for(const x of L)await put('pointage',{id:uid(),day:ptDay,type:x.k,start:x.s,end:x.en,c:[ch,cl].filter(Boolean).join(' – '),ot,ch,cl,rq:x.k==='inter'||L.length===1?rq:'',grp,techs:grp?[...ptSel]:[],t:Date.now()});
+ const tot=L.filter(x=>x.k!=='pause').reduce((t,x)=>t+x.en-x.s,0);
+ PTK.forEach(k=>{fS(k).value='';fE(k).value=''});ptDurUpd();
+ $('#ptOt').value='';$('#ptCh').value='';$('#ptCl').value='';$('#ptRq').value='';ptLock();
+ toast('Intervention validée · OT '+ot+' · '+hm(tot))}
+$('#ptVal').addEventListener('click',ptValidate);
+document.querySelectorAll('.ptsec').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();ptValidate()}));
 drawTechs();ptLock();
 
 /* Historique des OT */
@@ -1750,7 +1752,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.7.2',APP_CODE=24,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.7.3',APP_CODE=25,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
