@@ -341,6 +341,14 @@ public class MainActivity extends Activity {
             try { HeuresWidget.refresh(MainActivity.this); } catch (Exception ignored) {}
         }
 
+        /** Informations complémentaires du widget : heures sup. du mois, totaux semaine et mois, dernière intervention. */
+        @JavascriptInterface
+        public void setWidgetInfo(String sup, String week, String month, String last) {
+            getSharedPreferences("widget", MODE_PRIVATE).edit()
+                .putString("sup", sup).putString("week", week).putString("month", month).putString("last", last).apply();
+            try { HeuresWidget.refresh(MainActivity.this); } catch (Exception ignored) {}
+        }
+
         @JavascriptInterface
         public void shareText(String title, String text) {
             Intent send = new Intent(Intent.ACTION_SEND);

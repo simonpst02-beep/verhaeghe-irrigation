@@ -1553,7 +1553,13 @@ wDraw();
 function wSync(){try{if(!window.AndroidApp||!AndroidApp.setWidget)return;
  const o=totals(dKey(Date.now())),ot=$('#ptOt').value.trim(),cl=$('#ptCl').value.trim();
  const done=PTK.filter(k=>fS(k).value&&fE(k).value).join(','),hid=PTK.filter(k=>blkHidden(SKB[k])).join(',');
- AndroidApp.setWidget(hm(o.tot),ot||cl?'En cours : '+[ot&&'OT '+ot,cl].filter(Boolean).join(' · '):'Aucune intervention en cours',done,hid)}catch(e){}}
+ AndroidApp.setWidget(hm(o.tot),ot||cl?'En cours : '+[ot&&'OT '+ot,cl].filter(Boolean).join(' · '):'Aucune intervention en cours',done,hid);
+ if(AndroidApp.setWidgetInfo){const t=dKey(Date.now()),m=t.slice(0,7),MD=[...new Set(S.pointage.filter(x=>x.day.startsWith(m)).map(x=>x.day))];
+  const hs=MD.reduce((a,d)=>a+supDay(d).s,0),mo=MD.reduce((a,d)=>a+totals(d).tot,0),wk=weekDays(t).reduce((a,d)=>a+totals(d).tot,0);
+  const E=S.pointage.filter(x=>x.end).sort((a,b)=>b.end-a.end),l=E[0];let last='–';
+  if(l){const key=x=>otKey(x.ot)||('CL:'+(x.cl||'').trim().toUpperCase());const G=E.filter(x=>x.day===l.day&&key(x)===key(l)&&x.type!=='pause');
+   last=[l.ot&&'OT '+l.ot.trim(),l.cl||l.c,hm(G.reduce((a,x)=>a+durOf(x),0))].filter(Boolean).join(' · ')}
+  AndroidApp.setWidgetInfo(hs?'+ '+hm(hs):'0 h 00',hm(wk),hm(mo),last)}}catch(e){}}
 window.__openStep=k=>{if(navOff.includes('heures'))return;if(location.hash!=='#heures')location.hash='heures';
  if(ptDay!==dKey(Date.now())){ptDay=dKey(Date.now());drawPt()}
  ptMode='wiz';try{localStorage.setItem('dep_ptmode','wiz')}catch(e){}const S=wSteps();let i=S.indexOf(k);if(i<0)i=0;if(i>0&&!$('#ptOt').value.trim()&&!$('#ptCl').value.trim()){i=0;setTimeout(()=>toast('Renseignez d\'abord le N° OT ou le client'),400)}setTimeout(()=>wGo(i),150)};
@@ -2029,7 +2035,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.8.6',APP_CODE=38,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.8.7',APP_CODE=39,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;

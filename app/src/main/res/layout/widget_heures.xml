@@ -13,14 +13,27 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:gravity="center_vertical">
-        <TextView
+        <LinearLayout
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="Heures du jour"
-            android:textColor="#FFFFFF"
-            android:textSize="15sp"
-            android:textStyle="bold" />
+            android:orientation="vertical">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Heures du jour"
+                android:textColor="#FFFFFF"
+                android:textSize="15sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/w_sup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:singleLine="true"
+                android:text="Heures sup. du mois : –"
+                android:textColor="#FFE2B8"
+                android:textSize="11sp" />
+        </LinearLayout>
         <TextView
             android:id="@+id/w_total"
             android:layout_width="wrap_content"
@@ -41,6 +54,17 @@
         android:text="Touchez une étape pour noter vos heures"
         android:textColor="#E6F1FF"
         android:textSize="12sp" />
+
+    <TextView
+        android:id="@+id/w_last"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:singleLine="true"
+        android:ellipsize="end"
+        android:text="Dernière intervention : –"
+        android:textColor="#CFE6FF"
+        android:textSize="11sp" />
+
 
     <LinearLayout
         android:layout_width="match_parent"

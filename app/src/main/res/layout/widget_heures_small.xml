@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/w_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:gravity="center_vertical"
+    android:paddingStart="12dp"
+    android:paddingEnd="8dp"
+    android:background="@drawable/widget_bg">
+    <LinearLayout
+        android:id="@+id/w_head"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:orientation="vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Heures du jour"
+            android:singleLine="true"
+            android:textColor="#E6F1FF"
+            android:textSize="11sp" />
+        <TextView
+            android:id="@+id/w_total"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="0 h 00"
+            android:singleLine="true"
+            android:textColor="#FFFFFF"
+            android:textSize="18sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+    <TextView
+        android:id="@+id/w_valider"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/widget_btn_main"
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="8dp"
+        android:paddingBottom="8dp"
+        android:text="Noter"
+        android:textColor="#0E7E76"
+        android:textSize="14sp"
+        android:textStyle="bold" />
+</LinearLayout>
