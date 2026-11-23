@@ -729,7 +729,7 @@ html.lockd #lic{display:flex}
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Trajets entre interventions</h3><span class="tag" id="rtSum"></span></div><div id="ptRoute"></div></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Détail de la journée</h3><button class="ghost" id="ptAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div><div id="ptList"></div>
   <div class="tools"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier la journée</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div>
-  <div class="tools"><button id="ptTxt"><svg class="i"><use href="#i-file"/></svg>Exporter en texte</button><button id="ptPdf"><svg class="i"><use href="#i-file"/></svg>Exporter en PDF</button></div>
+  <div class="tools"><button id="ptTxt"><svg class="i"><use href="#i-file"/></svg>Exporter en texte</button><button id="ptPdf"><svg class="i"><use href="#i-file"/></svg>Exporter en PDF</button><button class="or" id="ptShare"><svg class="i"><use href="#i-ext"/></svg>Partager</button></div>
   <p class="tag" id="ptExpSt" hidden style="margin:10px 0 0"></p></div>
  <div class="card" style="margin-top:14px" id="otCard"><div class="ptlh"><h3>Historique des OT</h3><span class="tag" id="otSum"></span></div>
   <div class="search" style="margin-bottom:6px"><svg class="i"><use href="#i-search"/></svg><input id="otQ" placeholder="N° OT, chantier, client, technicien…" aria-label="Rechercher un OT"></div>
@@ -1728,6 +1728,12 @@ async function dayPdf(d){const L=daySegs(d);if(!L.length)return toast('Aucune he
  doc.setFontSize(8);doc.text('Édité le '+new Date().toLocaleDateString('fr-FR')+' à '+tOf(Date.now())+' - Verhaeghe Irrigation',W-M,H-8,{align:'right'});
  await deliverPdf(null,doc.output(),'heures-'+d+'.pdf',$('#ptExpSt'))}
 $('#ptTxt').addEventListener('click',()=>dayTxtExport(ptDay));
+$('#ptShare').addEventListener('click',async()=>{const d=ptDay;if(!daySegs(d).length)return toast('Aucune heure ce jour');
+ const title='Heures du '+new Date(d+'T12:00').toLocaleDateString('fr-FR'),t='VERHAEGHE IRRIGATION\n'+dayTxt(d),st=$('#ptExpSt');
+ if(window.AndroidApp&&AndroidApp.shareText){try{AndroidApp.shareText(title,t);return}catch(e){}}
+ if(navigator.share){try{await navigator.share({title,text:t});return}catch(e){if(e&&e.name==='AbortError')return}}
+ st.hidden=false;st.innerHTML=`<span style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><a class="shb" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">${ic('ext')}WhatsApp</a><a class="shb" href="mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(t)}" target="_blank" rel="noopener">${ic('ext')}E-mail</a><button class="ghost" type="button" id="ptShCopy">${ic('copy')}Copier</button></span>`;
+ $('#ptShCopy').onclick=()=>copy(t)});
 $('#ptPdf').addEventListener('click',()=>dayPdf(ptDay).catch(e=>{console.error(e);toast('PDF impossible : '+(e&&e.message||e))}));
 
 
@@ -1815,7 +1821,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.7.4',APP_CODE=26,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.7.5',APP_CODE=27,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
