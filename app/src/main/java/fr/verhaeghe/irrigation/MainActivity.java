@@ -45,6 +45,7 @@ public class MainActivity extends Activity {
     private Uri photoUri;
     private boolean pageReady = false;
     private String pendingPhotoJs = null;
+    private String pendingStepJs = null;
     private static final int PICK_FILE = 42;
     private static final int INSTALL_PERM = 43;
     private File pendingApk;
@@ -141,6 +142,7 @@ public class MainActivity extends Activity {
             public void onPageFinished(WebView v, String url) {
                 pageReady = true;
                 if (pendingPhotoJs != null) { String c = pendingPhotoJs; pendingPhotoJs = null; v.evaluateJavascript(c, null); }
+                if (pendingStepJs != null) { String c = pendingStepJs; pendingStepJs = null; v.postDelayed(() -> v.evaluateJavascript(c, null), 300); }
             }
             @Override
             public boolean shouldOverrideUrlLoading(WebView v, WebResourceRequest req) {
@@ -183,6 +185,24 @@ public class MainActivity extends Activity {
         if (state != null && state.getString("photoFile") != null) { photoFile = new File(state.getString("photoFile")); photoUri = state.getParcelable("photoUri"); }
         if (state != null) web.restoreState(state);
         else web.loadUrl("file:///android_asset/index.html");
+        handleStep(getIntent());
+    }
+
+    /** Ouverture depuis le widget : aller directement à l'étape demandée. */
+    private void handleStep(Intent i) {
+        if (i == null) return;
+        String s = i.getStringExtra("wstep");
+        if (s == null) return;
+        i.removeExtra("wstep");
+        String code = "window.__openStep&&window.__openStep('" + s.replaceAll("[^a-z]", "") + "')";
+        if (pageReady) js(code); else pendingStepJs = code;
+    }
+
+    @Override
+    protected void onNewIntent(Intent i) {
+        super.onNewIntent(i);
+        setIntent(i);
+        handleStep(i);
     }
 
     @Override
@@ -311,6 +331,14 @@ public class MainActivity extends Activity {
                     js("window.__upState&&window.__upState('error','" + m + "')");
                 }
             }).start();
+        }
+
+        /** Met à jour le widget d'écran d'accueil (heures du jour, intervention en cours, étapes remplies). */
+        @JavascriptInterface
+        public void setWidget(String total, String ot, String done, String hidden) {
+            getSharedPreferences("widget", MODE_PRIVATE).edit()
+                .putString("total", total).putString("ot", ot).putString("done", done).putString("hidden", hidden).apply();
+            try { HeuresWidget.refresh(MainActivity.this); } catch (Exception ignored) {}
         }
 
         @JavascriptInterface
