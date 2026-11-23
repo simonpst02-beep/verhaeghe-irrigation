@@ -505,7 +505,7 @@ html.lockd #lic{display:flex}
 .pfin.off{opacity:.45;filter:grayscale(.6);cursor:not-allowed}
 #ptLockMsg[hidden]{display:none}
 .ptinfo input.need{border-color:var(--bad);box-shadow:0 0 0 3px light-dark(#fde3e0,#4a1f1a)}
-.ptsec.k-prep{border-left-color:var(--or)}.k-prep .psh .pic{background:var(--orSoft);color:var(--or)}.k-prep .pfin{background:var(--or)}
+.ptsec.k-prep{border-left-color:var(--or)}.ptsec.k-retour{border-left-color:var(--deep)}.k-retour .psh .pic{color:var(--deep)}.k-prep .psh .pic{background:var(--orSoft);color:var(--or)}.k-prep .pfin{background:var(--or)}
 .seg2.k-prep{border-left-color:var(--or)}.pttot .k-prep,.otk .k-prep{border-top-color:var(--or)}.pttot .k-tot{border-top-color:var(--ink)!important}
 .pttot{grid-template-columns:repeat(5,minmax(0,1fr))!important}@media(max-width:600px){.pttot{grid-template-columns:repeat(2,minmax(0,1fr))!important}.pttot .k-tot{grid-column:1/-1}}
 .otk{grid-template-columns:repeat(4,minmax(0,1fr))!important}@media(max-width:480px){.otk{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
@@ -716,7 +716,7 @@ html.lockd #lic{display:flex}
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-prep"></label><label>Fin<input type="time" id="ptE-prep"></label><label>Durée<input id="ptD-prep" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
   <form class="ptsec k-trajet" data-sec="trajet">
-   <div class="psh"><span class="pic"><svg class="i"><use href="#i-car"/></svg></span><h3>Trajet</h3></div>
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-car"/></svg></span><h3>Trajet aller</h3><span class="tag" style="margin-left:auto">base → client</span></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-trajet"></label><label>Fin<input type="time" id="ptE-trajet"></label><label>Durée<input id="ptD-trajet" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
   <form class="ptsec k-inter" data-sec="inter">
@@ -727,8 +727,12 @@ html.lockd #lic{display:flex}
    <div class="psh"><span class="pic"><svg class="i"><use href="#i-cup"/></svg></span><h3>Pause</h3></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-pause"></label><label>Fin<input type="time" id="ptE-pause"></label><label>Durée<input id="ptD-pause" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
+  <form class="ptsec k-trajet k-retour" data-sec="retour">
+   <div class="psh"><span class="pic"><svg class="i" style="transform:scaleX(-1)"><use href="#i-car"/></svg></span><h3>Trajet retour</h3><span class="tag" style="margin-left:auto">client → base</span></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-retour"></label><label>Fin<input type="time" id="ptE-retour"></label><label>Durée<input id="ptD-retour" readonly tabindex="-1" placeholder="–"></label></div>
+  </form>
  <button type="button" class="pfin pval" id="ptVal"><svg class="i"><use href="#i-check"/></svg>Valider l'intervention</button>
- <p class="tag" style="margin:10px 0 0">* N° OT et client obligatoires. Saisissez librement le début et la fin de chaque étape faite (laissez vides celles qui ne servent pas), puis validez : tout est enregistré d'un coup et les champs se vident pour l'OT suivant.</p>
+ <p class="tag" style="margin:10px 0 0">* N° OT et client obligatoires. Le trajet retour se note dans le même OT, une fois rentré à la base. Saisissez librement le début et la fin de chaque étape faite (laissez vides celles qui ne servent pas), puis validez : tout est enregistré d'un coup et les champs se vident pour l'OT suivant.</p>
 </div>
  <div class="pttot" id="ptTot"></div>
  <div class="ptbar" id="ptBar"></div>
@@ -1321,6 +1325,8 @@ drawStep();
 
 /* ---------- Pointage ---------- */
 const PT={prep:'Préparation',trajet:'Trajet',inter:'Intervention',pause:'Pause'};
+const PTL={prep:'Préparation',trajet:'Trajet aller',inter:'Sur place',pause:'Pause',retour:'Trajet retour'};
+const stepName=x=>x.type==='trajet'?(x.sens==='retour'?'Trajet retour':x.sens==='aller'?'Trajet aller':'Trajet'):x.type==='inter'?'Sur place':PT[x.type];
 const dKey=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
 const hm=ms=>{const m=Math.round(ms/6e4);return Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')};
 const hms=ms=>{const s=Math.floor(ms/1e3);return Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
@@ -1352,7 +1358,7 @@ const otKey=v=>String(v||'').trim().toUpperCase();
 $('#ptOt').addEventListener('change',()=>{const k=otKey($('#ptOt').value);if(!k)return;const p=[...S.pointage].filter(x=>otKey(x.ot)===k).sort((a,b)=>b.start-a.start)[0];if(!p)return;
  if(!$('#ptCh').value&&p.ch)$('#ptCh').value=p.ch;if(!$('#ptCl').value&&p.cl)$('#ptCl').value=p.cl});
 
-const PTK=['prep','trajet','inter','pause'],fS=k=>$('#ptS-'+k),fE=k=>$('#ptE-'+k);
+const PTK=['prep','trajet','inter','pause','retour'],fS=k=>$('#ptS-'+k),fE=k=>$('#ptE-'+k);
 function ptDurUpd(k){if(!k)return PTK.forEach(ptDurUpd);const s=fS(k).value,e=fE(k).value;$('#ptD-'+k).value=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):''}
 function ptDefaults(){if($('#ptForm').dataset.day!==ptDay){PTK.forEach(k=>{fS(k).value='';fE(k).value=''});$('#ptForm').dataset.day=ptDay}ptDurUpd()}
 const ptLock=()=>{const ok=!!($('#ptOt').value.trim()&&$('#ptCl').value.trim());document.querySelectorAll('#ptForm .pfin').forEach(b=>{b.classList.toggle('off',!ok);b.setAttribute('aria-disabled',ok?'false':'true')});$('#ptLockMsg').hidden=ok};
@@ -1363,15 +1369,15 @@ async function ptValidate(){
   if(miss.length){miss.forEach(([i])=>$(i).classList.add('need'));const f=$(miss[0][0]);f.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>f.focus(),300);return toast('Renseignez d\'abord '+miss.map(m=>m[1]).join(' et '))}}
  const L=[];
  for(const k of PTK){if(!fS(k).value&&!fE(k).value)continue;
-  if(!fS(k).value){fS(k).focus();return toast(PT[k]+' : indiquez l\'heure de début')}
-  if(!fE(k).value){fE(k).focus();return toast(PT[k]+' : indiquez l\'heure de fin')}
+  if(!fS(k).value){fS(k).focus();return toast(PTL[k]+' : indiquez l\'heure de début')}
+  if(!fE(k).value){fE(k).focus();return toast(PTL[k]+' : indiquez l\'heure de fin')}
   const s=toMs(ptDay,fS(k).value),en=toMs(ptDay,fE(k).value);
-  if(!(en>s)){fE(k).focus();return toast(PT[k]+' : la fin doit être après le début')}
+  if(!(en>s)){fE(k).focus();return toast(PTL[k]+' : la fin doit être après le début')}
   L.push({k,s,en})}
  if(!L.length){fS('prep').focus();return toast('Saisissez les heures d\'au moins une étape')}
  if(L.some(x=>daySegs(ptDay).some(y=>y.end&&x.s<y.end&&x.en>y.start)))toast('Attention : chevauche une autre ligne');
  const ot=$('#ptOt').value.trim(),ch=$('#ptCh').value.trim(),cl=$('#ptCl').value.trim(),rq=$('#ptRq').value.trim(),grp=$('#ptGrp').checked;
- for(const x of L)await put('pointage',{id:uid(),day:ptDay,type:x.k,start:x.s,end:x.en,c:[ch,cl].filter(Boolean).join(' – '),ot,ch,cl,rq:x.k==='inter'||L.length===1?rq:'',grp,techs:grp?[...ptSel]:[],t:Date.now()});
+ for(const x of L)await put('pointage',{id:uid(),day:ptDay,type:x.k==='retour'?'trajet':x.k,...(x.k==='trajet'?{sens:'aller'}:x.k==='retour'?{sens:'retour'}:{}),start:x.s,end:x.en,c:[ch,cl].filter(Boolean).join(' – '),ot,ch,cl,rq:x.k==='inter'||L.length===1?rq:'',grp,techs:grp?[...ptSel]:[],t:Date.now()});
  const tot=L.filter(x=>x.k!=='pause').reduce((t,x)=>t+x.en-x.s,0);
  PTK.forEach(k=>{fS(k).value='';fE(k).value=''});ptDurUpd();
  $('#ptOt').value='';$('#ptCh').value='';$('#ptCl').value='';$('#ptRq').value='';ptLock();
@@ -1403,7 +1409,7 @@ function otGroups(){const G={};S.pointage.forEach(x=>{const k=otKey(x.ot);if(!k)
   .sort((a,b)=>b.lastT-a.lastT)}
 const dShort=d=>new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
 const otTxt=g=>[`OT N° ${g.n}`,g.ch&&'Chantier : '+g.ch,g.cl&&'Client : '+g.cl,g.techs.length&&'Équipe : '+g.techs.join(', '),
- ...g.L.map(x=>`${new Date(x.day+'T12:00').toLocaleDateString('fr-FR')}  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${PT[x.type]}  ${hm(durOf(x))}`),
+ ...g.L.map(x=>`${new Date(x.day+'T12:00').toLocaleDateString('fr-FR')}  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${stepName(x)}  ${hm(durOf(x))}`),
  `Préparation : ${hm(g.o.prep)} · Trajet : ${hm(g.o.trajet)} · Intervention : ${hm(g.o.inter)} · Pause : ${hm(g.o.pause)}`,`Total travaillé : ${hm(g.o.prep+g.o.trajet+g.o.inter)}`,g.rq.length&&'Remarques : '+g.rq.join(' / ')].filter(Boolean).join('\n');
 function drawOt(){if(!$('#otList'))return;const q=($('#otQ').value||'').trim().toLowerCase(),A=otGroups();
  const L=q?A.filter(g=>[g.n,g.ch,g.cl,g.techs.join(' '),g.rq.join(' ')].join(' ').toLowerCase().includes(q)):A;
@@ -1414,7 +1420,7 @@ function drawOt(){if(!$('#otList'))return;const q=($('#otQ').value||'').trim().t
   L.map(g=>`<details class="ot"><summary><div class="oth"><b>OT n° ${esc(g.n)}</b><span class="tag">${g.days.map(dShort).join(', ')}${g.ch?' · '+esc(g.ch):''}${g.cl?' · '+esc(g.cl):''}</span></div><span class="otv">${hm(g.o.prep+g.o.trajet+g.o.inter)}</span></summary>
    <div class="otb"><div class="otk"><div class="k-prep"><b>${hm(g.o.prep)}</b><span>Préparation</span></div><div class="k-trajet"><b>${hm(g.o.trajet)}</b><span>Trajet</span></div><div class="k-inter"><b>${hm(g.o.inter)}</b><span>Intervention</span></div><div class="k-pause"><b>${hm(g.o.pause)}</b><span>Pause</span></div></div>
    ${g.ch?`<p class="otm"><b>Chantier</b>${esc(g.ch)}</p>`:''}${g.cl?`<p class="otm"><b>Client</b>${esc(g.cl)}</p>`:''}${g.techs.length?`<p class="otm"><b>Équipe</b>${esc(g.techs.join(', '))}</p>`:''}${g.rq.length?`<p class="otm"><b>Remarques</b>${g.rq.map(esc).join('<br>')}</p>`:''}
-   <table class="otl">${g.L.map(x=>`<tr><td>${dShort(x.day)}</td><td>${tOf(x.start)} – ${x.end?tOf(x.end):'…'}</td><td class="w">${PT[x.type]}</td><td>${hm(durOf(x))}</td></tr>`).join('')}</table>
+   <table class="otl">${g.L.map(x=>`<tr><td>${dShort(x.day)}</td><td>${tOf(x.start)} – ${x.end?tOf(x.end):'…'}</td><td class="w">${stepName(x)}</td><td>${hm(durOf(x))}</td></tr>`).join('')}</table>
    <div class="tools"><button class="ghost" data-otc="${esc(g.k)}">${ic('copy')}Copier l'OT</button><button class="ghost" data-otd="${esc(g.days[g.days.length-1])}">${ic('clock')}Voir la journée</button></div></div></details>`).join('')}
 $('#otQ').addEventListener('input',drawOt);
 $('#otList').addEventListener('click',e=>{const c=e.target.closest('[data-otc]'),d=e.target.closest('[data-otd]');
@@ -1470,13 +1476,13 @@ $('#ptList').addEventListener('click',async e=>{const b=e.target.closest('[data-
 $('#ptAdd').addEventListener('click',async()=>{const L=daySegs(ptDay),last=L[L.length-1];const s=last&&last.end?last.end:new Date(ptDay+'T08:00').getTime();
  await put('pointage',{id:uid(),day:ptDay,type:'inter',start:s,end:s+36e5,c:'',t:Date.now()});toast('Ligne ajoutée : ajustez les heures')});
 const dayTxt=d=>{
- const L=daySegs(d),o=totals(d),nm=x=>x.type==='inter'?'Sur place':PT[x.type],R=[];
+ const L=daySegs(d),o=totals(d),nm=stepName,R=[];
  R.push("RELEVÉ D'HEURES – "+new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase(),'');
  const keys=[...new Set(L.map(x=>otKey(x.ot)||'—'))];
  keys.forEach(k=>{const S=L.filter(x=>(otKey(x.ot)||'—')===k),f=S.find(x=>x.cl||x.ch)||S[0];
   R.push('━━━━━━━━━━━━━━━━━━━━',k==='—'?'SANS N° OT':'▶ OT N° '+S[0].ot.trim(),'━━━━━━━━━━━━━━━━━━━━');if(f.cl)R.push('  Client   : '+f.cl);if(f.ch)R.push('  Chantier : '+f.ch);
   const tq=[...new Set(S.flatMap(x=>x.techs||[]))];if(tq.length)R.push('  Équipe   : '+tq.join(', '));
-  S.forEach(x=>R.push(`  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}   ${nm(x).padEnd(12)} ${hm(durOf(x))}`));
+  S.forEach(x=>R.push(`  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}   ${nm(x).padEnd(14)} ${hm(durOf(x))}`));
   const rq=[...new Set(S.map(x=>x.rq).filter(Boolean))];if(rq.length)R.push('  Remarque : '+rq.join(' / '));R.push('')});
  R.push('TOTAUX DE LA JOURNÉE',`  Préparation : ${hm(o.prep)}`,`  Trajet      : ${hm(o.trajet)}`,`  Sur place   : ${hm(o.inter)}`,`  Pause       : ${hm(o.pause)}`,`  Total travaillé : ${hm(o.tot)}`);
  return R.join('\n')};
@@ -1719,7 +1725,7 @@ async function dayPdf(d){const L=daySegs(d);if(!L.length)return toast('Aucune he
  const fill=c=>doc.setFillColor(c[0],c[1],c[2]),draw=c=>doc.setDrawColor(c[0],c[1],c[2]),txt=c=>doc.setTextColor(c[0],c[1],c[2]);
  const dt=new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
  const nOt=new Set(L.map(x=>x.ot).filter(Boolean)).size;let y=0;
- const cols=[['Horaire',27],['Étape',25],['Durée',17,'r'],['N° OT',23],['Client / chantier',49],['Remarque / équipe',41]],P=2,LH=4.2,FS=9;
+ const cols=[['Horaire',26],['Étape',28],['Durée',17,'r'],['N° OT',22],['Client / chantier',48],['Remarque / équipe',41]],P=2,LH=4.2,FS=9;
  function head(first){fill(C.blue);doc.rect(0,0,W,first?30:14,'F');txt([255,255,255]);doc.setFont('helvetica','bold');
   if(first){doc.setFontSize(17);doc.text('Verhaeghe Irrigation',M,12);doc.setFont('helvetica','normal');doc.setFontSize(11);doc.text("Relevé d'heures du "+dt,M,19.5);
    doc.setFontSize(9.5);doc.text(L.length+' ligne'+(L.length>1?'s':'')+(nOt?' · '+nOt+' OT':''),M,25.5);y=38}
@@ -1735,7 +1741,7 @@ async function dayPdf(d){const L=daySegs(d);if(!L.length)return toast('Aucune he
  y+=25;txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('Détail de la journée',M,y);y+=4;thead();
  L.forEach((x,i)=>{doc.setFont('helvetica','normal');doc.setFontSize(FS);
   const who=[x.cl&&x.ch?x.cl+' - '+x.ch:(x.cl||x.ch||x.c||'')].join(''),rem=[x.rq,(x.techs||[]).length?'Équipe : '+x.techs.join(', '):''].filter(Boolean).join(' / ');
-  const cells=[(tOf(x.start)+' - '+(x.end?tOf(x.end):'en cours')),PT[x.type]==='Intervention'?'Sur place':PT[x.type],hm(durOf(x)),x.ot||'',who,rem].map((v,j)=>doc.splitTextToSize(String(v||''),cols[j][1]-2*P));
+  const cells=[(tOf(x.start)+' - '+(x.end?tOf(x.end):'en cours')),stepName(x),hm(durOf(x)),x.ot||'',who,rem].map((v,j)=>doc.splitTextToSize(String(v||''),cols[j][1]-2*P));
   const h=Math.max(...cells.map(c=>c.length))*LH+2*P;need(h);
   if(i%2){fill(C.zebra);doc.rect(M,y,CW,h,'F')}fill(K[x.type]||C.line);doc.rect(M,y,1.3,h,'F');
   let cx=M;cells.forEach((c,j)=>{const [,w,a]=cols[j];txt(j===2?C.ink:j===5?C.mute:C.ink);doc.setFont('helvetica',j===2||j===3?'bold':'normal');
@@ -1845,7 +1851,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.7.6',APP_CODE=28,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.7.7',APP_CODE=29,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
