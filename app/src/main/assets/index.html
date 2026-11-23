@@ -530,6 +530,43 @@ html.lockd #lic{display:flex}
 .botfabx[hidden]{display:none}
 @media(max-width:640px){.botfabx{left:52px;bottom:136px}}
 .bm .bta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.bm .bta button{min-height:36px;padding:6px 12px;font-size:13.5px;border-radius:18px}
+
+/* ---- Onglet Heures compact ---- */
+#v-heures .card{padding:14px}
+#v-heures .card+.card,#v-heures .pttot+.ptbar+.card{margin-top:10px!important}
+#v-heures .ptlh{margin-bottom:6px}#v-heures .ptlh h3{font-size:19px}
+#v-heures .daynav{margin-bottom:10px}
+.ptmain>.psh{margin-bottom:8px}.ptmain>.psh .pic{width:34px;height:34px}.ptmain>.psh h3{font-size:21px!important}
+.ptinfo{gap:8px 10px;margin-top:6px;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.ptinfo label{font-size:13px}.ptinfo input,.ptinfo textarea{min-height:44px;padding:9px 12px}
+#ptRq{min-height:44px!important}
+.ptgrp{margin:10px 0 6px!important}
+#ptLockMsg{padding:8px 12px;font-size:14px;margin-bottom:0!important}
+.ptmain .ptlbl{margin:12px 0 4px!important}
+.ptsec{margin-top:8px!important;padding:8px 12px 10px!important;border-left-width:5px!important}
+.ptsec .psh{margin-bottom:4px!important;gap:8px}.ptsec .psh .pic{width:28px!important;height:28px!important;border-radius:9px!important}.ptsec .psh .pic svg{width:18px;height:18px}
+.ptsec .psh h3{font-size:16.5px!important}.ptsec .psh .tag{font-size:12px}
+.pdu{margin-left:auto;font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}.ptsec .psh .tag+.pdu{margin-left:8px}
+.ptsec .ptimes{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+.ptsec .ptimes label{font-size:12.5px}.ptsec .ptimes label:last-child{display:none}
+.ptsec .ptimes input{min-height:42px;padding:7px 10px}
+.pval{margin-top:12px!important;min-height:54px!important}
+#v-heures .pttot{margin-top:10px;gap:8px}
+#v-heures .pttot div{padding:8px 10px;border-radius:14px}#v-heures .pttot b{font-size:17px}#v-heures .pttot span{font-size:12px}
+@media(max-width:600px){#v-heures .pttot{grid-template-columns:repeat(3,minmax(0,1fr))!important}#v-heures .pttot .k-tot{grid-column:span 2}.hdesk{display:none}}
+#v-heures .seg2{padding:8px 0 8px 10px;gap:6px}
+#v-heures .seg2 select,#v-heures .seg2 input[type=time]{min-height:38px;padding:4px 8px}
+#v-heures .seg2 .cc{min-height:38px;padding:4px 10px}#v-heures .seg2 .ix input{min-height:34px;width:120px}
+.ptools{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px!important;margin-top:10px!important}
+.ptools button{min-height:42px;padding:6px 8px;font-size:14.5px;gap:6px}.ptools button svg{width:19px;height:19px}
+.ptools.pt2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:600px){#v-heures .seg2{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-areas:'ty ty du rm' 'st st en en' 'cc cc ix ix'!important}#v-heures .seg2 .du{justify-self:end}#v-heures .seg2 .ix input{padding:4px 6px!important;text-align:center}#v-heures .seg2 [data-pdel]{justify-self:end}#v-heures .seg2 .ix input{width:100%!important}#v-heures .seg2 .ix{grid-area:ix;grid-column:auto}#v-heures .seg2 .ix span{display:none}#v-heures .seg2 .ix input{width:100px}}
+#v-heures .wk th,#v-heures .wk td{padding:7px 5px}
+.supk{gap:6px!important;margin-bottom:8px!important}.supk div{padding:8px 10px!important}.supk b{font-size:17px!important}
+.ptold{border-top:1px solid var(--line)}
+.ptold summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:46px;padding:6px 2px;font-weight:700;color:var(--blue)}
+.ptold summary::-webkit-details-marker{display:none}.ptold summary::before{content:'▸';font-size:15px}.ptold[open] summary::before{content:'▾'}
+.ptold summary .tag{margin-left:auto;font-weight:600}
 </style>
 </head>
 <body>
@@ -694,15 +731,15 @@ html.lockd #lic{display:flex}
 <datalist id="chantiers"></datalist><datalist id="clients"></datalist><datalist id="otNums"></datalist><datalist id="enrRefs"></datalist><datalist id="peDims"></datalist>
 
 <section id="v-heures">
- <div class="head"><div><h2>Pointage</h2><p>Notez librement vos heures de trajet, d'intervention et de pause.</p></div></div>
+ <div class="head"><div><h2>Pointage</h2><p class="hdesk">Notez librement vos heures de trajet, d'intervention et de pause.</p></div></div>
  <div class="daynav"><button class="ghost ico2" id="ptPrev" aria-label="Jour précédent"><svg class="i"><use href="#i-back"/></svg></button><input type="date" id="ptDate" aria-label="Jour affiché"><button class="ghost ico2" id="ptNext" aria-label="Jour suivant"><svg class="i"><use href="#i-next"/></svg></button><button class="ghost" id="ptToday">Aujourd'hui</button></div>
 <div class="card ptmain" id="ptForm">
  <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Intervention</h3></div>
   <div class="ptinfo">
-   <label class="w">N° OT <span class="req">*</span><input id="ptOt" list="otNums" placeholder="Numéro d'ordre de travail" autocomplete="off"></label>
+   <label>N° OT <span class="req">*</span><input id="ptOt" list="otNums" placeholder="Numéro d'ordre de travail" autocomplete="off"></label>
    <label>Client <span class="req">*</span><input id="ptCl" list="clients" placeholder="EARL Dupont…"></label>
-   <label>Chantier<input id="ptCh" list="chantiers" placeholder="Lieu, parcelle…"></label>
-   <label class="w">Remarque<textarea id="ptRq" rows="2" placeholder="Travaux faits, pièces, suite à donner…"></textarea></label>
+   <label class="w">Chantier<input id="ptCh" list="chantiers" placeholder="Lieu, parcelle…"></label>
+   <label class="w">Remarque<textarea id="ptRq" rows="1" placeholder="Travaux faits, pièces, suite à donner…"></textarea></label>
   </div>
   <label class="allb ptgrp"><input type="checkbox" id="ptGrp"> Groupe (intervention à plusieurs)</label>
   <details class="tdd" id="ptTechs" hidden><summary><span id="ptTechsS">Choisir les techniciens</span></summary>
@@ -710,43 +747,43 @@ html.lockd #lic{display:flex}
    <div class="tdda"><input id="ptTechN" placeholder="Ajouter un technicien" aria-label="Nom du technicien"><button type="button" class="ghost" id="ptTechAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div>
   </details>
   <p class="ptlbl" style="margin-top:18px">Heures</p>
-  <p class="warn" id="ptLockMsg" style="margin:0 0 4px"><svg class="i"><use href="#i-warn"/></svg>Renseignez le N° OT et le client pour pouvoir valider les heures.</p>
+  <p class="warn" id="ptLockMsg" style="margin:0 0 4px"><svg class="i"><use href="#i-warn"/></svg>Renseignez le N° OT et le client pour valider.</p>
   <form class="ptsec k-prep" data-sec="prep">
-   <div class="psh"><span class="pic"><svg class="i"><use href="#i-box"/></svg></span><h3>Préparation</h3></div>
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-box"/></svg></span><h3>Préparation</h3><b class="pdu" id="ptH-prep"></b></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-prep"></label><label>Fin<input type="time" id="ptE-prep"></label><label>Durée<input id="ptD-prep" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
   <form class="ptsec k-trajet" data-sec="trajet">
-   <div class="psh"><span class="pic"><svg class="i"><use href="#i-car"/></svg></span><h3>Trajet aller</h3><span class="tag" style="margin-left:auto">base → client</span></div>
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-car"/></svg></span><h3>Trajet aller</h3><b class="pdu" id="ptH-trajet"></b><span class="tag" style="margin-left:auto">base → client</span></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-trajet"></label><label>Fin<input type="time" id="ptE-trajet"></label><label>Durée<input id="ptD-trajet" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
   <form class="ptsec k-inter" data-sec="inter">
-   <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Sur place</h3></div>
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Sur place</h3><b class="pdu" id="ptH-inter"></b></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-inter"></label><label>Fin<input type="time" id="ptE-inter"></label><label>Durée<input id="ptD-inter" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
   <form class="ptsec k-pause" data-sec="pause">
-   <div class="psh"><span class="pic"><svg class="i"><use href="#i-cup"/></svg></span><h3>Pause</h3></div>
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-cup"/></svg></span><h3>Pause</h3><b class="pdu" id="ptH-pause"></b></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-pause"></label><label>Fin<input type="time" id="ptE-pause"></label><label>Durée<input id="ptD-pause" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
   <form class="ptsec k-trajet k-retour" data-sec="retour">
-   <div class="psh"><span class="pic"><svg class="i" style="transform:scaleX(-1)"><use href="#i-car"/></svg></span><h3>Trajet retour</h3><span class="tag" style="margin-left:auto">client → base</span></div>
+   <div class="psh"><span class="pic"><svg class="i" style="transform:scaleX(-1)"><use href="#i-car"/></svg></span><h3>Trajet retour</h3><b class="pdu" id="ptH-retour"></b><span class="tag" style="margin-left:auto">client → base</span></div>
    <div class="grid ptimes"><label>Début<input type="time" id="ptS-retour"></label><label>Fin<input type="time" id="ptE-retour"></label><label>Durée<input id="ptD-retour" readonly tabindex="-1" placeholder="–"></label></div>
   </form>
  <button type="button" class="pfin pval" id="ptVal"><svg class="i"><use href="#i-check"/></svg>Valider l'intervention</button>
- <p class="tag" style="margin:10px 0 0">* N° OT et client obligatoires. Le trajet retour se note dans le même OT, une fois rentré à la base. Saisissez librement le début et la fin de chaque étape faite (laissez vides celles qui ne servent pas), puis validez : tout est enregistré d'un coup et les champs se vident pour l'OT suivant.</p>
+ <p class="tag" style="margin:10px 0 0">* Obligatoires. Remplissez seulement les étapes faites, puis validez.</p>
 </div>
  <div class="pttot" id="ptTot"></div>
  <div class="ptbar" id="ptBar"></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Trajets entre interventions</h3><span class="tag" id="rtSum"></span></div><div id="ptRoute"></div></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Détail de la journée</h3><button class="ghost" id="ptAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div><div id="ptList"></div>
-  <div class="tools"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier la journée</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div>
-  <div class="tools"><button id="ptTxt"><svg class="i"><use href="#i-file"/></svg>Exporter en texte</button><button id="ptPdf"><svg class="i"><use href="#i-file"/></svg>Exporter en PDF</button><button class="or" id="ptShare"><svg class="i"><use href="#i-ext"/></svg>Partager</button></div>
+  <div class="tools ptools pt2"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier le jour</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div>
+  <div class="tools ptools"><button id="ptTxt"><svg class="i"><use href="#i-file"/></svg>Texte</button><button id="ptPdf"><svg class="i"><use href="#i-file"/></svg>PDF</button><button class="or" id="ptShare"><svg class="i"><use href="#i-ext"/></svg>Partager</button></div>
   <p class="tag" id="ptExpSt" hidden style="margin:10px 0 0"></p></div>
  <div class="card" style="margin-top:14px" id="otCard"><div class="ptlh"><h3>Historique des OT</h3><span class="tag" id="otSum"></span></div>
   <div class="search" style="margin-bottom:6px"><svg class="i"><use href="#i-search"/></svg><input id="otQ" placeholder="N° OT, chantier, client, technicien…" aria-label="Rechercher un OT"></div>
   <div id="otList"></div></div>
  <div class="card" style="margin-top:14px"><h3 style="font-size:21px;margin-bottom:8px" id="ptWT">Semaine</h3><div id="ptWeek"></div></div>
  <div class="card" style="margin-top:14px" id="supCard"><div class="ptlh"><h3>Heures supplémentaires</h3><span class="tag" id="supM"></span></div>
-  <p class="tag" style="margin:0 0 12px">Base : 8 h par jour du lundi au vendredi. Au-delà de 8 h un jour de semaine, et toutes les heures du samedi et du dimanche, comptent en heures supplémentaires. Les pauses ne comptent pas.</p>
+  <p class="tag" style="margin:0 0 12px">Base 8 h/jour du lundi au vendredi ; le week-end compte en entier. Pauses non comptées.</p>
   <div id="supBox"></div></div>
 </section>
 
@@ -1331,7 +1368,7 @@ const dKey=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth(
 const hm=ms=>{const m=Math.round(ms/6e4);return Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')};
 const hms=ms=>{const s=Math.floor(ms/1e3);return Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const tOf=ms=>new Date(ms).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-let ptDay=dKey(Date.now());
+let ptDay=dKey(Date.now()),ptOldOpen=false;
 const running=()=>S.pointage.find(x=>!x.end);
 const durOf=x=>x.end?Math.max(0,x.end-x.start):0;
 const daySegs=d=>S.pointage.filter(x=>x.day===d).sort((a,b)=>a.start-b.start);
@@ -1359,7 +1396,7 @@ $('#ptOt').addEventListener('change',()=>{const k=otKey($('#ptOt').value);if(!k)
  if(!$('#ptCh').value&&p.ch)$('#ptCh').value=p.ch;if(!$('#ptCl').value&&p.cl)$('#ptCl').value=p.cl});
 
 const PTK=['prep','trajet','inter','pause','retour'],fS=k=>$('#ptS-'+k),fE=k=>$('#ptE-'+k);
-function ptDurUpd(k){if(!k)return PTK.forEach(ptDurUpd);const s=fS(k).value,e=fE(k).value;$('#ptD-'+k).value=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):''}
+function ptDurUpd(k){if(!k)return PTK.forEach(ptDurUpd);const s=fS(k).value,e=fE(k).value,v=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):'';$('#ptD-'+k).value=v;const h=$('#ptH-'+k);if(h)h.textContent=v}
 function ptDefaults(){ptDurUpd()}
 const ptLock=()=>{const ok=!!($('#ptOt').value.trim()&&$('#ptCl').value.trim());document.querySelectorAll('#ptForm .pfin').forEach(b=>{b.classList.toggle('off',!ok);b.setAttribute('aria-disabled',ok?'false':'true')});$('#ptLockMsg').hidden=ok};
 ['#ptOt','#ptCl'].forEach(i=>{$(i).addEventListener('input',e=>{if(e.target.value.trim())e.target.classList.remove('need');ptLock()});$(i).addEventListener('change',ptLock)});
@@ -1442,8 +1479,13 @@ function drawPtTotals(){const o=totals(ptDay),all=o.prep+o.trajet+o.inter+o.paus
 function drawPt(){const today=dKey(Date.now()),isT=ptDay===today;
  $('#ptDate').value=ptDay;$('#ptToday').hidden=isT;ptDefaults();
  const L=daySegs(ptDay);
- $('#ptList').innerHTML=L.length?L.map(x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"><div class="ix"><input data-f="ot" value="${esc(x.ot||'')}" placeholder="N° OT" aria-label="N° OT" list="otNums">${x.cl&&x.ch?`<span>Client <b>${esc(x.cl)}</b></span>`:''}${(x.techs||[]).length?`<span>Équipe <b>${esc(x.techs.join(', '))}</b></span>`:''}${x.rq?`<span>${esc(x.rq)}</span>`:''}</div></div>`).join('')
-  :`<p class="empty" style="margin:0">Aucun pointage ce jour.</p>`;
+ const row=x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"><div class="ix"><input data-f="ot" value="${esc(x.ot||'')}" placeholder="N° OT" aria-label="N° OT" list="otNums">${x.cl&&x.ch?`<span>Client <b>${esc(x.cl)}</b></span>`:''}${(x.techs||[]).length?`<span>Équipe <b>${esc(x.techs.join(', '))}</b></span>`:''}${x.rq?`<span>${esc(x.rq)}</span>`:''}</div></div>`;
+ const keyOf=x=>otKey(x.ot)||('#'+x.id),G=[];L.forEach(x=>{const k=keyOf(x);let g=G.find(y=>y.k===k);if(!g)G.push(g={k,L:[]});g.L.push(x)});
+ const old=G.slice(0,-2),last=G.slice(-2),nOld=old.length;
+ $('#ptList').innerHTML=!L.length?`<p class="empty" style="margin:0">Aucun pointage ce jour.</p>`:
+  (nOld?`<details class="ptold"${ptOldOpen?' open':''}><summary>${nOld} intervention${nOld>1?'s':''} plus tôt<span class="tag">${old.reduce((n,g)=>n+g.L.length,0)} ligne${old.reduce((n,g)=>n+g.L.length,0)>1?'s':''}</span></summary>${old.flatMap(g=>g.L).map(row).join('')}</details>`:'')+
+  last.flatMap(g=>g.L).map(row).join('');
+ $('#ptList').querySelector('.ptold')?.addEventListener('toggle',e=>ptOldOpen=e.target.open);
  drawPtTotals();drawRoute();drawWeek();drawOt();drawSup()}
 
 function drawRoute(){const L=daySegs(ptDay);const I=L.filter(x=>x.type==='inter');
@@ -1860,7 +1902,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.7.8',APP_CODE=30,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.7.9',APP_CODE=31,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
