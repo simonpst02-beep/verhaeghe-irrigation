@@ -22,6 +22,36 @@
             </intent-filter>
             <meta-data android:name="android.appwidget.provider" android:resource="@xml/heures_widget_info" />
         </receiver>
+        <receiver android:name=".HeuresWidgetMini" android:exported="true" android:label="Heures – mini (1×1)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/heures_widget_mini" />
+        </receiver>
+        <receiver android:name=".HeuresWidgetPetit" android:exported="true" android:label="Heures – petit (2×1)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/heures_widget_petit" />
+        </receiver>
+        <receiver android:name=".HeuresWidgetMoyen" android:exported="true" android:label="Heures – moyen (4×1)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/heures_widget_moyen" />
+        </receiver>
+        <receiver android:name=".HeuresWidgetGrand" android:exported="true" android:label="Heures – grand (4×2)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/heures_widget_grand" />
+        </receiver>
+        <receiver android:name=".HeuresWidgetTresGrand" android:exported="true" android:label="Heures – très grand (4×3)">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data android:name="android.appwidget.provider" android:resource="@xml/heures_widget_tresgrand" />
+        </receiver>
         <provider android:name="androidx.core.content.FileProvider"
             android:authorities="fr.verhaeghe.irrigation.files"
             android:exported="false" android:grantUriPermissions="true">

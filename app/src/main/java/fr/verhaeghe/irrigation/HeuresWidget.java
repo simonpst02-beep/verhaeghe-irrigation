@@ -83,9 +83,9 @@ public class HeuresWidget extends AppWidgetProvider {
     /** Taille choisie d'après l'espace donné au widget (en dp). */
     static int sizeFor(float w, float h) {
         if (w < 110) return MINI;
-        if (w < 200 || h < 90) return SMALL;
-        if (h < 150) return MEDIUM;
-        if (h < 220) return LARGE;
+        if (w < 200 || h < 70) return SMALL;
+        if (h < 140) return MEDIUM;
+        if (h < 210) return LARGE;
         return XL;
     }
 
@@ -96,9 +96,9 @@ public class HeuresWidget extends AppWidgetProvider {
             Map<SizeF, RemoteViews> map = new HashMap<>();
             map.put(new SizeF(40f, 40f), build(c, MINI));
             map.put(new SizeF(110f, 40f), build(c, SMALL));
-            map.put(new SizeF(200f, 90f), build(c, MEDIUM));
-            map.put(new SizeF(200f, 150f), build(c, LARGE));
-            map.put(new SizeF(200f, 220f), build(c, XL));
+            map.put(new SizeF(200f, 70f), build(c, MEDIUM));
+            map.put(new SizeF(200f, 140f), build(c, LARGE));
+            map.put(new SizeF(200f, 210f), build(c, XL));
             v = new RemoteViews(map);
         } else {
             Bundle o = m.getAppWidgetOptions(id);
@@ -112,7 +112,10 @@ public class HeuresWidget extends AppWidgetProvider {
     /** Appelé par l'appli quand les heures ou la saisie en cours changent. */
     static void refresh(Context c) {
         AppWidgetManager m = AppWidgetManager.getInstance(c);
-        int[] ids = m.getAppWidgetIds(new ComponentName(c, HeuresWidget.class));
-        for (int id : ids) update(c, m, id);
+        Class<?>[] all = {HeuresWidget.class, HeuresWidgetMini.class, HeuresWidgetPetit.class, HeuresWidgetMoyen.class, HeuresWidgetGrand.class, HeuresWidgetTresGrand.class};
+        for (Class<?> k : all) {
+            int[] ids = m.getAppWidgetIds(new ComponentName(c, k));
+            for (int id : ids) update(c, m, id);
+        }
     }
 }
