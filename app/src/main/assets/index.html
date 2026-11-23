@@ -581,6 +581,8 @@ html:not(.android) .andr{display:none}
 .ptold summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:46px;padding:6px 2px;font-weight:700;color:var(--blue)}
 .ptold summary::-webkit-details-marker{display:none}.ptold summary::before{content:'▸';font-size:15px}.ptold[open] summary::before{content:'▾'}
 .ptold summary .tag{margin-left:auto;font-weight:600}
+.hrow #hi{flex:1 1 auto;min-width:0}
+.hin{display:block;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
 </style>
 </head>
 <body>
@@ -1221,7 +1223,7 @@ window.addEventListener('hashchange',route);
 /* ---------- Accueil ---------- */
 window.__hiName=()=>{try{if($('#v-accueil').classList.contains('cur'))drawHome()}catch(e){}};
 function drawHome(){drawPtHome();drawHomeFo();
- const h=new Date().getHours();let pn='';try{pn=localStorage.getItem('vi_prenom')||''}catch(e){}$('#hi').textContent=(h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir')+(pn?' '+pn:'');
+ const h=new Date().getHours();let pn='';try{pn=localStorage.getItem('vi_prenom')||''}catch(e){}$('#hi').innerHTML=esc(h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir')+(pn?`<span class="hin">${esc(pn)}</span>`:'');
  $('#today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
  const todo=S.memo.filter(x=>!x.s);
  $('#nP').textContent=PANNES.length;$('#nM').textContent=S.mes.length||'';$('#nT').textContent=todo.length||'';$('#nF').textContent=S.photos.length||'';
@@ -1956,7 +1958,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.8.2',APP_CODE=34,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.8.3',APP_CODE=35,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
