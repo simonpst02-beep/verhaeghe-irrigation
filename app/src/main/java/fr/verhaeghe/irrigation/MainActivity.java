@@ -47,6 +47,7 @@ public class MainActivity extends Activity {
     private String pendingPhotoJs = null;
     private String pendingStepJs = null;
     private static final int PICK_FILE = 42;
+    private static final int VOICE = 7301;
     private static final int INSTALL_PERM = 43;
     private File pendingApk;
 
@@ -212,6 +213,15 @@ public class MainActivity extends Activity {
             else js("window.__upState&&window.__upState('denied')");
             return;
         }
+        if (req == VOICE) {
+            String t = "";
+            if (res == RESULT_OK && data != null) {
+                java.util.ArrayList<String> r = data.getStringArrayListExtra(android.speech.RecognizerIntent.EXTRA_RESULTS);
+                if (r != null && !r.isEmpty()) t = r.get(0);
+            }
+            js("window.__voiceRes&&window.__voiceRes(" + org.json.JSONObject.quote(t) + ")");
+            return;
+        }
         if (req == PICK_FILE && fileCallback == null) {
             // L'appli a été relancée pendant la prise de vue : on récupère quand même la photo
             if (res == RESULT_OK && photoFile != null && photoFile.length() > 0) { File f = photoFile; new Thread(() -> sendPhotoToPage(f)).start(); }
@@ -251,6 +261,20 @@ public class MainActivity extends Activity {
         @JavascriptInterface
         public String deviceId() {
             try { return Settings.Secure.getString(getContentResolver(), Settings.Secure.ANDROID_ID); } catch (Exception e) { return ""; }
+        }
+
+        /** Dictée vocale (reconnaissance vocale d'Android, en français). Renvoie false si indisponible. */
+        @JavascriptInterface
+        public boolean listen() {
+            try {
+                Intent i = new Intent(android.speech.RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                i.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE_MODEL, android.speech.RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                i.putExtra(android.speech.RecognizerIntent.EXTRA_LANGUAGE, "fr-FR");
+                i.putExtra(android.speech.RecognizerIntent.EXTRA_PROMPT, "Dictez vos heures");
+                if (i.resolveActivity(getPackageManager()) == null) return false;
+                runOnUiThread(() -> { try { startActivityForResult(i, VOICE); } catch (Exception e) { js("window.__voiceErr&&window.__voiceErr('Reconnaissance vocale indisponible')"); } });
+                return true;
+            } catch (Exception e) { return false; }
         }
 
         @JavascriptInterface

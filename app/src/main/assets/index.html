@@ -607,6 +607,15 @@ html:not(.android) .andr{display:none}
 .botfabx{left:auto!important;right:60px}
 @media(max-width:640px){.botfab{right:12px}.botfabx{right:52px}}
 body:has(#botFab:not([hidden])) main{padding-bottom:84px}
+
+/* dictée des heures */
+.ptvoice{margin:4px 0 14px;padding:12px;border-radius:16px;background:var(--soft,#f3f7fc);border:1.5px dashed var(--line)}
+.ptvoice .vrow{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.ptvoice #ptMic{background:linear-gradient(135deg,#2f7de1,#19b3a6);color:#fff}
+.ptvoice #ptMic.rec{background:#c0392b;animation:vpulse 1s infinite}
+@keyframes vpulse{50%{opacity:.7}}
+.ptvoice textarea{width:100%;margin-top:10px}
+.ptvoice .vres{margin-top:8px;font-size:14px}.ptvoice .vres li{margin:2px 0}.ptvoice .vres .bad{color:#c0392b}
 </style>
 </head>
 <body>
@@ -646,7 +655,7 @@ body:has(#botFab:not([hidden])) main{padding-bottom:84px}
  <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4z"/><path d="M10 20a2 2 0 004 0"/></symbol>
  <symbol id="i-file" viewBox="0 0 24 24"><path d="M14 3H6v18h12V7z"/><path d="M14 3v4h4"/><path d="M9 13h6M9 17h6"/></symbol>
  <symbol id="i-ext" viewBox="0 0 24 24"><path d="M14 4h6v6M20 4l-9 9"/><path d="M18 14v6H4V6h6"/></symbol>
- <symbol id="i-pipe" viewBox="0 0 24 24"><path d="M3 9h7v6H3zM14 9h7v6h-7z"/><path d="M10 12h4"/></symbol>
+ <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M8 21h8"/></symbol><symbol id="i-pipe" viewBox="0 0 24 24"><path d="M3 9h7v6H3zM14 9h7v6h-7z"/><path d="M10 12h4"/></symbol>
 </svg>
 
 <header class="hero">
@@ -777,6 +786,12 @@ body:has(#botFab:not([hidden])) main{padding-bottom:84px}
 <div class="card ptmain" id="ptForm">
  <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Intervention</h3></div>
  <div class="seg ptmode" id="ptMode" role="tablist" aria-label="Mode de saisie"><button type="button" data-pm="form">Formulaire</button><button type="button" data-pm="wiz">Étape par étape</button></div>
+ <div class="ptvoice" id="ptVoice">
+  <div class="vrow"><button type="button" id="ptMic"><svg class="i"><use href="#i-mic"/></svg>Dicter mes heures</button><span class="tag" style="flex:1;min-width:180px">Ex. : « OT 1234 chez EARL Dupont, trajet de 7 h 30 à 8 h, sur place jusqu'à 12 h, pause jusqu'à 13 h, retour de 17 h à 17 h 30 »</span></div>
+  <div id="ptVoiceBox" hidden><textarea id="ptVoiceTxt" rows="3" placeholder="Votre dictée apparaît ici (vous pouvez la corriger)"></textarea>
+   <div class="tools" style="margin-top:8px"><button type="button" id="ptVoiceGo"><svg class="i"><use href="#i-check"/></svg>Remplir le formulaire</button><button type="button" class="ghost" id="ptVoiceX">Fermer</button></div>
+   <div class="vres" id="ptVoiceRes"></div></div>
+ </div>
  <div class="wizonly wizhd"><div class="wizdots" id="wizDots"></div><b id="wizT"></b><span class="tag" id="wizN"></span></div>
   <div class="ptinfo">
    <label>N° OT <span class="req">*</span><input id="ptOt" list="otNums" placeholder="Numéro d'ordre de travail" autocomplete="off"></label>
@@ -1489,6 +1504,91 @@ function ptDefaults(){ptDurUpd()}
 const ptLock=()=>{const ok=!!($('#ptOt').value.trim()||$('#ptCl').value.trim());if(ok)['#ptOt','#ptCl'].forEach(i=>$(i).classList.remove('need'));document.querySelectorAll('#ptForm .pfin').forEach(b=>{b.classList.toggle('off',!ok);b.setAttribute('aria-disabled',ok?'false':'true')});$('#ptLockMsg').hidden=ok};
 ['#ptOt','#ptCl'].forEach(i=>{$(i).addEventListener('input',e=>{if(e.target.value.trim())e.target.classList.remove('need');ptLock()});$(i).addEventListener('change',ptLock)});
 PTK.forEach(k=>{fS(k).addEventListener('input',()=>ptDurUpd(k));fE(k).addEventListener('input',()=>ptDurUpd(k))});
+// Analyse d'une dictée d'heures en français → { ot, cl, ch, rq, seg:{prep,trajet,inter,pause,retour:{s,e}}, notes:[] }
+function parseHeures(txt){
+ const raw=String(txt||'');
+ let t=' '+raw.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[’']/g,' ').replace(/\s+/g,' ')+' ';
+ const out={seg:{},notes:[]};
+ // remarque : tout ce qui suit le mot « remarque » / « commentaire »
+ let m=raw.match(/\b(remarques?|commentaires?|note)\s*:?\s*(.+)$/i);
+ if(m){out.rq=m[2].trim().replace(/^[,.:\s]+/,'');t=t.slice(0,t.search(/\b(remarques?|commentaires?|note)\b/))+' '}
+ // nombres en lettres courants
+ const NB={une:1,un:1,deux:2,trois:3,quatre:4,cinq:5,six:6,sept:7,huit:8,neuf:9,dix:10,onze:11,douze:12,treize:13,quatorze:14,quinze:15,seize:16,'dix sept':17,'dix huit':18,'dix neuf':19,vingt:20,trente:30,quarante:40,'quarante cinq':45,cinquante:50};
+ Object.keys(NB).sort((a,b)=>b.length-a.length).forEach(k=>{t=t.replace(new RegExp('\\b'+k+'\\b','g'),NB[k])});
+ // N° OT
+ m=t.match(/\b(?:o\s?t|ordre de travail|numero d ot|numero|n°)\s*(?:numero|n°|no)?\s*:?\s*([a-z]{0,3}\s?\d[\d\s-]{0,12}\d|\d)/);
+ if(m){out.ot=m[1].replace(/\s+/g,'').toUpperCase();t=t.replace(m[0],' ')}
+ // heures : 7h30, 7 h 30, 7:30, 7 heures 30, 7 heures et demie, midi, midi et demi, minuit, 8h moins le quart
+ const TIME=/\b(midi|minuit|(\d{1,2})\s*(?:heures?|h|:)\s*(\d{1,2}(?!\s*(?:heures?|h\b|h\d|:)))?)(\s*(?:et demie?|et quart|moins le quart|moins (\d{1,2})))?(?!\s*(?:min|minutes|mn))/g;
+ const toMin=(mm)=>{let h,mi=0;if(mm[1]==='midi')h=12;else if(mm[1]==='minuit')h=0;else{h=+mm[2];mi=mm[3]?+mm[3]:0}
+  const x=(mm[4]||'').trim();if(/et demi/.test(x))mi+=30;else if(/et quart/.test(x))mi+=15;else if(/moins le quart/.test(x))mi-=15;else if(mm[5])mi-=+mm[5];
+  if(h>=1&&h<=4)h+=12; // pas de travail à 3 h du matin : c'est l'après-midi
+  let v=h*60+mi;return v>=0&&v<24*60?v:null};
+ // client / chantier
+ const KW='(?:preparation|prepa|trajet|aller|route|deplacement|retour|intervention|sur place|travail|pause|dejeuner|repas|chantier|client|chez|de \\d|a \\d|jusqu|ot\\b|remarque|,|\\.|;| et (?:trajet|retour|pause|intervention)|$)';
+ m=t.match(new RegExp('\\b(?:chez|client|pour)\\s+(?:le client\\s+)?(.+?)\\s*(?='+KW+')'));
+ if(m&&m[1].trim()){out.cl=cap(raw,m[1].trim())}
+ m=t.match(new RegExp('\\b(?:chantier|parcelle|lieu dit|lieu)\\s+(?:de |du |d )?(.+?)\\s*(?='+KW+')'));
+ if(m&&m[1].trim()&&!/^\d/.test(m[1]))out.ch=cap(raw,m[1].trim());
+ // découpage en étapes
+ const ST=[['prep',/\b(preparation|prepa|prepare|chargement)\b/g],['retour',/\b(retour|trajet retour|rentre|rentree)\b/g],['pause',/\b(pause|dejeuner|repas|casse croute)\b/g],['trajet',/\b(trajet|aller|route|deplacement|parti|depart)\b/g],['inter',/\b(intervention|sur place|travail|travaille|arrive|arrivee|chantier)\b/g]];
+ const marks=[];
+ ST.forEach(([k,re])=>{let x;re.lastIndex=0;while((x=re.exec(t))){if(k==='trajet'&&/retour\s*$/.test(t.slice(0,x.index)))continue;if(k==='inter'&&x[1]==='chantier'&&!/\d/.test(t.slice(x.index,x.index+40)))continue;marks.push({k,i:x.index,len:x[0].length})}});
+ marks.sort((a,b)=>a.i-b.i);
+ const M=marks.filter((x,j)=>!(j&&marks[j-1].k===x.k&&x.i-marks[j-1].i<15)&&!marks.some(y=>y!==x&&y.i<=x.i&&y.i+y.len>=x.i+x.len&&y.len>x.len));
+ let prevEnd=null;
+ M.forEach((mk,j)=>{let part=t.slice(mk.i,j+1<M.length?M[j+1].i:t.length);const T=[];let x;
+  // durée (« d'une heure », « pendant 1 h », « 45 minutes ») : retirée avant de chercher les horaires
+  let dur=null;const dm=part.match(/\b(?:d|pendant|durant)\s+(\d+)\s*heures?\b(?!\s*(?:\d|et\b))|\b(\d+)\s*(?:min|minutes|mn)\b|\b(\d+)\s*(?:heures?|h)\s+de\s+(?:pause|trajet|route)\b/);
+  if(dm){dur=dm[1]?+dm[1]*60:dm[2]?+dm[2]:+dm[3]*60;part=part.replace(dm[0],' ')}
+  TIME.lastIndex=0;
+  while((x=TIME.exec(part))){const v=toMin(x);if(v!=null)T.push({v,pre:part.slice(Math.max(0,x.index-12),x.index)})}
+  let s=null,e=null;
+  if(T.length>=2){s=T[0].v;e=T[1].v}
+  else if(T.length===1){const pre=T[0].pre;
+   if(/(jusqu|fini|termine|fin\b)/.test(pre)||(/\ba\s*$/.test(pre)&&dur==null&&prevEnd!=null)){s=prevEnd;e=T[0].v}
+   else{s=T[0].v;if(dur!=null)e=s+dur}}
+  else if(dur!=null&&prevEnd!=null){s=prevEnd;e=s+dur}
+  if(s!=null&&e!=null&&e<=s&&e<13*60&&e+12*60>s)e+=12*60; // « de 11 h à 5 h » : 17 h
+  if(s!=null&&e!=null&&e>s){const o=out.seg[mk.k];out.seg[mk.k]=o?{s:Math.min(o.s,s),e:Math.max(o.e,e)}:{s,e};if(mk.k!=='pause')prevEnd=Math.max(prevEnd||0,e)}
+  else if(s!=null||e!=null){out.notes.push(lab(mk.k)+' : heure de '+(s==null?'début':'fin')+' non comprise');if(e!=null&&mk.k!=='pause')prevEnd=e}
+ });
+ // une seule plage horaire sans étape nommée → intervention
+ if(!M.length){const T=[];let x;TIME.lastIndex=0;while((x=TIME.exec(t))){const v=toMin(x);if(v!=null)T.push(v)}if(T.length>=2&&T[1]>T[0])out.seg.inter={s:T[0],e:T[1]}}
+ return out;
+ function lab(k){return {prep:'Préparation',trajet:'Trajet aller',inter:'Sur place',pause:'Pause',retour:'Trajet retour'}[k]}
+ function cap(src,low){ // reprend l'écriture d'origine (majuscules, accents) si possible
+  const n=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[’']/g,' ');
+  const i=n(src).indexOf(low);let v=i>=0?src.slice(i,i+low.length):low;v=v.replace(/[\s,.;:]+$/,'');return v.charAt(0).toUpperCase()+v.slice(1)}
+}
+
+{const box=$('#ptVoiceBox'),ta=$('#ptVoiceTxt'),res=$('#ptVoiceRes'),mic=$('#ptMic');
+ const hhmm=m=>String(Math.floor(m/60)).padStart(2,'0')+':'+String(m%60).padStart(2,'0');
+ const LB={prep:'Préparation',trajet:'Trajet aller',inter:'Sur place',pause:'Pause',retour:'Trajet retour'},SKV={prep:'t_prep',pause:'t_pause',retour:'t_ret'};
+ const setv=(el,v)=>{el.value=v;el.dispatchEvent(new Event('input',{bubbles:true}));el.dispatchEvent(new Event('change',{bubbles:true}))};
+ function fill(){const txt=ta.value.trim();if(!txt){res.innerHTML='';return}
+  const o=parseHeures(txt),L=[],bad=[...o.notes];
+  if(!Object.keys(o.seg).length&&!o.ot&&!o.cl){res.innerHTML='<p class="bad">Je n\'ai reconnu aucune heure. Dites par exemple « trajet de 7 h 30 à 8 h, sur place de 8 h à 12 h ».</p>';return}
+  if(ptMode==='wiz'){const b=document.querySelector('#ptMode [data-pm="form"]');b&&b.click()}
+  if(o.ot)setv($('#ptOt'),o.ot);if(o.cl)setv($('#ptCl'),o.cl);if(o.ch)setv($('#ptCh'),o.ch);if(o.rq)setv($('#ptRq'),o.rq);
+  if(Object.keys(o.seg).length)PTK.forEach(k=>{fS(k).value='';fE(k).value=''});
+  PTK.forEach(k=>{const g=o.seg[k];if(!g)return;if(SKV[k]&&blkHidden(SKV[k])){bad.push(LB[k]+' : étape masquée dans les Paramètres, non remplie');return}
+   setv(fS(k),hhmm(g.s));setv(fE(k),hhmm(g.e));L.push(`<li><b>${LB[k]}</b> ${hhmm(g.s).replace(':',' h ')} → ${hhmm(g.e).replace(':',' h ')}</li>`)});
+  ptDurUpd();try{ptLock()}catch(e){}try{ptDraftSave()}catch(e){}
+  res.innerHTML=`<ul style="margin:0;padding-left:18px">${o.ot?`<li><b>N° OT</b> ${esc(o.ot)}</li>`:''}${o.cl?`<li><b>Client</b> ${esc(o.cl)}</li>`:''}${o.ch?`<li><b>Chantier</b> ${esc(o.ch)}</li>`:''}${L.join('')}${o.rq?`<li><b>Remarque</b> ${esc(o.rq)}</li>`:''}${bad.map(b=>`<li class="bad">${esc(b)}</li>`).join('')}</ul>
+   <p style="margin:8px 0 0"><b>Vérifiez le formulaire</b>, corrigez si besoin, puis touchez <b>Valider l'intervention</b>. Rien n'est enregistré avant.</p>`;
+  toast('Formulaire rempli : vérifiez puis validez')}
+ window.__voiceRes=t=>{mic.classList.remove('rec');box.hidden=false;if(t){ta.value=(ta.value.trim()?ta.value.trim()+' ':'')+t;fill()}};
+ window.__voiceErr=m=>{mic.classList.remove('rec');box.hidden=false;res.innerHTML=`<p class="bad">${esc(m||'Dictée impossible')}. Vous pouvez aussi taper le texte, ou utiliser le micro du clavier, puis « Remplir le formulaire ».</p>`;ta.focus()};
+ mic.addEventListener('click',()=>{ta.value='';res.innerHTML='';
+  try{if(window.AndroidApp&&AndroidApp.listen&&AndroidApp.listen()){mic.classList.add('rec');return}}catch(e){}
+  const SR=window.SpeechRecognition||window.webkitSpeechRecognition;
+  if(SR){try{const r=new SR();r.lang='fr-FR';r.interimResults=false;r.maxAlternatives=1;mic.classList.add('rec');
+   r.onresult=e=>window.__voiceRes(e.results[0][0].transcript);r.onerror=e=>window.__voiceErr(e.error==='not-allowed'?'Micro non autorisé':'Dictée interrompue');r.onend=()=>mic.classList.remove('rec');r.start();return}catch(e){}}
+  box.hidden=false;res.innerHTML='<p>Touchez le <b>micro du clavier</b> pour dicter dans la case, puis « Remplir le formulaire ».</p>';ta.focus()});
+ $('#ptVoiceGo').addEventListener('click',fill);
+ $('#ptVoiceX').addEventListener('click',()=>{box.hidden=true;ta.value='';res.innerHTML=''});
+}
 async function ptValidate(){
  {const miss=$('#ptOt').value.trim()||$('#ptCl').value.trim()?[]:[['#ptOt','le N° OT'],['#ptCl','le client']];
   if(miss.length){miss.forEach(([i])=>$(i).classList.add('need'));const f=$(miss[0][0]);f.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>f.focus(),300);return toast('Renseignez au moins le N° OT ou le client')}}
@@ -2045,7 +2145,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.9.0',APP_CODE=42,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.9.1',APP_CODE=43,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
