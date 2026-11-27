@@ -601,6 +601,12 @@ html:not(.android) .andr{display:none}
 #ptRecap .rc button{min-height:34px;padding:4px 10px;font-size:13px}
 #ptRecap .rt{display:flex;justify-content:space-between;padding:10px 2px;font-weight:800;font-size:16px}
 #ptRecap .ri{margin:0 0 6px;font-size:15px}
+
+/* 2.9.0 : bulle de l'assistant à droite pour ne plus cacher les boutons, et marge en bas de page */
+.botfab{left:auto!important;right:16px}
+.botfabx{left:auto!important;right:60px}
+@media(max-width:640px){.botfab{right:12px}.botfabx{right:52px}}
+body:has(#botFab:not([hidden])) main{padding-bottom:84px}
 </style>
 </head>
 <body>
@@ -1235,6 +1241,8 @@ document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closes
  blkOff=c.checked?blkOff.filter(x=>x!==k):[...new Set([...blkOff,k])];try{localStorage.setItem('dep_blkoff',JSON.stringify(blkOff))}catch(x){}applyBlk()});
 document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closest('[data-nav]');if(!c)return;const k=c.dataset.nav;
  navOff=c.checked?navOff.filter(x=>x!==k):[...new Set([...navOff,k])];try{localStorage.setItem('dep_navoff',JSON.stringify(navOff))}catch(x){}applyNav();toast((NAVS.find(n=>n[0]===k)||[])[1]+(c.checked?' affiché':' masqué'))});
+// 2.9.0 : la bulle de l'assistant réapparaît une fois pour tout le monde (elle reste masquable)
+try{if(!localStorage.getItem('dep_botback290')){localStorage.removeItem('dep_botoff');localStorage.setItem('dep_botback290','1')}}catch(e){}
 function botFabUpd(){const f=$('#botFab'),x=$('#botFabX');if(!f)return;let off=false;try{off=localStorage.getItem('dep_botoff')==='1'}catch(e){}
  const v=location.hash.slice(1)||'accueil',show=(v==='accueil'||!VIEWS.includes(v))&&!off&&$('#bot').hidden;f.hidden=!show;x.hidden=!show}
 function route(){if(navOff.includes(location.hash.slice(1))){location.hash='accueil';return}applyNav();const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
@@ -2037,7 +2045,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.8.9',APP_CODE=41,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.9.0',APP_CODE=42,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
