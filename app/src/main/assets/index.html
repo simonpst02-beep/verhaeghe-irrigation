@@ -456,6 +456,151 @@ html.lockd #lic{display:flex}
 #lic input{width:100%;font-size:17px;letter-spacing:1px;text-transform:uppercase;text-align:center;margin:12px 0}
 #lic button{width:100%;justify-content:center}
 #lic .lerr{color:#c0392b;font-weight:700;margin:10px 0 0;min-height:1em}
+
+/* pointage : OT, chantier, client, groupe, boutons de fin */
+.ptlbl{font-size:13px;font-weight:800;color:var(--mute);text-transform:uppercase;letter-spacing:.05em;margin:0 0 6px}
+.ptinfo{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:14px}
+.ptinfo .w{grid-column:1/-1}
+@media(max-width:480px){.ptinfo{grid-template-columns:minmax(0,1fr)}}
+#ptRq{min-height:64px}
+#ptOt{font-weight:800;letter-spacing:.02em}
+.ptgrp{margin:16px 0 8px}
+.tdd{border:1.5px solid var(--line);border-radius:12px;background:var(--card);margin-bottom:4px}
+.tdd[hidden]{display:none}
+.tdd summary{list-style:none;cursor:pointer;min-height:48px;display:flex;align-items:center;justify-content:space-between;gap:10px;padding:0 14px;font-weight:600;color:var(--ink)}
+.tdd summary::-webkit-details-marker{display:none}
+.tdd summary::after{content:'▾';color:var(--mute);font-size:18px}.tdd[open] summary::after{content:'▴'}
+.tddl{padding:4px 6px 4px 12px;border-top:1px solid var(--line);max-height:260px;overflow:auto}
+.tddl .tr{display:flex;align-items:center;gap:6px;min-height:46px}
+.tddl .tr label{flex:1;display:flex;align-items:center;gap:12px;color:var(--ink);font-size:16px;cursor:pointer;min-height:46px}
+.tddl .tr input{width:22px;height:22px;min-height:0;accent-color:var(--blue);margin:0;flex:none}
+.tddl .tr button{min-height:40px;width:40px}
+.tdda{display:flex;gap:8px;padding:10px;border-top:1px solid var(--line)}.tdda button{flex:none}
+.ptend{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:16px}
+.ptend button{flex-direction:column;gap:4px;min-height:64px;padding:8px 4px;font-size:15px;font-weight:700;background:var(--card);border:2px solid var(--line);color:var(--ink);text-align:center;line-height:1.15}
+.ptend .k-trajet.cur{background:var(--blue);border-color:var(--blue);color:#fff}
+.ptend .k-inter.cur{background:var(--teal);border-color:var(--teal);color:#fff}
+.ptend .k-pause.cur{background:var(--mute);border-color:var(--mute);color:#fff}
+@media(max-width:420px){.ptend button{font-size:13.5px;min-height:58px}}
+.seg2 .ix{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:center;font-size:13.5px;color:var(--mute)}
+.seg2 .ix input{width:140px;min-height:36px;padding:4px 10px;font-size:14px;font-weight:700}
+.seg2 .ix b{color:var(--ink);font-weight:700}
+.ptmain>.psh h3{font-size:23px}
+.ptsec{margin-top:12px;padding:14px;border-radius:16px;background:var(--bg);border-left:6px solid var(--blue)}.ptsec.k-inter{border-left-color:var(--teal)}.ptsec.k-pause{border-left-color:var(--mute)}
+.ptsec .psh h3{font-size:19px}.ptsec .psh{margin-bottom:10px}.ptsec .psh .pic{width:36px;height:36px;border-radius:11px}
+.psh{display:flex;align-items:center;gap:10px;margin-bottom:12px}.psh h3{font-size:21px}
+.psh .pic{width:42px;height:42px;border-radius:13px;display:grid;place-items:center;background:var(--blueSoft);color:var(--blue);flex:none}
+.k-inter .psh .pic{background:light-dark(#dff6f3,#123a37);color:var(--teal)}.k-pause .psh .pic{background:var(--line);color:var(--mute)}
+.ptimes input[readonly]{font-weight:800;background:var(--card)}
+.pfin{width:100%;margin-top:14px;min-height:54px;font-size:17px;font-weight:700;background:var(--blue)}
+.k-inter .pfin{background:var(--teal)}.k-pause .pfin{background:light-dark(#5d6d80,#53657a)}
+.req{color:var(--bad);font-weight:800}
+html:not(.android) .andr{display:none}
+#licForm #licName{margin-bottom:10px;text-transform:none!important;letter-spacing:normal!important}
+#nav a[hidden],.tiles a[hidden],.card[hidden],.nsep[hidden]{display:none!important}
+.navsw{display:flex;flex-direction:column}
+.nsw{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:52px;border-top:1px solid var(--line);font-size:16px;color:var(--ink);cursor:pointer}
+.nsw:first-child{border-top:0}
+.nsg{border-top:1px solid var(--line)}.nsg:first-child{border-top:0}.nsg>.nsw{border-top:0}
+.nsubs[hidden]{display:none}
+.nsw.sub{min-height:44px;padding-left:34px;font-size:14.5px;border-top:1px dashed var(--line)}.nsw.sub span{font-weight:500;color:var(--mute)}
+.nsw.sub input{width:42px;height:26px}.nsw.sub input::after{width:20px;height:20px}.nsw.sub input:checked::after{transform:translateX(16px)}.nsw span{display:flex;align-items:center;gap:10px;font-weight:600}.nsw span svg{color:var(--blue)}
+.nsw input{appearance:none;-webkit-appearance:none;width:50px;height:30px;min-height:0;padding:0;border-radius:15px;background:var(--line);border:0;position:relative;cursor:pointer;flex:none;transition:background .2s}
+.nsw input::after{content:'';position:absolute;top:3px;left:3px;width:24px;height:24px;border-radius:50%;background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.25);transition:transform .2s}
+.nsw input:checked{background:var(--ok)}.nsw input:checked::after{transform:translateX(20px)}
+.supk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:12px}
+.supk div{background:var(--bg);border-radius:14px;padding:10px 12px;border-top:4px solid var(--line)}
+.supk b{display:block;font-size:20px;font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap}.supk span{font-size:12.5px;color:var(--mute);font-weight:600}
+.supk .hs{border-top-color:var(--or)}.supk .hs b{color:var(--or)}
+@media(max-width:420px){.supk b{font-size:17px}}
+.sup td.p{color:var(--or);font-weight:800}.sup tr.we td:first-child{color:var(--or)}
+.pval{width:100%;margin-top:16px;min-height:60px;font-size:18px;background:var(--teal)}
+.pfin.off{opacity:.45;filter:grayscale(.6);cursor:not-allowed}
+#ptLockMsg[hidden]{display:none}
+.ptinfo input.need{border-color:var(--bad);box-shadow:0 0 0 3px light-dark(#fde3e0,#4a1f1a)}
+.ptsec.k-prep{border-left-color:var(--or)}.ptsec.k-retour{border-left-color:var(--deep)}.k-retour .psh .pic{color:var(--deep)}.k-prep .psh .pic{background:var(--orSoft);color:var(--or)}.k-prep .pfin{background:var(--or)}
+.seg2.k-prep{border-left-color:var(--or)}.pttot .k-prep,.otk .k-prep{border-top-color:var(--or)}.pttot .k-tot{border-top-color:var(--ink)!important}
+.pttot{grid-template-columns:repeat(5,minmax(0,1fr))!important}@media(max-width:600px){.pttot{grid-template-columns:repeat(2,minmax(0,1fr))!important}.pttot .k-tot{grid-column:1/-1}}
+.otk{grid-template-columns:repeat(4,minmax(0,1fr))!important}@media(max-width:480px){.otk{grid-template-columns:repeat(2,minmax(0,1fr))!important}}
+/* historique OT */
+.ot{border-top:1px solid var(--line)}
+.ot summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:12px;padding:12px 2px;min-height:56px}
+.ot summary::-webkit-details-marker{display:none}
+.ot .oth{flex:1;line-height:1.3}.ot .oth b{font-size:17px}.ot .oth .tag{display:block}
+.ot .otv{font-weight:800;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--teal)}
+.ot summary::after{content:'▾';color:var(--mute)}.ot[open] summary::after{content:'▴'}
+.otb{padding:0 2px 14px}
+.otk{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-bottom:10px}
+.otk div{background:var(--bg);border-radius:12px;padding:8px 10px;border-top:4px solid var(--line)}
+.otk b{display:block;font-size:17px;font-variant-numeric:tabular-nums;white-space:nowrap}.otk span{font-size:12.5px;color:var(--mute);font-weight:600}
+.otk .k-trajet{border-top-color:var(--blue)}.otk .k-inter{border-top-color:var(--teal)}.otk .k-pause{border-top-color:var(--mute)}
+.otm{margin:0 0 8px;font-size:15px}.otm b{color:var(--mute);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin-right:6px}
+.otl{width:100%;border-collapse:collapse;font-size:14.5px;font-variant-numeric:tabular-nums;margin-bottom:10px}
+.otl td{padding:7px 4px;border-bottom:1px solid var(--line);white-space:nowrap}.otl td:last-child{text-align:right;font-weight:700}
+.otl td.w{white-space:normal;color:var(--mute)}
+/* assistant : croix pour masquer la bulle */
+.botfabx{position:fixed;z-index:36;left:60px;bottom:64px;width:28px;height:28px;min-height:0;padding:0;border-radius:50%;background:var(--card);color:var(--ink);border:1.5px solid var(--line);font-size:13px;font-weight:800;box-shadow:0 2px 8px rgba(0,0,0,.18)}
+.botfabx[hidden]{display:none}
+@media(max-width:640px){.botfabx{left:52px;bottom:136px}}
+.bm .bta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}.bm .bta button{min-height:36px;padding:6px 12px;font-size:13.5px;border-radius:18px}
+
+/* ---- Onglet Heures compact ---- */
+#v-heures .card{padding:14px}
+#v-heures .card+.card,#v-heures .pttot+.ptbar+.card{margin-top:10px!important}
+#v-heures .ptlh{margin-bottom:6px}#v-heures .ptlh h3{font-size:19px}
+#v-heures .daynav{margin-bottom:10px}
+.ptmain>.psh{margin-bottom:8px}.ptmain>.psh .pic{width:34px;height:34px}.ptmain>.psh h3{font-size:21px!important}
+.ptinfo{gap:8px 10px;margin-top:6px;grid-template-columns:repeat(2,minmax(0,1fr))!important}
+.ptinfo label{font-size:13px}.ptinfo input,.ptinfo textarea{min-height:44px;padding:9px 12px}
+#ptRq{min-height:44px!important}
+.ptgrp{margin:10px 0 6px!important}
+#ptLockMsg{padding:8px 12px;font-size:14px;margin-bottom:0!important}
+.ptmain .ptlbl{margin:12px 0 4px!important}
+.ptsec{margin-top:8px!important;padding:8px 12px 10px!important;border-left-width:5px!important}
+.ptsec .psh{margin-bottom:4px!important;gap:8px}.ptsec .psh .pic{width:28px!important;height:28px!important;border-radius:9px!important}.ptsec .psh .pic svg{width:18px;height:18px}
+.ptsec .psh h3{font-size:16.5px!important}.ptsec .psh .tag{font-size:12px}
+.pdu{margin-left:auto;font-size:15px;font-variant-numeric:tabular-nums;white-space:nowrap}.ptsec .psh .tag+.pdu{margin-left:8px}
+.ptsec .ptimes{grid-template-columns:repeat(2,minmax(0,1fr))!important;gap:8px}
+.ptsec .ptimes label{font-size:12.5px}.ptsec .ptimes label:last-child{display:none}
+.ptsec .ptimes input{min-height:42px;padding:7px 10px}
+.pval{margin-top:12px!important;min-height:54px!important}
+#v-heures .pttot{margin-top:10px;gap:8px}
+#v-heures .pttot div{padding:8px 10px;border-radius:14px}#v-heures .pttot b{font-size:17px}#v-heures .pttot span{font-size:12px}
+@media(max-width:600px){#v-heures .pttot{grid-template-columns:repeat(3,minmax(0,1fr))!important}#v-heures .pttot .k-tot{grid-column:span 2}.hdesk{display:none}}
+#v-heures .seg2{padding:8px 0 8px 10px;gap:6px}
+#v-heures .seg2 select,#v-heures .seg2 input[type=time]{min-height:38px;padding:4px 8px}
+#v-heures .seg2 .cc{min-height:38px;padding:4px 10px}#v-heures .seg2 .ix input{min-height:34px;width:120px}
+.ptools{display:grid!important;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px!important;margin-top:10px!important}
+.ptools button{min-height:42px;padding:6px 8px;font-size:14.5px;gap:6px}.ptools button svg{width:19px;height:19px}
+.ptools.pt2{grid-template-columns:repeat(2,minmax(0,1fr))}
+@media(max-width:600px){#v-heures .seg2{grid-template-columns:repeat(4,minmax(0,1fr))!important;grid-template-areas:'ty ty du rm' 'st st en en' 'cc cc ix ix'!important}#v-heures .seg2 .du{justify-self:end}#v-heures .seg2 .ix input{padding:4px 6px!important;text-align:center}#v-heures .seg2 [data-pdel]{justify-self:end}#v-heures .seg2 .ix input{width:100%!important}#v-heures .seg2 .ix{grid-area:ix;grid-column:auto}#v-heures .seg2 .ix span{display:none}#v-heures .seg2 .ix input{width:100px}}
+#v-heures .wk th,#v-heures .wk td{padding:7px 5px}
+.supk{gap:6px!important;margin-bottom:8px!important}.supk div{padding:8px 10px!important}.supk b{font-size:17px!important}
+.ptold{border-top:1px solid var(--line);margin-top:6px}
+.ptlast{margin:4px 0 6px;font-size:12.5px;font-weight:800;color:var(--mute);text-transform:uppercase;letter-spacing:.05em}
+.ptold summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;min-height:46px;padding:6px 2px;font-weight:700;color:var(--blue)}
+.ptold summary::-webkit-details-marker{display:none}.ptold summary::before{content:'▸';font-size:15px}.ptold[open] summary::before{content:'▾'}
+.ptold summary .tag{margin-left:auto;font-weight:600}
+.hrow #hi{flex:1 1 auto;min-width:0}
+.hin{display:block;color:var(--blue);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-top:2px}
+
+/* ---- Saisie étape par étape ---- */
+.ptmode{margin:0 0 10px;box-shadow:none;background:var(--bg)}.ptmode button{flex:1;min-height:40px;font-size:14.5px}
+#ptForm:not(.wiz) .wizonly{display:none!important}
+#ptForm.wiz [data-w]:not(.won){display:none!important}
+#ptForm.wiz .ptinfo{grid-template-columns:minmax(0,1fr)!important}
+#ptForm.wiz .ptsec{margin-top:4px!important;padding:14px!important}
+#ptForm.wiz .ptsec .ptimes input{min-height:52px;font-size:18px}
+#ptForm.wiz .ptsec .psh h3{font-size:19px!important}
+.wizhd{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin:2px 0 10px}.wizhd b{font-size:17px}.wizhd .tag{margin-left:auto}
+.wizdots{display:flex;gap:5px;flex-basis:100%}.wizdots i{flex:1;height:5px;border-radius:3px;background:var(--line)}.wizdots i.on{background:var(--teal)}.wizdots i.done{background:light-dark(#9fdcd6,#2a6d67)}
+.wiznav{display:grid;grid-template-columns:1fr 1.4fr;gap:8px;margin-top:12px}.wiznav button{min-height:52px;font-size:16px}
+.wiznav button[hidden]{display:none!important}.wiznav.one{grid-template-columns:1fr}
+#ptRecap .rc{display:flex;align-items:center;gap:10px;padding:10px 2px;border-bottom:1px solid var(--line);font-size:15px}
+#ptRecap .rc b{flex:1}#ptRecap .rc span{font-variant-numeric:tabular-nums;color:var(--mute)}#ptRecap .rc em{font-style:normal;font-weight:800;min-width:58px;text-align:right}
+#ptRecap .rc button{min-height:34px;padding:4px 10px;font-size:13px}
+#ptRecap .rt{display:flex;justify-content:space-between;padding:10px 2px;font-weight:800;font-size:16px}
+#ptRecap .ri{margin:0 0 6px;font-size:15px}
 </style>
 </head>
 <body>
@@ -516,7 +661,8 @@ html.lockd #lic{display:flex}
 
 <div id="lic"><form class="lbox" id="licForm" autocomplete="off">
  <div class="lhd"><b><svg class="i"><use href="#i-drop"/></svg></b><div><h2>Verhaeghe Irrigation</h2><small>Application réservée aux membres Verhaeghe</small></div></div>
- <p id="licMsg" style="margin:0">Entrez votre code d'activation personnel (il vous a été remis par Verhaeghe Irrigation). Il n'est demandé qu'une seule fois sur ce téléphone.</p>
+ <p id="licMsg" style="margin:0">Entrez votre prénom puis votre code d'activation personnel (il vous a été remis par Verhaeghe Irrigation). Il n'est demandé qu'une seule fois sur ce téléphone.</p>
+ <input id="licName" placeholder="Votre prénom" autocomplete="given-name" autocapitalize="words" aria-label="Votre prénom">
  <input id="licCode" placeholder="VHG-XXXX-XXXX-XXXX" autocapitalize="characters" spellcheck="false">
  <button id="licBtn" type="submit">Activer l'application</button>
  <p class="lerr" id="licErr"></p>
@@ -617,32 +763,67 @@ html.lockd #lic{display:flex}
  </div>
 </section>
 
-<datalist id="chantiers"></datalist><datalist id="enrRefs"></datalist><datalist id="peDims"></datalist>
+<datalist id="chantiers"></datalist><datalist id="clients"></datalist><datalist id="otNums"></datalist><datalist id="enrRefs"></datalist><datalist id="peDims"></datalist>
 
 <section id="v-heures">
- <div class="head"><div><h2>Pointage</h2><p>Notez librement vos heures de trajet, d'intervention et de pause.</p></div></div>
+ <div class="head"><div><h2>Pointage</h2><p class="hdesk">Notez librement vos heures de trajet, d'intervention et de pause.</p></div></div>
  <div class="daynav"><button class="ghost ico2" id="ptPrev" aria-label="Jour précédent"><svg class="i"><use href="#i-back"/></svg></button><input type="date" id="ptDate" aria-label="Jour affiché"><button class="ghost ico2" id="ptNext" aria-label="Jour suivant"><svg class="i"><use href="#i-next"/></svg></button><button class="ghost" id="ptToday">Aujourd'hui</button></div>
- <form class="card ptadd" id="ptForm">
-  <h3 style="font-size:21px;margin-bottom:10px">Noter mes heures</h3>
-  <div class="ptype" role="radiogroup" aria-label="Type">
-   <label class="k-trajet"><input type="radio" name="ptT" value="trajet" checked><span><svg class="i"><use href="#i-car"/></svg>Trajet</span></label>
-   <label class="k-inter"><input type="radio" name="ptT" value="inter"><span><svg class="i"><use href="#i-tool"/></svg>Intervention</span></label>
-   <label class="k-pause"><input type="radio" name="ptT" value="pause"><span><svg class="i"><use href="#i-cup"/></svg>Pause</span></label>
+<div class="card ptmain" id="ptForm">
+ <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Intervention</h3></div>
+ <div class="seg ptmode" id="ptMode" role="tablist" aria-label="Mode de saisie"><button type="button" data-pm="form">Formulaire</button><button type="button" data-pm="wiz">Étape par étape</button></div>
+ <div class="wizonly wizhd"><div class="wizdots" id="wizDots"></div><b id="wizT"></b><span class="tag" id="wizN"></span></div>
+  <div class="ptinfo">
+   <label>N° OT <span class="req">*</span><input id="ptOt" list="otNums" placeholder="Numéro d'ordre de travail" autocomplete="off"></label>
+   <label>Client <span class="req">*</span><input id="ptCl" list="clients" placeholder="EARL Dupont…"></label>
+   <label class="w">Chantier<input id="ptCh" list="chantiers" placeholder="Lieu, parcelle…"></label>
+   <label class="w">Remarque<textarea id="ptRq" rows="1" placeholder="Travaux faits, pièces, suite à donner…"></textarea></label>
   </div>
-  <div class="grid ptimes">
-   <label>Début<input type="time" id="ptS" required></label>
-   <label>Fin<input type="time" id="ptE" required></label>
-   <label>Durée<input id="ptDur" readonly tabindex="-1" placeholder="–"></label>
-  </div>
-  <label style="margin-top:12px">Chantier / client / remarque<input id="ptC" list="chantiers" placeholder="EARL Dupont…"></label>
-  <div class="tools"><button type="submit"><svg class="i"><use href="#i-plus"/></svg>Ajouter à la journée</button></div>
- </form>
+  <label class="allb ptgrp"><input type="checkbox" id="ptGrp"> Groupe (intervention à plusieurs)</label>
+  <details class="tdd" id="ptTechs" hidden><summary><span id="ptTechsS">Choisir les techniciens</span></summary>
+   <div class="tddl" id="ptTechL"></div>
+   <div class="tdda"><input id="ptTechN" placeholder="Ajouter un technicien" aria-label="Nom du technicien"><button type="button" class="ghost" id="ptTechAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div>
+  </details>
+  <p class="ptlbl" style="margin-top:18px">Heures</p>
+  <p class="warn" id="ptLockMsg" style="margin:0 0 4px"><svg class="i"><use href="#i-warn"/></svg>Renseignez le N° OT ou le client pour valider.</p>
+  <form class="ptsec k-prep" data-sec="prep">
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-box"/></svg></span><h3>Préparation</h3><b class="pdu" id="ptH-prep"></b></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-prep"></label><label>Fin<input type="time" id="ptE-prep"></label><label>Durée<input id="ptD-prep" readonly tabindex="-1" placeholder="–"></label></div>
+  </form>
+  <form class="ptsec k-trajet" data-sec="trajet">
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-car"/></svg></span><h3>Trajet aller</h3><b class="pdu" id="ptH-trajet"></b><span class="tag" style="margin-left:auto">base → client</span></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-trajet"></label><label>Fin<input type="time" id="ptE-trajet"></label><label>Durée<input id="ptD-trajet" readonly tabindex="-1" placeholder="–"></label></div>
+  </form>
+  <form class="ptsec k-inter" data-sec="inter">
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-tool"/></svg></span><h3>Sur place</h3><b class="pdu" id="ptH-inter"></b></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-inter"></label><label>Fin<input type="time" id="ptE-inter"></label><label>Durée<input id="ptD-inter" readonly tabindex="-1" placeholder="–"></label></div>
+  </form>
+  <form class="ptsec k-pause" data-sec="pause">
+   <div class="psh"><span class="pic"><svg class="i"><use href="#i-cup"/></svg></span><h3>Pause</h3><b class="pdu" id="ptH-pause"></b></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-pause"></label><label>Fin<input type="time" id="ptE-pause"></label><label>Durée<input id="ptD-pause" readonly tabindex="-1" placeholder="–"></label></div>
+  </form>
+  <form class="ptsec k-trajet k-retour" data-sec="retour">
+   <div class="psh"><span class="pic"><svg class="i" style="transform:scaleX(-1)"><use href="#i-car"/></svg></span><h3>Trajet retour</h3><b class="pdu" id="ptH-retour"></b><span class="tag" style="margin-left:auto">client → base</span></div>
+   <div class="grid ptimes"><label>Début<input type="time" id="ptS-retour"></label><label>Fin<input type="time" id="ptE-retour"></label><label>Durée<input id="ptD-retour" readonly tabindex="-1" placeholder="–"></label></div>
+  </form>
+ <div class="wizonly" id="ptRecap"></div>
+ <button type="button" class="pfin pval" id="ptVal"><svg class="i"><use href="#i-check"/></svg>Valider l'intervention</button>
+ <div class="wizonly wiznav"><button type="button" class="ghost" id="wizPrev"><svg class="i"><use href="#i-back"/></svg>Précédent</button><button type="button" id="wizNext">Suivant<svg class="i"><use href="#i-next"/></svg></button></div>
+ <p class="tag" style="margin:10px 0 0">* N° OT ou client obligatoire. Remplissez seulement les étapes faites, puis validez.</p>
+</div>
  <div class="pttot" id="ptTot"></div>
  <div class="ptbar" id="ptBar"></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Trajets entre interventions</h3><span class="tag" id="rtSum"></span></div><div id="ptRoute"></div></div>
  <div class="card" style="margin-top:14px"><div class="ptlh"><h3>Détail de la journée</h3><button class="ghost" id="ptAdd"><svg class="i"><use href="#i-plus"/></svg>Ajouter</button></div><div id="ptList"></div>
-  <div class="tools"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier la journée</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div></div>
+  <div class="tools ptools pt2"><button class="ghost" id="ptCopy"><svg class="i"><use href="#i-copy"/></svg>Copier le jour</button><button class="ghost" id="ptCopyW"><svg class="i"><use href="#i-copy"/></svg>Copier la semaine</button></div>
+  <div class="tools ptools"><button id="ptTxt"><svg class="i"><use href="#i-file"/></svg>Texte</button><button id="ptPdf"><svg class="i"><use href="#i-file"/></svg>PDF</button><button class="or" id="ptShare"><svg class="i"><use href="#i-ext"/></svg>Partager</button></div>
+  <p class="tag" id="ptExpSt" hidden style="margin:10px 0 0"></p></div>
+ <div class="card" style="margin-top:14px" id="otCard"><div class="ptlh"><h3>Historique des OT</h3><span class="tag" id="otSum"></span></div>
+  <div class="search" style="margin-bottom:6px"><svg class="i"><use href="#i-search"/></svg><input id="otQ" placeholder="N° OT, chantier, client, technicien…" aria-label="Rechercher un OT"></div>
+  <div id="otList"></div></div>
  <div class="card" style="margin-top:14px"><h3 style="font-size:21px;margin-bottom:8px" id="ptWT">Semaine</h3><div id="ptWeek"></div></div>
+ <div class="card" style="margin-top:14px" id="supCard"><div class="ptlh"><h3>Heures supplémentaires</h3><span class="tag" id="supM"></span></div>
+  <p class="tag" style="margin:0 0 12px">Base 8 h/jour du lundi au vendredi ; le week-end compte en entier. Pauses non comptées.</p>
+  <div id="supBox"></div></div>
 </section>
 
 <section id="v-magasin">
@@ -699,6 +880,12 @@ html.lockd #lic{display:flex}
   <h3>Affichage</h3>
   <div class="seg prmth" id="prmTh"><button data-pth="light">Clair</button><button data-pth="dark">Sombre</button><button data-pth="auto">Automatique</button></div>
   <label style="margin-top:12px">Commune pour la météo<input id="prmCity" placeholder="Amiens, Abbeville…"></label>
+  <label class="allb" style="margin:14px 0 0"><input type="checkbox" id="prmBot"> Afficher la bulle de l'assistant sur l'accueil</label>
+ </div>
+ <div class="card prm">
+  <h3>Menu et affichage</h3>
+  <p class="tag" style="margin:0 0 10px">Choisissez les onglets et, dans chacun, les parties à afficher. Ce qui est masqué garde ses données.</p>
+  <div class="navsw" id="prmNav"></div>
  </div>
  <div class="card prm">
   <h3>Sauvegarde des données</h3>
@@ -708,7 +895,7 @@ html.lockd #lic{display:flex}
  </div>
  <div class="card prm">
   <h3>À propos</h3>
-  <dl class="about"><dt>Application</dt><dd>Verhaeghe Irrigation – Assistant technique terrain</dd><dt>Version</dt><dd id="abVer"></dd><dt>Type</dt><dd id="abType"></dd><dt>Données</dt><dd id="abData"></dd><dt>Licence</dt><dd id="abLic">—</dd></dl>
+  <dl class="about"><dt>Application</dt><dd>Verhaeghe Irrigation – Assistant technique terrain</dd><dt>Version</dt><dd id="abVer"></dd><dt>Type</dt><dd id="abType"></dd><dt>Données</dt><dd id="abData"></dd><dt>Licence</dt><dd id="abLic">—</dd><dt class="andr">Prénom</dt><dd class="andr"><input id="abName" placeholder="Votre prénom" autocomplete="given-name" style="min-height:40px;padding:6px 10px;max-width:220px"></dd></dl>
  </div>
 </section>
 
@@ -728,7 +915,7 @@ html.lockd #lic{display:flex}
 <p class="fine">Fiches génériques : se référer toujours à la notice du constructeur (pressions, réglages, couples de serrage).</p>
 </main>
 <div class="lb" id="lb"><img id="lbImg" alt=""><div id="lbCap"></div><div class="tools"><button class="ghost" id="lbClose">Fermer</button><button class="del" id="lbDel"><svg class="i"><use href="#i-trash"/></svg>Supprimer</button></div></div>
-<button class="botfab" id="botFab" aria-label="Ouvrir l'assistant" hidden><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><circle cx="9" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12.5" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="10.5" r="1.2" fill="currentColor" stroke="none"/></svg></button>
+<button class="botfabx" id="botFabX" aria-label="Masquer l'assistant" title="Masquer l'assistant" hidden>✕</button><button class="botfab" id="botFab" aria-label="Ouvrir l'assistant" hidden><svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/><circle cx="9" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="12.5" cy="10.5" r="1.2" fill="currentColor" stroke="none"/><circle cx="16" cy="10.5" r="1.2" fill="currentColor" stroke="none"/></svg></button>
 <div class="bot" id="bot" role="dialog" aria-label="Assistant Verhaeghe" hidden>
  <div class="bothd"><span class="botav"><svg class="i"><use href="#i-drop"/></svg></span><div><b>Assistant Verhaeghe</b><small>Dépannage, pièces, forages, heures</small></div><button class="ico" id="botNew" aria-label="Nouvelle conversation" title="Nouvelle conversation"><svg class="i"><use href="#i-plus"/></svg></button><button class="ico" id="botX" aria-label="Fermer">✕</button></div>
  <div class="botmsgs" id="botMsgs"></div>
@@ -766,6 +953,7 @@ html.lockd #lic{display:flex}
    try{const r=await fetch(`https://raw.githubusercontent.com/${R}/main/config.json?t=${Date.now()}`,{cache:'no-store'});if(r.ok){const c=await r.json();try{localStorage.setItem('vi_cfg',JSON.stringify(c))}catch(e){}return c}}catch(e){}}
   try{return JSON.parse(localStorage.getItem('vi_cfg')||'{}')}catch(e){return {}}}
  async function sheet(url,q){const r=await fetch(url+(url.includes('?')?'&':'?')+new URLSearchParams({...q,t:Date.now()}),{cache:'no-store'});if(!r.ok)throw new Error('reseau');return r.json()}
+ const toastP=t=>{try{toast(t)}catch(e){}};
  const ERR={inconnu:'Code inconnu. Vérifiez-le ou demandez votre code à Verhaeghe Irrigation.',desactive:'Ce code a été désactivé.',autre_tel:'Ce code est déjà utilisé sur un autre téléphone. Demandez à l\'administrateur de le libérer.',libere:'Ce téléphone a été déconnecté de la licence. Entrez à nouveau votre code.',serveur:'Le registre des licences ne répond pas. Réessayez plus tard.'};
  async function list(){
   for(const R of SRCS){
@@ -775,16 +963,17 @@ html.lockd #lic{display:flex}
  const get=()=>{try{return JSON.parse(localStorage.getItem(KEY)||'null')}catch(e){return null}};
  const save=v=>{try{v?localStorage.setItem(KEY,JSON.stringify(v)):localStorage.removeItem(KEY)}catch(e){}};
  const showLic=(msg,err)=>{H.classList.add('lockd');if(msg)$('#licMsg').innerHTML=msg;$('#licErr').textContent=err||''};
- const about=l=>{const d=$('#abLic');if(d)d.textContent=l?('Activée – '+(l.n||'membre Verhaeghe')):'—'};
+ const about=l=>{const d=$('#abLic');if(d)d.textContent=l?('Activée – '+(l.n||l.p||'membre Verhaeghe')):'—';const a=$('#abName');if(a&&document.activeElement!==a)a.value=l&&l.p||'';try{if(l&&l.p)localStorage.setItem('vi_prenom',l.p)}catch(e){}window.__hiName&&window.__hiName()};
+ const pren=()=>($('#licName').value||'').trim().replace(/\s+/g,' ');
  let lic=get();
  if(!lic)showLic();
  else if(Date.now()-(lic.chk||0)>MAXOFF)showLic('Cela fait plus de 30 jours que la licence n\'a pas pu être vérifiée. <b>Connectez-vous à internet</b> puis entrez à nouveau votre code.');
  document.addEventListener('DOMContentLoaded',()=>{about(lic);try{$('#licDev').textContent=devShort()}catch(e){}
-  $('#licForm').addEventListener('submit',async e=>{e.preventDefault();const c=$('#licCode').value;if(norm(c).length<8)return showLic(null,'Code incomplet.');
+  $('#licForm').addEventListener('submit',async e=>{e.preventDefault();const c=$('#licCode').value;if(pren().length<2){$('#licName').focus();return showLic(null,'Indiquez votre prénom.')}if(norm(c).length<8)return showLic(null,'Code incomplet.');
    const b=$('#licBtn');b.disabled=true;b.textContent='Vérification…';$('#licErr').textContent='';
    try{await new Promise(r=>setTimeout(r,30));const h=hashCode(c),C=await cfg();
-    const ok=n=>{lic={h,n:n||'',t:Date.now(),chk:Date.now(),mode:C.licenceUrl?'sheet':'json'};save(lic);about(lic);H.classList.remove('lockd');$('#licCode').value=''};
-    if(C.licenceUrl){const r=await sheet(C.licenceUrl,{a:'act',code:norm(c),dev:devId(),model:devModel()});if(r.ok)ok(r.n);else showLic(null,ERR[r.err]||ERR.serveur)}
+    const ok=n=>{lic={h,n:n||'',p:pren(),t:Date.now(),chk:Date.now(),mode:C.licenceUrl?'sheet':'json'};save(lic);about(lic);H.classList.remove('lockd');$('#licCode').value=''};
+    if(C.licenceUrl){const r=await sheet(C.licenceUrl,{a:'act',code:norm(c),dev:devId(),model:devModel(),prenom:pren()});if(r.ok)ok(r.n);else showLic(null,ERR[r.err]||ERR.serveur)}
     else{const L=await list(),f=(L.codes||[]).find(x=>x.h===h);
      if(!f)showLic(null,ERR.inconnu);else if(f.actif===false)showLic(null,ERR.desactive);else ok(f.n)}}
    catch(x){showLic(null,'Pas de connexion internet : l\'activation nécessite internet (une seule fois).')}
@@ -792,11 +981,14 @@ html.lockd #lic{display:flex}
   // contrôle en arrière-plan (code désactivé à distance)
   const check=async()=>{lic=get();if(!lic||Date.now()-(lic.chk||0)<RECHECK)return;
    try{const C=await cfg();let st;
-    if(C.licenceUrl){const r=await sheet(C.licenceUrl,{a:'chk',h:lic.h,dev:devId(),model:devModel(),mig:lic.mode==='sheet'?'':'1'});if(r.err==='serveur')return;st=r.ok?{n:r.n}:{err:r.err};if(r.ok)lic.mode='sheet'}
+    if(C.licenceUrl){const r=await sheet(C.licenceUrl,{a:'chk',h:lic.h,dev:devId(),model:devModel(),prenom:lic.p||'',mig:lic.mode==='sheet'?'':'1'});if(r.err==='serveur')return;st=r.ok?{n:r.n}:{err:r.err};if(r.ok)lic.mode='sheet'}
     else{const L=await list(),f=(L.codes||[]).find(x=>x.h===lic.h);st=!f?{err:'inconnu'}:f.actif===false?{err:'desactive'}:{n:f.n}}
     if(st.err){save(null);lic=null;about(null);showLic(st.err==='libere'?ERR.libere:st.err==='autre_tel'?'<b>Ce code est maintenant utilisé sur un autre téléphone.</b> Contactez Verhaeghe Irrigation.':'<b>Votre accès a été désactivé.</b> Contactez Verhaeghe Irrigation pour obtenir un nouveau code.')}
     else{lic.chk=Date.now();lic.n=st.n||lic.n;save(lic);about(lic);if(H.classList.contains('lockd')&&!$('#licErr').textContent)H.classList.remove('lockd')}}catch(e){}};
   check();document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')check()});
+  // prénom modifiable dans Paramètres › À propos : enregistré et envoyé au registre des licences
+  $('#abName').addEventListener('change',async e=>{const v=e.target.value.trim().replace(/\s+/g,' ');lic=get();if(!lic)return;lic.p=v;save(lic);about(lic);
+   try{const C=await cfg();if(C.licenceUrl)await sheet(C.licenceUrl,{a:'chk',h:lic.h,dev:devId(),model:devModel(),prenom:v,mig:lic.mode==='sheet'?'':'1'});toastP('Prénom enregistré')}catch(x){toastP('Prénom enregistré sur le téléphone (envoi au registre à la prochaine connexion)')}});
  });
 })();
 </script>
@@ -1015,15 +1207,46 @@ function render(k){if(k==='magasin'){drawMg();drawQ();return}if(pmTab==='tb'&&$(
 
 /* ---------- Navigation ---------- */
 const VIEWS=['accueil','enrouleurs','pompage','heures','photos','magasin','parametres'];
-function route(){const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
+/* Menu : onglets activables dans les Paramètres */
+const NAVS=[['enrouleurs','Enrouleurs','reel'],['pompage','Station de pompage','pump'],['heures','Heures','clock'],['photos','Photos','cam'],['magasin','Magasin','box']];
+let navOff=[];try{navOff=JSON.parse(localStorage.getItem('dep_navoff')||'[]')}catch(e){}
+function applyNav(){NAVS.forEach(([k])=>{const off=navOff.includes(k);document.querySelectorAll(`#nav a[data-v="${k}"],.tiles a[href="#${k}"]`).forEach(e=>e.hidden=off)});
+ const hf=$('#homeFo'),ph=$('#ptHome'),ns=document.querySelector('.nsep');if(hf)hf.hidden=navOff.includes('pompage');if(ph)ph.hidden=navOff.includes('heures');if(ns)ns.hidden=navOff.includes('magasin');
+ const sw=$('#prmNav');if(sw&&!sw.children.length){const sub=k=>(BLK[k]||[]).map(([b,l])=>`<label class="nsw sub"><span>${l}</span><input type="checkbox" data-blk="${b}"></label>`).join('');
+  sw.innerHTML=`<div class="nsg"><div class="nsw"><span>${ic('home')}Accueil</span></div>${sub('accueil')}</div>`+NAVS.map(([k,l,i])=>`<div class="nsg" data-g="${k}"><label class="nsw"><span>${ic(i)}${l}</span><input type="checkbox" data-nav="${k}"></label><div class="nsubs">${sub(k)}</div></div>`).join('')}
+ document.querySelectorAll('[data-nav]').forEach(c=>{c.checked=!navOff.includes(c.dataset.nav);const s=c.closest('.nsg').querySelector('.nsubs');if(s)s.hidden=!c.checked});
+ document.querySelectorAll('[data-blk]').forEach(c=>c.checked=!blkOff.includes(c.dataset.blk));applyBlk()}
+/* Parties affichées à l'intérieur des onglets */
+const BLK={accueil:[['h_clock','Horloge','#v-accueil .clock'],['h_wx','Météo','#wx,#wxEdit,#wxForm'],['h_fo','Encadré Forages','#homeFo'],['h_pt','Encadré Heures du jour','#ptHome'],['h_todo','Pièces à prévoir','#todo']],
+ enrouleurs:[['e_info','Fiche de la marque','#brandInfo'],['e_memo','Onglet Mémo','#btabs [data-t=memo]'],['e_pdf','Onglet PDF','#btabs [data-t=pdf]']],
+ pompage:[['p_tb','Tableau de bord','#pmTabs [data-pt=tb]'],['p_mes','Intervention chantier','#pmTabs [data-pt=mes]'],['p_for','Forages','#pmTabs [data-pt=for]'],['p_memo','Mémo','#pmTabs [data-pt=memo]']],
+ heures:[['t_prep','Étape Préparation','.ptsec.k-prep'],['t_pause','Étape Pause','.ptsec.k-pause'],['t_ret','Étape Trajet retour','.ptsec.k-retour'],['t_grp','Groupe / techniciens','.ptgrp,#ptTechs'],['t_tot','Totaux du jour','#ptTot,#ptBar'],['t_route','Trajets entre interventions','#rtCard'],['t_det','Détail de la journée','#detCard'],['t_exp','Boutons copier / exporter / partager','#v-heures .ptools,#ptExpSt'],['t_ot','Historique des OT','#otCard'],['t_wk','Semaine','#wkCard'],['t_sup','Heures supplémentaires','#supCard']],
+ photos:[['f_chips','Filtres par chantier','#pChips']],
+ magasin:[['m_q','Recherche rapide','#qlook']]};
+let blkOff=[];try{blkOff=JSON.parse(localStorage.getItem('dep_blkoff')||'[]')}catch(e){}
+const blkHidden=k=>blkOff.includes(k);
+{const id=(sel,v)=>{const e=$(sel);if(e){const c=e.closest('.card');if(c&&!c.id)c.id=v}};id('#ptRoute','rtCard');id('#ptList','detCard');id('#ptWeek','wkCard')}
+function applyBlk(){let st=$('#blkCss');if(!st){st=document.createElement('style');st.id='blkCss';document.head.appendChild(st)}
+ st.textContent=Object.values(BLK).flat().filter(([k])=>blkOff.includes(k)).map(([,,s])=>s.split(',').map(x=>x.trim()+'{display:none!important}').join('')).join('\n');
+ if(typeof wDraw==='function'&&$('#ptForm'))try{wDraw()}catch(e){}
+ if((blkHidden('e_memo')&&btab==='memo')||(blkHidden('e_pdf')&&btab==='pdf')){btab='diag';try{localStorage.setItem('dep_btab','diag')}catch(e){}drawBTabs()}
+ const pm={tb:'p_tb',mes:'p_mes',for:'p_for',memo:'p_memo'};if(pm[pmTab]&&blkHidden(pm[pmTab])){pmTab='diag';try{localStorage.setItem('dep_pmtab','diag')}catch(e){}drawPmTabs()}}
+document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closest('[data-blk]');if(!c)return;const k=c.dataset.blk;
+ blkOff=c.checked?blkOff.filter(x=>x!==k):[...new Set([...blkOff,k])];try{localStorage.setItem('dep_blkoff',JSON.stringify(blkOff))}catch(x){}applyBlk()});
+document.addEventListener('change',e=>{const c=e.target.closest&&e.target.closest('[data-nav]');if(!c)return;const k=c.dataset.nav;
+ navOff=c.checked?navOff.filter(x=>x!==k):[...new Set([...navOff,k])];try{localStorage.setItem('dep_navoff',JSON.stringify(navOff))}catch(x){}applyNav();toast((NAVS.find(n=>n[0]===k)||[])[1]+(c.checked?' affiché':' masqué'))});
+function botFabUpd(){const f=$('#botFab'),x=$('#botFabX');if(!f)return;let off=false;try{off=localStorage.getItem('dep_botoff')==='1'}catch(e){}
+ const v=location.hash.slice(1)||'accueil',show=(v==='accueil'||!VIEWS.includes(v))&&!off&&$('#bot').hidden;f.hidden=!show;x.hidden=!show}
+function route(){if(navOff.includes(location.hash.slice(1))){location.hash='accueil';return}applyNav();const v=VIEWS.includes(location.hash.slice(1))?location.hash.slice(1):'accueil';
  for(const x of VIEWS)$('#v-'+x).classList.toggle('cur',x===v);
  document.querySelectorAll('#nav a').forEach(a=>a.classList.toggle('cur',a.dataset.v===v));
- if(v==='accueil')drawHome();scrollTo({top:0})}
+ if(v==='accueil')drawHome();botFabUpd();scrollTo({top:0})}
 window.addEventListener('hashchange',route);
 
 /* ---------- Accueil ---------- */
+window.__hiName=()=>{try{if($('#v-accueil').classList.contains('cur'))drawHome()}catch(e){}};
 function drawHome(){drawPtHome();drawHomeFo();
- const h=new Date().getHours();$('#hi').textContent=h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir';
+ const h=new Date().getHours();let pn='';try{pn=localStorage.getItem('vi_prenom')||''}catch(e){}$('#hi').innerHTML=esc(h<12?'Bonjour':h<18?'Bon après-midi':'Bonsoir')+(pn?`<span class="hin">${esc(pn)}</span>`:'');
  $('#today').textContent=new Date().toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'});
  const todo=S.memo.filter(x=>!x.s);
  $('#nP').textContent=PANNES.length;$('#nM').textContent=S.mes.length||'';$('#nT').textContent=todo.length||'';$('#nF').textContent=S.photos.length||'';
@@ -1216,50 +1439,194 @@ drawStep();
 
 
 /* ---------- Pointage ---------- */
-const PT={trajet:'Trajet',inter:'Intervention',pause:'Pause'};
+const PT={prep:'Préparation',trajet:'Trajet',inter:'Intervention',pause:'Pause'};
+const PTL={prep:'Préparation',trajet:'Trajet aller',inter:'Sur place',pause:'Pause',retour:'Trajet retour'};
+const stepName=x=>x.type==='trajet'?(x.sens==='retour'?'Trajet retour':x.sens==='aller'?'Trajet aller':'Trajet'):x.type==='inter'?'Sur place':PT[x.type];
 const dKey=d=>{const x=new Date(d);return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0')};
 const hm=ms=>{const m=Math.round(ms/6e4);return Math.floor(m/60)+' h '+String(m%60).padStart(2,'0')};
 const hms=ms=>{const s=Math.floor(ms/1e3);return Math.floor(s/3600)+':'+String(Math.floor(s/60)%60).padStart(2,'0')+':'+String(s%60).padStart(2,'0')};
 const tOf=ms=>new Date(ms).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'});
-let ptDay=dKey(Date.now());
+let ptDay=dKey(Date.now()),ptOldOpen=false,rOldOpen=false;
 const running=()=>S.pointage.find(x=>!x.end);
 const durOf=x=>x.end?Math.max(0,x.end-x.start):0;
 const daySegs=d=>S.pointage.filter(x=>x.day===d).sort((a,b)=>a.start-b.start);
-// Les pauses sont déduites du temps de travail, y compris quand elles tombent pendant un trajet ou une intervention
-function totals(d){const o={trajet:0,inter:0,pause:0},L=daySegs(d),P=L.filter(x=>x.type==='pause'&&x.end);
- L.forEach(x=>{let v=durOf(x);if(x.type!=='pause'&&x.end)P.forEach(p=>{v-=Math.max(0,Math.min(x.end,p.end)-Math.max(x.start,p.start))});o[x.type]=(o[x.type]||0)+Math.max(0,v)});
- o.tot=o.trajet+o.inter;return o}
+function totals(d){const o={prep:0,trajet:0,inter:0,pause:0};daySegs(d).forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));o.tot=o.prep+o.trajet+o.inter;return o}
 
 const toMs=(d,v)=>new Date(d+'T'+v).getTime();
-function ptDefaults(){const L=daySegs(ptDay).filter(x=>x.end),last=L[L.length-1];
- if(!$('#ptS').value||$('#ptForm').dataset.day!==ptDay){$('#ptS').value=last?tOf(last.end):'08:00';$('#ptE').value='';$('#ptForm').dataset.day=ptDay}ptDurUpd()}
-function ptDurUpd(){const s=$('#ptS').value,e=$('#ptE').value;$('#ptDur').value=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):''}
-$('#ptS').addEventListener('input',ptDurUpd);$('#ptE').addEventListener('input',ptDurUpd);
-$('#ptForm').addEventListener('submit',async e=>{e.preventDefault();const s=toMs(ptDay,$('#ptS').value),en=toMs(ptDay,$('#ptE').value);
- if(!(en>s))return toast('L\'heure de fin doit être après le début');
- const type=document.querySelector('[name=ptT]:checked').value;
- if(daySegs(ptDay).some(x=>x.end&&s<x.end&&en>x.start))toast('Attention : chevauche une autre ligne');
- await put('pointage',{id:uid(),day:ptDay,type,start:s,end:en,c:$('#ptC').value.trim(),t:Date.now()});
- $('#ptS').value=$('#ptE').value;$('#ptE').value='';ptDurUpd();
- const nx=type==='trajet'?'inter':'trajet';document.querySelector(`[name=ptT][value=${nx}]`).checked=true;if(type!=='trajet')$('#ptC').value='';
- toast(PT[type]+(type==='trajet'?' ajouté : ':' ajoutée : ')+hm(en-s))});
-function drawPtTotals(){const o=totals(ptDay),all=o.trajet+o.inter+o.pause||1;
- $('#ptTot').innerHTML=[['trajet','Trajet',o.trajet],['inter','Intervention',o.inter],['pause','Pause',o.pause],['tot','Total travaillé',o.tot]].map(([k,l,v])=>`<div class="k-${k}"><b>${hm(v)}</b><span>${l}</span></div>`).join('');
- $('#ptBar').innerHTML=`<i style="width:${o.trajet/all*100}%;background:var(--blue)"></i><i style="width:${o.inter/all*100}%;background:var(--teal)"></i><i style="width:${o.pause/all*100}%;background:var(--mute)"></i>`;
+/* Techniciens (liste gardée sur cet appareil) */
+let TECHS=[],ptSel=[];try{TECHS=JSON.parse(localStorage.getItem('dep_techs')||'[]');ptSel=JSON.parse(localStorage.getItem('dep_ptsel')||'[]')}catch(e){}
+const saveTechs=()=>{try{localStorage.setItem('dep_techs',JSON.stringify(TECHS));localStorage.setItem('dep_ptsel',JSON.stringify(ptSel))}catch(e){}};
+function drawTechs(){ptSel=ptSel.filter(n=>TECHS.includes(n));
+ $('#ptTechL').innerHTML=TECHS.length?TECHS.map((n,i)=>`<div class="tr"><label><input type="checkbox" data-tech="${i}"${ptSel.includes(n)?' checked':''}>${esc(n)}</label><button type="button" class="ico" data-tdel="${i}" aria-label="Retirer ${esc(n)} de la liste">✕</button></div>`).join(''):`<p class="tag" style="margin:10px 0">Aucun technicien enregistré : ajoutez-les ci-dessous.</p>`;
+ $('#ptTechsS').textContent=ptSel.length?ptSel.join(', '):'Choisir les techniciens';
+ $('#ptTechs').hidden=!$('#ptGrp').checked}
+function addTech(){const n=$('#ptTechN').value.trim().replace(/\s+/g,' ');if(!n)return;if(!TECHS.some(x=>x.toLowerCase()===n.toLowerCase())){TECHS.push(n);TECHS.sort((a,b)=>a.localeCompare(b,'fr'))}const k=TECHS.find(x=>x.toLowerCase()===n.toLowerCase());if(!ptSel.includes(k))ptSel.push(k);$('#ptTechN').value='';saveTechs();drawTechs()}
+$('#ptTechAdd').addEventListener('click',addTech);
+$('#ptTechN').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();addTech()}});
+$('#ptTechL').addEventListener('change',e=>{const c=e.target.closest('[data-tech]');if(!c)return;const n=TECHS[+c.dataset.tech];ptSel=c.checked?[...new Set([...ptSel,n])]:ptSel.filter(x=>x!==n);saveTechs();drawTechs()});
+$('#ptTechL').addEventListener('click',e=>{const b=e.target.closest('[data-tdel]');if(!b)return;e.preventDefault();const n=TECHS[+b.dataset.tdel];TECHS=TECHS.filter(x=>x!==n);ptSel=ptSel.filter(x=>x!==n);saveTechs();drawTechs();toast(n+' retiré de la liste')});
+{let g=false;try{g=localStorage.getItem('dep_ptgrp')==='1'}catch(e){}$('#ptGrp').checked=g}
+$('#ptGrp').addEventListener('change',e=>{try{localStorage.setItem('dep_ptgrp',e.target.checked?'1':'0')}catch(x){}drawTechs();if(e.target.checked&&!TECHS.length)$('#ptTechs').open=true});
+
+/* OT déjà connu : reprend chantier et client */
+const otKey=v=>String(v||'').trim().toUpperCase();
+$('#ptOt').addEventListener('change',()=>{const k=otKey($('#ptOt').value);if(!k)return;const p=[...S.pointage].filter(x=>otKey(x.ot)===k).sort((a,b)=>b.start-a.start)[0];if(!p)return;
+ if(!$('#ptCh').value&&p.ch)$('#ptCh').value=p.ch;if(!$('#ptCl').value&&p.cl)$('#ptCl').value=p.cl});
+
+const PTK=['prep','trajet','inter','pause','retour'],fS=k=>$('#ptS-'+k),fE=k=>$('#ptE-'+k);
+function ptDurUpd(k){if(!k)return PTK.forEach(ptDurUpd);const s=fS(k).value,e=fE(k).value,v=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?hm(toMs(ptDay,e)-toMs(ptDay,s)):'';$('#ptD-'+k).value=v;const h=$('#ptH-'+k);if(h)h.textContent=v}
+function ptDefaults(){ptDurUpd()}
+const ptLock=()=>{const ok=!!($('#ptOt').value.trim()||$('#ptCl').value.trim());if(ok)['#ptOt','#ptCl'].forEach(i=>$(i).classList.remove('need'));document.querySelectorAll('#ptForm .pfin').forEach(b=>{b.classList.toggle('off',!ok);b.setAttribute('aria-disabled',ok?'false':'true')});$('#ptLockMsg').hidden=ok};
+['#ptOt','#ptCl'].forEach(i=>{$(i).addEventListener('input',e=>{if(e.target.value.trim())e.target.classList.remove('need');ptLock()});$(i).addEventListener('change',ptLock)});
+PTK.forEach(k=>{fS(k).addEventListener('input',()=>ptDurUpd(k));fE(k).addEventListener('input',()=>ptDurUpd(k))});
+async function ptValidate(){
+ {const miss=$('#ptOt').value.trim()||$('#ptCl').value.trim()?[]:[['#ptOt','le N° OT'],['#ptCl','le client']];
+  if(miss.length){miss.forEach(([i])=>$(i).classList.add('need'));const f=$(miss[0][0]);f.scrollIntoView({block:'center',behavior:'smooth'});setTimeout(()=>f.focus(),300);return toast('Renseignez au moins le N° OT ou le client')}}
+ const L=[];
+ const SK={prep:'t_prep',pause:'t_pause',retour:'t_ret'};
+ for(const k of PTK){if(blkHidden(SK[k]))continue;if(!fS(k).value&&!fE(k).value)continue;
+  if(!fS(k).value){fS(k).focus();return toast(PTL[k]+' : indiquez l\'heure de début')}
+  if(!fE(k).value){fE(k).focus();return toast(PTL[k]+' : indiquez l\'heure de fin')}
+  const s=toMs(ptDay,fS(k).value),en=toMs(ptDay,fE(k).value);
+  if(!(en>s)){fE(k).focus();return toast(PTL[k]+' : la fin doit être après le début')}
+  L.push({k,s,en})}
+ if(!L.length){fS('prep').focus();return toast('Saisissez les heures d\'au moins une étape')}
+ if(L.some(x=>daySegs(ptDay).some(y=>y.end&&x.s<y.end&&x.en>y.start)))toast('Attention : chevauche une autre ligne');
+ const ot=$('#ptOt').value.trim(),ch=$('#ptCh').value.trim(),cl=$('#ptCl').value.trim(),rq=$('#ptRq').value.trim(),grp=$('#ptGrp').checked&&!blkHidden('t_grp');
+ for(const x of L)await put('pointage',{id:uid(),day:ptDay,type:x.k==='retour'?'trajet':x.k,...(x.k==='trajet'?{sens:'aller'}:x.k==='retour'?{sens:'retour'}:{}),start:x.s,end:x.en,c:[ch,cl].filter(Boolean).join(' – '),ot,ch,cl,rq:x.k==='inter'||L.length===1?rq:'',grp,techs:grp?[...ptSel]:[],t:Date.now()});
+ const tot=L.filter(x=>x.k!=='pause').reduce((t,x)=>t+x.en-x.s,0);
+ PTK.forEach(k=>{fS(k).value='';fE(k).value=''});ptDurUpd();
+ $('#ptOt').value='';$('#ptCh').value='';$('#ptCl').value='';$('#ptRq').value='';ptLock();ptDraftSave();if(ptMode==='wiz'){wStep=0;wDraw()}
+ toast('Intervention validée · '+(ot?'OT '+ot:cl)+' · '+hm(tot))}
+$('#ptVal').addEventListener('click',ptValidate);
+document.querySelectorAll('.ptsec').forEach(f=>f.addEventListener('submit',e=>{e.preventDefault();ptValidate()}));
+drawTechs();ptLock();
+/* Brouillon : la saisie en cours reste enregistrée (même appli fermée) jusqu'à la validation */
+const PTD_F=['ptOt','ptCl','ptCh','ptRq'];
+function ptDraftSave(){setTimeout(()=>{try{wSync()}catch(e){}},0);const d={f:{},t:{}};PTD_F.forEach(i=>d.f[i]=$('#'+i).value);PTK.forEach(k=>d.t[k]=[fS(k).value,fE(k).value]);
+ const empty=!Object.values(d.f).some(Boolean)&&!Object.values(d.t).some(v=>v[0]||v[1]);try{empty?localStorage.removeItem('dep_ptdraft'):localStorage.setItem('dep_ptdraft',JSON.stringify(d))}catch(e){}}
+function ptDraftLoad(){let d=null;try{d=JSON.parse(localStorage.getItem('dep_ptdraft')||'null')}catch(e){}if(!d)return;
+ PTD_F.forEach(i=>{if(d.f&&d.f[i]!=null)$('#'+i).value=d.f[i]});PTK.forEach(k=>{const v=d.t&&d.t[k];if(v){fS(k).value=v[0]||'';fE(k).value=v[1]||''}});ptDurUpd();ptLock()}
+$('#ptForm').addEventListener('input',ptDraftSave);$('#ptForm').addEventListener('change',ptDraftSave);
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='hidden')ptDraftSave()});
+ptDraftLoad();
+
+/* Saisie étape par étape (au choix avec le formulaire complet) */
+let ptMode='form',wStep=0;try{ptMode=localStorage.getItem('dep_ptmode')||'form';wStep=+localStorage.getItem('dep_ptwstep')||0}catch(e){}
+{const W=(sel,k)=>document.querySelectorAll(sel).forEach(e=>e.dataset.w=k),lab=id=>$(id).closest('label');
+ [lab('#ptOt'),lab('#ptCl'),lab('#ptCh')].forEach(e=>e.dataset.w='id');lab('#ptRq').dataset.w='inter';
+ W('.ptgrp,#ptTechs','fin');W('#ptForm>.ptlbl','none');W('#ptLockMsg','fin');W('#ptVal','fin');
+ const note=$('#ptVal').parentElement.querySelector(':scope>p.tag');if(note)note.dataset.w='fin';
+ document.querySelectorAll('#ptForm .ptsec').forEach(f=>f.dataset.w=f.dataset.sec);$('#ptRecap').dataset.w='fin'}
+const WSN={id:'Client et N° OT',prep:'Préparation',trajet:'Trajet aller',inter:'Sur place',pause:'Pause',retour:'Trajet retour',fin:'Vérifier et valider'};
+const SKB={prep:'t_prep',pause:'t_pause',retour:'t_ret'};
+const wSteps=()=>['id',...PTK.filter(k=>!blkHidden(SKB[k])),'fin'];
+function wRecap(){const L=PTK.filter(k=>!blkHidden(SKB[k])&&(fS(k).value||fE(k).value));let tot=0;
+ const ot=$('#ptOt').value.trim(),cl=$('#ptCl').value.trim(),ch=$('#ptCh').value.trim();
+ $('#ptRecap').innerHTML=`<p class="ri"><b>${esc(ot?'OT '+ot:'Sans N° OT')}</b>${cl?' · '+esc(cl):''}${ch?' · '+esc(ch):''}</p>`+
+  (L.length?L.map(k=>{const s=fS(k).value,e=fE(k).value,d=s&&e&&toMs(ptDay,e)>toMs(ptDay,s)?toMs(ptDay,e)-toMs(ptDay,s):0;if(k!=='pause')tot+=d;
+   return `<div class="rc"><b>${PTL[k]}</b><span>${s||'--:--'} – ${e||'--:--'}</span><em>${d?hm(d):'–'}</em><button type="button" class="ghost" data-wgo="${k}">Modifier</button></div>`}).join('')+`<div class="rt"><span>Total travaillé</span><span>${hm(tot)}</span></div>`
+  :`<p class="empty" style="margin:6px 0">Aucune heure saisie. Revenez aux étapes avec « Précédent ».</p>`)}
+function wDraw(){const F=$('#ptForm'),wiz=ptMode==='wiz';F.classList.toggle('wiz',wiz);
+ document.querySelectorAll('#ptMode [data-pm]').forEach(b=>b.classList.toggle('cur',b.dataset.pm===ptMode));
+ if(!wiz)return;const S=wSteps();if(!(wStep>=0&&wStep<S.length))wStep=0;const k=S[wStep];
+ document.querySelectorAll('#ptForm [data-w]').forEach(e=>e.classList.toggle('won',e.dataset.w===k));
+ $('#wizDots').innerHTML=S.map((_,i)=>`<i class="${i===wStep?'on':i<wStep?'done':''}"></i>`).join('');
+ $('#wizT').textContent=WSN[k];$('#wizN').textContent=`Étape ${wStep+1} / ${S.length}`;
+ $('#wizPrev').hidden=wStep===0;$('#wizNext').hidden=k==='fin';$('#wizPrev').parentElement.classList.toggle('one',wStep===0||k==='fin');
+ $('#wizNext').innerHTML=(k!=='id'&&k!=='fin'&&!fS(k).value&&!fE(k).value?'Passer cette étape':'Suivant')+ic('next');
+ if(k==='fin')wRecap();try{localStorage.setItem('dep_ptwstep',wStep)}catch(e){}}
+function wGo(n,focus){wStep=n;wDraw();scrollTo({top:$('#ptForm').getBoundingClientRect().top+scrollY-12,behavior:'smooth'});
+ if(focus!==false){const k=wSteps()[wStep];const f=k==='id'?$('#ptOt'):k==='fin'?null:fS(k);if(f&&!f.value)setTimeout(()=>f.focus(),250)}}
+$('#ptMode').addEventListener('click',e=>{const b=e.target.closest('[data-pm]');if(!b)return;ptMode=b.dataset.pm;try{localStorage.setItem('dep_ptmode',ptMode)}catch(x){}wDraw()});
+$('#wizPrev').addEventListener('click',()=>wGo(Math.max(0,wStep-1),false));
+$('#wizNext').addEventListener('click',()=>{const k=wSteps()[wStep];
+ if(k==='id'&&!$('#ptOt').value.trim()&&!$('#ptCl').value.trim()){['#ptOt','#ptCl'].forEach(i=>$(i).classList.add('need'));$('#ptOt').focus();return toast('Renseignez au moins le N° OT ou le client')}
+ if(k!=='id'&&k!=='fin'){if(fS(k).value&&!fE(k).value){fE(k).focus();return toast('Indiquez l\'heure de fin')}if(!fS(k).value&&fE(k).value){fS(k).focus();return toast('Indiquez l\'heure de début')}
+  if(fS(k).value&&fE(k).value&&!(toMs(ptDay,fE(k).value)>toMs(ptDay,fS(k).value))){fE(k).focus();return toast('La fin doit être après le début')}}
+ wGo(wStep+1)});
+$('#ptRecap').addEventListener('click',e=>{const b=e.target.closest('[data-wgo]');if(b)wGo(wSteps().indexOf(b.dataset.wgo))});
+$('#ptForm').addEventListener('input',e=>{if(ptMode==='wiz'&&e.target.type==='time')wDraw()});
+wDraw();
+
+/* Widget d'écran d'accueil (appli Android) */
+function wSync(){try{if(!window.AndroidApp||!AndroidApp.setWidget)return;
+ const o=totals(dKey(Date.now())),ot=$('#ptOt').value.trim(),cl=$('#ptCl').value.trim();
+ const done=PTK.filter(k=>fS(k).value&&fE(k).value).join(','),hid=PTK.filter(k=>blkHidden(SKB[k])).join(',');
+ AndroidApp.setWidget(hm(o.tot),ot||cl?'En cours : '+[ot&&'OT '+ot,cl].filter(Boolean).join(' · '):'Aucune intervention en cours',done,hid);
+ if(AndroidApp.setWidgetInfo){const t=dKey(Date.now()),m=t.slice(0,7),MD=[...new Set(S.pointage.filter(x=>x.day.startsWith(m)).map(x=>x.day))];
+  const hs=MD.reduce((a,d)=>a+supDay(d).s,0),mo=MD.reduce((a,d)=>a+totals(d).tot,0),wk=weekDays(t).reduce((a,d)=>a+totals(d).tot,0);
+  const E=S.pointage.filter(x=>x.end).sort((a,b)=>b.end-a.end),l=E[0];let last='–';
+  if(l){const key=x=>otKey(x.ot)||('CL:'+(x.cl||'').trim().toUpperCase());const G=E.filter(x=>x.day===l.day&&key(x)===key(l)&&x.type!=='pause');
+   last=[l.ot&&'OT '+l.ot.trim(),l.cl||l.c,hm(G.reduce((a,x)=>a+durOf(x),0))].filter(Boolean).join(' · ')}
+  AndroidApp.setWidgetInfo(hs?'+ '+hm(hs):'0 h 00',hm(wk),hm(mo),last)}}catch(e){}}
+window.__openStep=k=>{if(navOff.includes('heures'))return;if(location.hash!=='#heures')location.hash='heures';
+ if(ptDay!==dKey(Date.now())){ptDay=dKey(Date.now());drawPt()}
+ ptMode='wiz';try{localStorage.setItem('dep_ptmode','wiz')}catch(e){}const S=wSteps();let i=S.indexOf(k);if(i<0)i=0;if(i>0&&!$('#ptOt').value.trim()&&!$('#ptCl').value.trim()){i=0;setTimeout(()=>toast('Renseignez d\'abord le N° OT ou le client'),400)}setTimeout(()=>wGo(i),150)};
+wSync();
+
+/* Heures supplémentaires du mois : base 8 h du lundi au vendredi */
+const BASE_J=8*36e5;
+function supDay(d){const w=new Date(d+'T12:00').getDay(),t=totals(d).tot,we=w===0||w===6;return {t,we,s:we?t:Math.max(0,t-BASE_J)}}
+function drawSup(){if(!$('#supBox'))return;const m=ptDay.slice(0,7),D=[...new Set(S.pointage.filter(x=>x.day.startsWith(m)).map(x=>x.day))].sort();
+ $('#supM').textContent=new Date(m+'-15T12:00').toLocaleDateString('fr-FR',{month:'long',year:'numeric'});
+ const R=D.map(d=>({d,...supDay(d)})).filter(x=>x.t>0),tot=R.reduce((a,x)=>a+x.t,0),hs=R.reduce((a,x)=>a+x.s,0),nj=R.filter(x=>!x.we).length;
+ // détail par semaine (lundi → dimanche)
+ const W={};R.forEach(x=>{const k=weekDays(x.d)[0];(W[k]=W[k]||{t:0,s:0}).t+=x.t;W[k].s+=x.s});
+ const rows=R.filter(x=>x.s>0);
+ $('#supBox').innerHTML=!R.length?`<p class="empty" style="margin:0">Aucune heure notée ce mois-ci.</p>`:
+  `<div class="supk"><div><b>${hm(tot)}</b><span>Travaillées</span></div><div><b>${nj} j</b><span>Jours en semaine</span></div><div class="hs"><b>${hm(hs)}</b><span>Heures sup.</span></div></div>`+
+  `<table class="wk sup"><thead><tr><th>Semaine du</th><th>Travaillé</th><th>Heures sup.</th></tr></thead><tbody>${Object.entries(W).map(([k,v])=>`<tr><td>${new Date(k+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}</td><td>${hm(v.t)}</td><td class="${v.s?'p':''}">${v.s?'+ '+hm(v.s):'–'}</td></tr>`).join('')}</tbody><tfoot><tr><td>Mois</td><td>${hm(tot)}</td><td class="p">${hs?'+ '+hm(hs):'–'}</td></tr></tfoot></table>`+
+  (rows.length?`<details style="margin-top:10px"><summary class="tag" style="cursor:pointer;min-height:40px;display:flex;align-items:center">Voir les ${rows.length} jour${rows.length>1?'s':''} avec heures sup.</summary><table class="wk sup"><tbody>${rows.map(x=>`<tr class="${x.we?'we':''}"><td><button data-day="${x.d}">${new Date(x.d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'})}</button></td><td>${hm(x.t)}</td><td class="p">+ ${hm(x.s)}</td></tr>`).join('')}</tbody></table></details>`:'')}
+$('#supBox').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(b){ptDay=b.dataset.day;drawPt();scrollTo({top:0,behavior:'smooth'})}});
+
+/* Historique des OT */
+function otGroups(){const G={};S.pointage.forEach(x=>{const k=otKey(x.ot);if(!k)return;(G[k]=G[k]||{k,n:x.ot.trim(),L:[]}).L.push(x)});
+ return Object.values(G).map(g=>{g.L.sort((a,b)=>a.start-b.start);const o={prep:0,trajet:0,inter:0,pause:0};g.L.forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));g.o=o;
+  const last=k=>[...g.L].reverse().find(x=>x[k])?.[k]||'';g.ch=last('ch');g.cl=last('cl');if(!g.ch&&!g.cl)g.ch=last('c');
+  g.rq=[...new Set(g.L.map(x=>x.rq).filter(Boolean))];g.techs=[...new Set(g.L.flatMap(x=>x.techs||[]))];g.days=[...new Set(g.L.map(x=>x.day))];g.lastT=g.L[g.L.length-1].start;return g})
+  .sort((a,b)=>b.lastT-a.lastT)}
+const dShort=d=>new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'short',day:'numeric',month:'short'});
+const otTxt=g=>[`OT N° ${g.n}`,g.ch&&'Chantier : '+g.ch,g.cl&&'Client : '+g.cl,g.techs.length&&'Équipe : '+g.techs.join(', '),
+ ...g.L.map(x=>`${new Date(x.day+'T12:00').toLocaleDateString('fr-FR')}  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${stepName(x)}  ${hm(durOf(x))}`),
+ `Préparation : ${hm(g.o.prep)} · Trajet : ${hm(g.o.trajet)} · Intervention : ${hm(g.o.inter)} · Pause : ${hm(g.o.pause)}`,`Total travaillé : ${hm(g.o.prep+g.o.trajet+g.o.inter)}`,g.rq.length&&'Remarques : '+g.rq.join(' / ')].filter(Boolean).join('\n');
+function drawOt(){if(!$('#otList'))return;const q=($('#otQ').value||'').trim().toLowerCase(),A=otGroups();
+ const L=q?A.filter(g=>[g.n,g.ch,g.cl,g.techs.join(' '),g.rq.join(' ')].join(' ').toLowerCase().includes(q)):A;
+ $('#otSum').textContent=A.length?A.length+' OT':'';
+ $('#otNums').innerHTML=A.slice(0,60).map(g=>`<option value="${esc(g.n)}">`).join('');
+ $('#clients').innerHTML=[...new Set(S.pointage.map(x=>x.cl).filter(Boolean))].map(c=>`<option value="${esc(c)}">`).join('');
+ $('#otList').innerHTML=!A.length?`<p class="tag" style="margin:4px 0 0">Les heures notées avec un n° d'OT apparaîtront ici, regroupées par OT.</p>`:!L.length?`<p class="tag" style="margin:4px 0 0">Aucun OT ne correspond.</p>`:
+  L.map(g=>`<details class="ot"><summary><div class="oth"><b>OT n° ${esc(g.n)}</b><span class="tag">${g.days.map(dShort).join(', ')}${g.ch?' · '+esc(g.ch):''}${g.cl?' · '+esc(g.cl):''}</span></div><span class="otv">${hm(g.o.prep+g.o.trajet+g.o.inter)}</span></summary>
+   <div class="otb"><div class="otk"><div class="k-prep"><b>${hm(g.o.prep)}</b><span>Préparation</span></div><div class="k-trajet"><b>${hm(g.o.trajet)}</b><span>Trajet</span></div><div class="k-inter"><b>${hm(g.o.inter)}</b><span>Intervention</span></div><div class="k-pause"><b>${hm(g.o.pause)}</b><span>Pause</span></div></div>
+   ${g.ch?`<p class="otm"><b>Chantier</b>${esc(g.ch)}</p>`:''}${g.cl?`<p class="otm"><b>Client</b>${esc(g.cl)}</p>`:''}${g.techs.length?`<p class="otm"><b>Équipe</b>${esc(g.techs.join(', '))}</p>`:''}${g.rq.length?`<p class="otm"><b>Remarques</b>${g.rq.map(esc).join('<br>')}</p>`:''}
+   <table class="otl">${g.L.map(x=>`<tr><td>${dShort(x.day)}</td><td>${tOf(x.start)} – ${x.end?tOf(x.end):'…'}</td><td class="w">${stepName(x)}</td><td>${hm(durOf(x))}</td></tr>`).join('')}</table>
+   <div class="tools"><button class="ghost" data-otc="${esc(g.k)}">${ic('copy')}Copier l'OT</button><button class="ghost" data-otd="${esc(g.days[g.days.length-1])}">${ic('clock')}Voir la journée</button></div></div></details>`).join('')}
+$('#otQ').addEventListener('input',drawOt);
+$('#otList').addEventListener('click',e=>{const c=e.target.closest('[data-otc]'),d=e.target.closest('[data-otd]');
+ if(c){const g=otGroups().find(x=>x.k===c.dataset.otc);if(g)copy(otTxt(g))}
+ if(d){ptDay=d.dataset.otd;drawPt();scrollTo({top:0,behavior:'smooth'})}});
+function drawPtTotals(){const o=totals(ptDay),all=o.prep+o.trajet+o.inter+o.pause||1;
+ $('#ptTot').innerHTML=[['prep','Préparation',o.prep],['trajet','Trajet',o.trajet],['inter','Intervention',o.inter],['pause','Pause',o.pause],['tot','Total travaillé',o.tot]].map(([k,l,v])=>`<div class="k-${k}"><b>${hm(v)}</b><span>${l}</span></div>`).join('');
+ $('#ptBar').innerHTML=`<i style="width:${o.prep/all*100}%;background:var(--or)"></i><i style="width:${o.trajet/all*100}%;background:var(--blue)"></i><i style="width:${o.inter/all*100}%;background:var(--teal)"></i><i style="width:${o.pause/all*100}%;background:var(--mute)"></i>`;
 }
-function drawPt(){const today=dKey(Date.now()),isT=ptDay===today;
+function drawPt(){const today=dKey(Date.now()),isT=ptDay===today;setTimeout(()=>{try{wSync()}catch(e){}},0);
  $('#ptDate').value=ptDay;$('#ptToday').hidden=isT;ptDefaults();
  const L=daySegs(ptDay);
- $('#ptList').innerHTML=L.length?L.map(x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"></div>`).join('')
-  :`<p class="empty" style="margin:0">Aucun pointage ce jour.</p>`;
- drawPtTotals();drawRoute();drawWeek()}
+ const row=x=>`<div class="seg2 k-${x.type}" data-id="${esc(x.id)}"><select data-f="type" aria-label="Type">${Object.entries(PT).map(([k,l])=>`<option value="${k}"${k===x.type?' selected':''}>${l}</option>`).join('')}</select><input type="time" data-f="start" value="${tOf(x.start)}" aria-label="Début"><input type="time" data-f="end" value="${x.end?tOf(x.end):''}" aria-label="Fin"><span class="du">${x.end?hm(durOf(x)):'<span style="color:var(--or)">à compléter</span>'}</span><button class="ico" data-pdel="${esc(x.id)}" aria-label="Supprimer">${ic('trash')}</button><input class="cc" data-f="c" value="${esc(x.c||'')}" placeholder="Chantier / remarque" list="chantiers"><div class="ix"><input data-f="ot" value="${esc(x.ot||'')}" placeholder="N° OT" aria-label="N° OT" list="otNums">${x.cl&&x.ch?`<span>Client <b>${esc(x.cl)}</b></span>`:''}${(x.techs||[]).length?`<span>Équipe <b>${esc(x.techs.join(', '))}</b></span>`:''}${x.rq?`<span>${esc(x.rq)}</span>`:''}</div></div>`;
+ const keyOf=x=>otKey(x.ot)||(x.cl?'CL:'+x.cl.trim().toUpperCase():'#'+x.id),G=[];L.forEach(x=>{const k=keyOf(x);let g=G.find(y=>y.k===k);if(!g)G.push(g={k,L:[]});g.L.push(x)});
+ const old=G.slice(0,-1),last=G.slice(-1),nOld=old.length;
+ $('#ptList').innerHTML=!L.length?`<p class="empty" style="margin:0">Aucun pointage ce jour.</p>`:
+  (nOld?'<p class="ptlast">Dernière intervention</p>':'')+last.flatMap(g=>g.L).map(row).join('')+
+  (nOld?`<details class="ptold"${ptOldOpen?' open':''}><summary>Interventions précédentes<span class="tag">${nOld}</span></summary>${old.flatMap(g=>g.L).map(row).join('')}</details>`:'');
+ $('#ptList').querySelector('.ptold')?.addEventListener('toggle',e=>ptOldOpen=e.target.open);
+ drawPtTotals();drawRoute();drawWeek();drawOt();drawSup()}
 
 function drawRoute(){const L=daySegs(ptDay);const I=L.filter(x=>x.type==='inter');
  if(!I.length){$('#ptRoute').innerHTML=`<p class="tag" style="margin:0">Pointez au moins une intervention pour voir les trajets entre chantiers.</p>`;$('#rtSum').textContent='';return}
  const out=[];let prevEnd=null,sumTr=0,nTr=0;
  const trBetween=(a,b)=>L.filter(x=>x.type==='trajet'&&x.start>=a-6e4&&(x.end||Date.now())<=b+6e4);
  const first=L[0];out.push(`<li class="k-start"><span class="ri">${ic('home')}</span><div class="rb"><b>Début de journée</b><small>${tOf(first.start)}</small></div></li>`);
- I.forEach((x,i)=>{const from=i===0?first.start:prevEnd;const T=trBetween(from,x.start);const tr=T.reduce((s,y)=>s+durOf(y),0);
+ let cut=0;I.forEach((x,i)=>{if(i===I.length-1)cut=out.length;const from=i===0?first.start:prevEnd;const T=trBetween(from,x.start);const tr=T.reduce((s,y)=>s+durOf(y),0);
   const lbl=i===0?'Trajet vers le 1er chantier':`Trajet ${esc(I[i-1].c||'chantier '+i)} → ${esc(x.c||'chantier '+(i+1))}`;
   if(T.length){sumTr+=tr;if(i>0)nTr++;out.push(`<li class="k-trajet"><span class="ri">${ic('car')}</span><div class="rb"><b>${lbl}</b><small>${tOf(T[0].start)} – ${T[T.length-1].end?tOf(T[T.length-1].end):'en cours'}</small></div><span class="rv">${hm(tr)}</span></li>`)}
   else if(i>0){const gap=x.start-prevEnd-L.filter(y=>y.type==='pause'&&y.start>=prevEnd&&y.start<x.start).reduce((s,y)=>s+durOf(y),0);
@@ -1268,23 +1635,23 @@ function drawRoute(){const L=daySegs(ptDay);const I=L.filter(x=>x.type==='inter'
   prevEnd=x.end||Date.now()});
  const last=I[I.length-1];if(last.end){const R=L.filter(x=>x.type==='trajet'&&x.start>=last.end-6e4);const r=R.reduce((s,y)=>s+durOf(y),0);
   if(R.length){sumTr+=r;out.push(`<li class="k-trajet"><span class="ri">${ic('car')}</span><div class="rb"><b>Trajet retour</b><small>${tOf(R[0].start)} – ${R[R.length-1].end?tOf(R[R.length-1].end):'en cours'}</small></div><span class="rv">${hm(r)}</span></li>`)}}
- $('#ptRoute').innerHTML=`<ul class="route">${out.join('')}</ul>`;
+ const nO=I.length-1;$('#ptRoute').innerHTML=`<p class="ptlast">Dernière intervention</p><ul class="route">${out.slice(nO?cut:0).join('')}</ul>`+(nO?`<details class="ptold"${rOldOpen?' open':''}><summary>Interventions précédentes<span class="tag">${nO}</span></summary><ul class="route">${out.slice(0,cut).join('')}</ul></details>`:'');$('#ptRoute').querySelector('.ptold')?.addEventListener('toggle',e=>rOldOpen=e.target.open);
  $('#rtSum').textContent=`${I.length} intervention${I.length>1?'s':''}`;
  if(nTr){const between=[];I.forEach((x,i)=>{if(i){const t=trBetween(I[i-1].end||0,x.start).reduce((s,y)=>s+durOf(y),0);if(t)between.push(t)}});$('#rtSum').textContent=`${I.length} interventions · trajet moyen ${hm(between.reduce((a,b)=>a+b,0)/between.length)}`}}
 function weekDays(d){const x=new Date(d+'T12:00');const n=(x.getDay()+6)%7;x.setDate(x.getDate()-n);return [...Array(7)].map((_,i)=>{const y=new Date(x);y.setDate(x.getDate()+i);return dKey(y)})}
-function drawWeek(){const W=weekDays(ptDay);let s={trajet:0,inter:0,tot:0};
- const rows=W.map(d=>{const o=totals(d);s.trajet+=o.trajet;s.inter+=o.inter;s.tot+=o.tot;const dt=new Date(d+'T12:00');
-  return `<tr class="${d===ptDay?'cur':''}"><td><button data-day="${d}">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'})}</button></td><td>${o.trajet?hm(o.trajet):'–'}</td><td>${o.inter?hm(o.inter):'–'}</td><td>${o.tot?hm(o.tot):'–'}</td></tr>`}).join('');
+function drawWeek(){const W=weekDays(ptDay);let s={prep:0,trajet:0,inter:0,tot:0};
+ const rows=W.map(d=>{const o=totals(d);s.prep+=o.prep;s.trajet+=o.trajet;s.inter+=o.inter;s.tot+=o.tot;const dt=new Date(d+'T12:00');
+  return `<tr class="${d===ptDay?'cur':''}"><td><button data-day="${d}">${dt.toLocaleDateString('fr-FR',{weekday:'short',day:'numeric'})}</button></td><td>${o.prep?hm(o.prep):'–'}</td><td>${o.trajet?hm(o.trajet):'–'}</td><td>${o.inter?hm(o.inter):'–'}</td><td>${o.tot?hm(o.tot):'–'}</td></tr>`}).join('');
  const wn=$('#clkS')?'':'';
  $('#ptWT').textContent='Semaine du '+new Date(W[0]+'T12:00').toLocaleDateString('fr-FR',{day:'numeric',month:'long'});
- $('#ptWeek').innerHTML=`<table class="wk"><thead><tr><th>Jour</th><th>Trajet</th><th>Interv.</th><th>Total</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${hm(s.trajet)}</td><td>${hm(s.inter)}</td><td>${hm(s.tot)}</td></tr></tfoot></table>`}
+ $('#ptWeek').innerHTML=`<table class="wk"><thead><tr><th>Jour</th><th>Prép.</th><th>Trajet</th><th>Interv.</th><th>Total</th></tr></thead><tbody>${rows}</tbody><tfoot><tr><td>Total</td><td>${hm(s.prep)}</td><td>${hm(s.trajet)}</td><td>${hm(s.inter)}</td><td>${hm(s.tot)}</td></tr></tfoot></table>`}
 const shift=n=>{const x=new Date(ptDay+'T12:00');x.setDate(x.getDate()+n);ptDay=dKey(x);drawPt()};
 $('#ptPrev').addEventListener('click',()=>shift(-1));$('#ptNext').addEventListener('click',()=>shift(1));
 $('#ptToday').addEventListener('click',()=>{ptDay=dKey(Date.now());drawPt()});
 $('#ptDate').addEventListener('change',e=>{if(e.target.value){ptDay=e.target.value;drawPt()}});
 $('#ptWeek').addEventListener('click',e=>{const b=e.target.closest('[data-day]');if(b){ptDay=b.dataset.day;drawPt()}});
 $('#ptList').addEventListener('change',async e=>{const row=e.target.closest('[data-id]'),f=e.target.dataset.f;if(!row||!f)return;const x=S.pointage.find(y=>y.id===row.dataset.id);if(!x)return;const n={...x};
- if(f==='type')n.type=e.target.value;else if(f==='c')n.c=e.target.value.trim();
+ if(f==='type')n.type=e.target.value;else if(f==='c')n.c=e.target.value.trim();else if(f==='ot')n.ot=e.target.value.trim();
  else{if(!e.target.value)return;const ms=new Date(x.day+'T'+e.target.value).getTime();n[f]=ms;if(n.end&&n.end<=n.start){toast('La fin doit être après le début');drawPt();return}}
  await put('pointage',n)});
 $('#ptList').addEventListener('click',async e=>{const b=e.target.closest('[data-pdel]');if(!b)return;
@@ -1292,7 +1659,17 @@ $('#ptList').addEventListener('click',async e=>{const b=e.target.closest('[data-
  await del('pointage',b.dataset.pdel)});
 $('#ptAdd').addEventListener('click',async()=>{const L=daySegs(ptDay),last=L[L.length-1];const s=last&&last.end?last.end:new Date(ptDay+'T08:00').getTime();
  await put('pointage',{id:uid(),day:ptDay,type:'inter',start:s,end:s+36e5,c:'',t:Date.now()});toast('Ligne ajoutée : ajustez les heures')});
-const dayTxt=d=>{const o=totals(d);const L=daySegs(d);return [`POINTAGE ${new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'})}`,...L.map(x=>`${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}  ${PT[x.type]}  ${hm(durOf(x))}${x.c?'  ('+x.c+')':''}`),`Trajet : ${hm(o.trajet)} · Intervention : ${hm(o.inter)} · Pause : ${hm(o.pause)}`,`Total travaillé : ${hm(o.tot)}`].join('\n')};
+const dayTxt=d=>{
+ const L=daySegs(d),o=totals(d),nm=stepName,R=[];
+ R.push("RELEVÉ D'HEURES – "+new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'}).toUpperCase(),'');
+ const gk=x=>otKey(x.ot)||(x.cl?'CL:'+x.cl.trim().toUpperCase():'—'),keys=[...new Set(L.map(gk))];
+ keys.forEach(k=>{const S=L.filter(x=>gk(x)===k),f=S.find(x=>x.cl||x.ch)||S[0];
+  R.push('━━━━━━━━━━━━━━━━━━━━',k==='—'?'SANS N° OT':k.startsWith('CL:')?'▶ '+S[0].cl.trim()+' (sans N° OT)':'▶ OT N° '+S[0].ot.trim(),'━━━━━━━━━━━━━━━━━━━━');if(f.cl)R.push('  Client   : '+f.cl);if(f.ch)R.push('  Chantier : '+f.ch);
+  const tq=[...new Set(S.flatMap(x=>x.techs||[]))];if(tq.length)R.push('  Équipe   : '+tq.join(', '));
+  S.forEach(x=>R.push(`  ${tOf(x.start)} - ${x.end?tOf(x.end):'en cours'}   ${nm(x).padEnd(14)} ${hm(durOf(x))}`));
+  const rq=[...new Set(S.map(x=>x.rq).filter(Boolean))];if(rq.length)R.push('  Remarque : '+rq.join(' / '));R.push('')});
+ R.push('TOTAUX DE LA JOURNÉE',`  Préparation : ${hm(o.prep)}`,`  Trajet      : ${hm(o.trajet)}`,`  Sur place   : ${hm(o.inter)}`,`  Pause       : ${hm(o.pause)}`,`  Total travaillé : ${hm(o.tot)}`);
+ return R.join('\n')};
 $('#ptCopy').addEventListener('click',()=>copy(dayTxt(ptDay)));
 $('#ptCopyW').addEventListener('click',()=>{const W=weekDays(ptDay).filter(d=>daySegs(d).length);if(!W.length)return toast('Semaine vide');let t=0;W.forEach(d=>t+=totals(d).tot);copy(W.map(dayTxt).join('\n\n')+`\n\nTOTAL SEMAINE : ${hm(t)}`)});
 
@@ -1514,7 +1891,64 @@ async function deliverPdf(k,bytes,name,stEl){const st=stEl||document.querySelect
  catch(e){if(e&&e.code==='declined')say('Téléchargement annulé. <button class="ghost small" data-r="pdflink">Obtenir un lien vers le PDF</button>'),st.querySelector('[data-r=pdflink]').onclick=()=>viaLink();else viaLink(e&&e.code)}}
 let dl=null;
 if(window.AndroidApp){dl={save:async({filename,data})=>{const a=new Uint8Array(await data.arrayBuffer());let s='';for(let i=0;i<a.length;i+=8192)s+=String.fromCharCode.apply(null,a.subarray(i,i+8192));
- const r=AndroidApp.saveFile(btoa(s),filename,'application/pdf');if(r!=='ok')throw {code:'unavailable',message:r};return {status:'saved'}}};document.documentElement.classList.add('android')}window.__memoTest={rpdf:rapportPdf,pdf:memoPdf,setDl:v=>dl=v,all:v=>MB.e.all=v};
+ const r=AndroidApp.saveFile(btoa(s),filename,'application/pdf');if(r!=='ok')throw {code:'unavailable',message:r};return {status:'saved'}}};document.documentElement.classList.add('android')}window.__dayPdf=dayPdf;window.__memoTest={rpdf:rapportPdf,pdf:memoPdf,setDl:v=>dl=v,all:v=>MB.e.all=v};
+
+
+/* ---------- Export de la journée : texte et PDF ---------- */
+async function dayTxtExport(d){if(!daySegs(d).length)return toast('Aucune heure ce jour');
+ const t=('VERHAEGHE IRRIGATION\n'+dayTxt(d)).replace(/\n/g,'\r\n')+'\r\n',name='heures-'+d+'.txt',st=$('#ptExpSt'),say=h=>{st.hidden=false;st.innerHTML=h};
+ try{if(window.AndroidApp){const r=AndroidApp.saveFile(btoa(unescape(encodeURIComponent(t))),name,'text/plain');if(r!=='ok')throw {code:r}}
+  else if(dl){await dl.save({filename:name,data:new Blob([t],{type:'text/plain'})})}
+  else throw {code:'none'};
+  say(`<b style="color:var(--ok)">✓ Fichier « ${esc(name)} » enregistré.</b> <span class="tag">Il est dans vos téléchargements.</span>`)}
+ catch(e){if(e&&e.code==='declined')return say('Enregistrement annulé.');copy(t);say('Enregistrement de fichier indisponible ici : le texte de la journée a été copié dans le presse-papier.')}}
+async function dayPdf(d){const L=daySegs(d);if(!L.length)return toast('Aucune heure ce jour');
+ const doc=new MiniPDF.jsPDF({unit:'mm',format:'a4'}),W=210,H=297,M=14,CW=W-2*M,o=totals(d);
+ const C={blue:[47,125,225],ink:[30,42,54],mute:[102,118,138],line:[196,207,219],head:[232,239,247],zebra:[247,249,252]};
+ const K={prep:[242,140,40],trajet:[47,125,225],inter:[20,163,154],pause:[102,118,138],tot:[30,42,54]};
+ const fill=c=>doc.setFillColor(c[0],c[1],c[2]),draw=c=>doc.setDrawColor(c[0],c[1],c[2]),txt=c=>doc.setTextColor(c[0],c[1],c[2]);
+ const dt=new Date(d+'T12:00').toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+ const nOt=new Set(L.map(x=>x.ot).filter(Boolean)).size;let y=0;
+ const cols=[['Horaire',26],['Étape',28],['Durée',17,'r'],['N° OT',22],['Client / chantier',48],['Remarque / équipe',41]],P=2,LH=4.2,FS=9;
+ function head(first){fill(C.blue);doc.rect(0,0,W,first?30:14,'F');txt([255,255,255]);doc.setFont('helvetica','bold');
+  if(first){doc.setFontSize(17);doc.text('Verhaeghe Irrigation',M,12);doc.setFont('helvetica','normal');doc.setFontSize(11);doc.text("Relevé d'heures du "+dt,M,19.5);
+   doc.setFontSize(9.5);doc.text(L.length+' ligne'+(L.length>1?'s':'')+(nOt?' · '+nOt+' OT':''),M,25.5);y=38}
+  else{doc.setFontSize(10);doc.text("Relevé d'heures du "+dt+' (suite)',M,9);y=22}}
+ function thead(){fill(C.head);draw(C.line);doc.setLineWidth(.3);doc.rect(M,y,CW,8,'FD');let x=M;txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(8.5);
+  cols.forEach(([t,w,a])=>{doc.text(t,a==='r'?x+w-P:x+P,y+5.4,a==='r'?{align:'right'}:undefined);x+=w});y+=8}
+ const need=h=>{if(y+h>H-16){doc.addPage();head(false);thead()}};
+ head(true);
+ // totaux
+ const T=[['prep','Préparation',o.prep],['trajet','Trajet',o.trajet],['inter','Sur place',o.inter],['pause','Pause',o.pause],['tot','Total travaillé',o.tot]],bw=(CW-4*3)/5;
+ T.forEach(([k,l,v],i)=>{const x=M+i*(bw+3);fill(C.zebra);draw(C.line);doc.setLineWidth(.3);doc.rect(x,y,bw,17,'FD');fill(K[k]);doc.rect(x,y,bw,1.6,'F');
+  txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(13);doc.text(hm(v),x+3,y+9.5);txt(C.mute);doc.setFont('helvetica','normal');doc.setFontSize(8.5);doc.text(l,x+3,y+14.3)});
+ y+=25;txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('Détail de la journée',M,y);y+=4;thead();
+ L.forEach((x,i)=>{doc.setFont('helvetica','normal');doc.setFontSize(FS);
+  const who=[x.cl&&x.ch?x.cl+' - '+x.ch:(x.cl||x.ch||x.c||'')].join(''),rem=[x.rq,(x.techs||[]).length?'Équipe : '+x.techs.join(', '):''].filter(Boolean).join(' / ');
+  const cells=[(tOf(x.start)+' - '+(x.end?tOf(x.end):'en cours')),stepName(x),hm(durOf(x)),x.ot||'',who,rem].map((v,j)=>doc.splitTextToSize(String(v||''),cols[j][1]-2*P));
+  const h=Math.max(...cells.map(c=>c.length))*LH+2*P;need(h);
+  if(i%2){fill(C.zebra);doc.rect(M,y,CW,h,'F')}fill(K[x.type]||C.line);doc.rect(M,y,1.3,h,'F');
+  let cx=M;cells.forEach((c,j)=>{const [,w,a]=cols[j];txt(j===2?C.ink:j===5?C.mute:C.ink);doc.setFont('helvetica',j===2||j===3?'bold':'normal');
+   doc.text(c,a==='r'?cx+w-P:cx+P+(j===0?1:0),y+P+3.1,a==='r'?{align:'right'}:undefined);cx+=w});
+  draw(C.line);doc.setLineWidth(.2);doc.line(M,y+h,M+CW,y+h);y+=h});
+ // récap par OT
+ const G=[...new Set(L.map(x=>otKey(x.ot)).filter(Boolean))];
+ if(G.length){y+=8;need(14);txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('Par OT',M,y);y+=6;
+  G.forEach(k=>{const S=L.filter(x=>otKey(x.ot)===k),t={};S.forEach(x=>t[x.type]=(t[x.type]||0)+durOf(x));const f=S[0];
+   const line=`OT ${f.ot}${f.cl?' · '+f.cl:''}${f.ch?' · '+f.ch:''}`,det=['prep','trajet','inter','pause'].filter(z=>t[z]).map(z=>(z==='inter'?'Sur place':PT[z])+' '+hm(t[z])).join(' · ');
+   need(12);txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text(doc.splitTextToSize(line,CW)[0],M,y);txt(C.mute);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(det,M,y+4.6);y+=11})}
+ // signature
+ y+=6;need(36);draw(C.line);doc.setLineWidth(.4);doc.rect(M,y,(CW-6)/2,30);txt(C.mute);doc.setFontSize(9);doc.text('Signature technicien',M+3,y+5.5);
+ doc.setFontSize(8);doc.text('Édité le '+new Date().toLocaleDateString('fr-FR')+' à '+tOf(Date.now())+' - Verhaeghe Irrigation',W-M,H-8,{align:'right'});
+ await deliverPdf(null,doc.output(),'heures-'+d+'.pdf',$('#ptExpSt'))}
+$('#ptTxt').addEventListener('click',()=>dayTxtExport(ptDay));
+$('#ptShare').addEventListener('click',async()=>{const d=ptDay;if(!daySegs(d).length)return toast('Aucune heure ce jour');
+ const title='Heures du '+new Date(d+'T12:00').toLocaleDateString('fr-FR'),t='VERHAEGHE IRRIGATION\n'+dayTxt(d),st=$('#ptExpSt');
+ if(window.AndroidApp&&AndroidApp.shareText){try{AndroidApp.shareText(title,t);return}catch(e){}}
+ if(navigator.share){try{await navigator.share({title,text:t});return}catch(e){if(e&&e.name==='AbortError')return}}
+ st.hidden=false;st.innerHTML=`<span style="display:flex;flex-wrap:wrap;gap:8px;align-items:center"><a class="shb" href="https://wa.me/?text=${encodeURIComponent(t)}" target="_blank" rel="noopener">${ic('ext')}WhatsApp</a><a class="shb" href="mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(t)}" target="_blank" rel="noopener">${ic('ext')}E-mail</a><button class="ghost" type="button" id="ptShCopy">${ic('copy')}Copier</button></span>`;
+ $('#ptShCopy').onclick=()=>copy(t)});
+$('#ptPdf').addEventListener('click',()=>dayPdf(ptDay).catch(e=>{console.error(e);toast('PDF impossible : '+(e&&e.message||e))}));
 
 
 /* ---------- Assistant (chatbot) ---------- */
@@ -1546,10 +1980,34 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
    execute:async({designation,quantite,chantier,section})=>{const pm=String(section)==='pompage',d=String(designation||'').trim();if(!d)throw new Error('désignation vide');const ref=refFor(d,pm?'sta':'enr')?.ref||'';
     await put('memo',{id:uid(),d,r:ref,q:Math.max(1,Number(quantite)||1),c:String(chantier||''),s:0,t:Date.now(),dom:pm?'pmp':'enr',m:pm?'Pompage':bName(),from:'Assistant'});return {ajoute:d,reference:ref||'(pas au magasin)',memo:pm?'pompage':'enrouleurs'}}},
   {name:'lire_forages',description:'Liste les forages enregistrés : nom, client, commune, coordonnées GPS, profondeur, débit, pompe, accès.',execute:()=>(S.forages||[]).slice(0,40).map(f=>({nom:f.n,client:f.c,commune:f.v,gps:`${f.lat}, ${f.lon}`,profondeur_m:f.prof,debit_m3h:f.q,niveau_statique:f.ns,niveau_dynamique:f.nd,pompe:f.pompe,acces:f.r}))},
-  {name:'heures_semaine',description:'Totaux des heures (trajet, intervention, pause) par jour pour la semaine en cours, avec les chantiers.',execute:()=>weekDays(dKey(Date.now())).map(d=>{const o=totals(d);return {jour:d,trajet:hm(o.trajet),intervention:hm(o.inter),pause:hm(o.pause),total:hm(o.tot),chantiers:[...new Set(daySegs(d).filter(x=>x.type==='inter'&&x.c).map(x=>x.c))]}})}
+  {name:'historique_ot',description:'Historique des OT (ordres de travail) : numéro, chantier, client, équipe, remarques, heures de trajet / intervention / pause et lignes détaillées. recherche = n° OT, client ou chantier (facultatif).',inputSchema:{type:'object',properties:{recherche:{type:'string'}}},
+   execute:({recherche})=>{const q=String(recherche||'').toLowerCase();return otGroups().filter(g=>!q||[g.n,g.ch,g.cl].join(' ').toLowerCase().includes(q)).slice(0,20).map(otTxt)}},
+  {name:'heures_semaine',description:'Totaux des heures (trajet, intervention, pause) par jour pour la semaine en cours, avec les chantiers.',execute:()=>weekDays(dKey(Date.now())).map(d=>{const o=totals(d);return {jour:d,preparation:hm(o.prep),trajet:hm(o.trajet),intervention:hm(o.inter),pause:hm(o.pause),total:hm(o.tot),chantiers:[...new Set(daySegs(d).filter(x=>x.type==='inter'&&x.c).map(x=>x.c))]}})}
  ];
- const LBL={fiche_panne:'Lecture de la fiche panne',chercher_reference:'Recherche au magasin',lire_memo:'Lecture du mémo',ajouter_au_memo:'Ajout au mémo',lire_forages:'Lecture des forages',heures_semaine:'Lecture des heures'};
+ const LBL={fiche_panne:'Lecture de la fiche panne',chercher_reference:'Recherche au magasin',lire_memo:'Lecture du mémo',ajouter_au_memo:'Ajout au mémo',lire_forages:'Lecture des forages',heures_semaine:'Lecture des heures',historique_ot:'Lecture des OT'};
+ const nz=v=>String(v||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
+ const STOP=new Set('les des une est sont pas plus mon mes mais pour par avec sans qui que quoi quel quelle quels quelles comment pourquoi elle ils cette ces dans sur aux vous nous fait faire peut quand tout tous'.split(' '));
+ function localAnswer(q){const Q=nz(q),W=Q.split(/[^a-z0-9]+/).filter(w=>w.length>2&&!STOP.has(w)),st=W.map(w=>w.slice(0,Math.max(4,w.length-2)));
+  const hit=t=>{const T=nz(t);return st.reduce((n,w)=>n+(T.includes(w)?1:0),0)};let out='',btn='';
+  const otm=q.match(/\bOT\s*(?:n°|no|num[eé]ro)?\s*([A-Za-z0-9][\w\-/]*)/i);
+  if(otm){const g=otGroups().find(x=>x.k===otKey(otm[1]));if(g)return {t:'**OT n° '+g.n+'**\n'+otTxt(g).split('\n').slice(1).map(l=>'- '+l).join('\n')}}
+  if(/heure|pointage|semaine|journee/.test(Q)){const W7=weekDays(dKey(Date.now()));let tt=0;const L=W7.map(d=>{const o=totals(d);tt+=o.tot;return o.tot?`- ${dShort(d)} : préparation ${hm(o.prep)}, trajet ${hm(o.trajet)}, intervention ${hm(o.inter)}, total **${hm(o.tot)}**`:''}).filter(Boolean);
+   return {t:L.length?'**Vos heures de la semaine**\n'+L.join('\n')+'\n\nTotal semaine : **'+hm(tt)+'**':'Aucune heure notée cette semaine.'}}
+  if(/memo|commander|commande|prevoir/.test(Q)){const L=S.memo.filter(x=>!(x.s>0));return {t:L.length?'**Pièces à prévoir**\n'+L.slice(0,15).map(x=>`- ${x.q||1} × ${x.d}${x.r?' (réf. '+x.r+')':''}${x.c?' – '+x.c:''}`).join('\n'):'Rien à prévoir dans le mémo.'}}
+  if(!st.length)return null;
+  const pm=/pompe|pompage|station|forage|moteur|variateur|disjonct|pression/.test(Q);
+  const sc=[...PANNES.map((p,i)=>({p,i,e:1,n:hit(p.t)*3+hit(p.s+' '+p.k)*2+hit(p.c.join(' '))+(pm?0:.5)})),...PPANNES.map((p,i)=>({p,i,e:0,n:hit(p.t)*3+hit(p.s+' '+p.k)*2+hit(p.c.join(' '))+(pm?.5:0)}))].filter(x=>x.n>=2).sort((a,b)=>b.n-a.n);
+  if(sc.length){const {p,i,e}=sc[0];out+=`**${p.t}** (${e?'enrouleur':'station de pompage'})\nCauses possibles :\n${p.c.slice(0,5).map(x=>'- '+x).join('\n')}`;
+   if(p.v&&p.v.length)out+=`\n\nÀ vérifier :\n${p.v.slice(0,4).map(x=>'- '+x).join('\n')}`;
+   btn=`<button type="button" data-ofiche="${e?'e':'p'}${i}">${ic('file')}Ouvrir la fiche complète</button>`+sc.slice(1,3).map(x=>`<button type="button" class="ghost" data-ofiche="${x.e?'e':'p'}${x.i}">${esc(x.p.t)}</button>`).join('')}
+  const M=S.magasin.map(x=>({x,n:hit([x.d,x.ref,x.m,x.comp].join(' '))})).filter(o=>o.n>=Math.min(2,st.length)).sort((a,b)=>b.n-a.n).slice(0,5);
+  if(M.length)out+=(out?'\n\n':'')+'**Au magasin**\n'+M.map(({x})=>`- ${x.d}${x.ref?' – réf. '+x.ref:''} · stock ${x.s??0}${x.e?' · '+x.e:''}`).join('\n');
+  return out?{t:out,b:btn}:null}
+ box.addEventListener('click',e=>{const b=e.target.closest('[data-ofiche]');if(!b)return;const k=b.dataset.ofiche,i=+k.slice(1);$('#bot').hidden=true;botFabUpd();
+  if(k[0]==='e'){location.hash='enrouleurs';setTimeout(()=>openPanne(i),60)}else{pmTab='diag';try{localStorage.setItem('dep_pmtab','diag')}catch(x){}drawPmTabs();location.hash='pompage';setTimeout(()=>openPm(i),60)}});
  async function ask(){const q=$('#botQ').value.trim();if(!q||busy)return;$('#botQ').value='';fit();
+  if(!sample){box.querySelector('.botsug')?.remove();add('u',esc(q).replace(/\n/g,'<br>'));const r=localAnswer(q);
+   const a=add('a',r?md(r.t)+(r.b?`<div class="bta">${r.b}</div>`:''):md('Je n\'ai rien trouvé pour cette question. Hors connexion, je cherche dans les **fiches pannes**, le **magasin**, le **mémo**, vos **heures** et vos **OT**. Essayez avec des mots-clés, par ex. « courroie turbine », « pompe disjoncte » ou « OT 1234 ».'));return}
   box.querySelector('.botsug')?.remove();add('u',esc(q).replace(/\n/g,'<br>'));turns.push({role:'user',content:q});if(turns.length>16)turns=turns.slice(-16);while(turns[0]&&turns[0].role!=='user')turns.shift();
   const a=add('a think','Réflexion…');busy=true;ctl=new AbortController();const sb=$('#botSend');sb.classList.add('stop');sb.innerHTML='■';sb.setAttribute('aria-label','Arrêter');
   const used=[];const tools=TOOLS.map(t=>({...t,execute:(i,c)=>{used.push(LBL[t.name]);if(a.classList.contains('think'))a.textContent=LBL[t.name]+'…';return t.execute(i,c)}}));
@@ -1558,21 +2016,26 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
    a.classList.remove('think');a.innerHTML=md(text)+(used.length?`<span class="tool">✓ ${esc([...new Set(used)].join(' · '))}</span>`:'');turns.push({role:'assistant',content:text})}
   catch(e){a.classList.remove('think');const M={cancelled:'Réponse arrêtée.',not_granted:'L\'assistant n\'a pas été autorisé. Rechargez la page pour l\'autoriser.',rate_limited:'Trop de questions d\'un coup : réessayez dans un moment.',session_expired:'Reconnectez-vous à Claude.',refused:'Je ne peux pas répondre à cette demande.',sampling_disabled:'L\'assistant n\'est pas disponible pour ce compte.'};
    if(e&&e.text){a.innerHTML=md(e.text);turns.push({role:'assistant',content:e.text})}else{a.classList.add('err');a.textContent=M[e&&e.code]||'Réponse interrompue, réessayez.'}
-   if(e&&(e.code==='not_granted'||e.code==='sampling_disabled')){$('#botFab').hidden=true}}
+   if(e&&(e.code==='not_granted'||e.code==='sampling_disabled')){sample=null;offUi()}}
   finally{busy=false;sb.classList.remove('stop');sb.innerHTML=ic('next');sb.setAttribute('aria-label','Envoyer')}}
  const fit=()=>{const t=$('#botQ');t.style.height='auto';t.style.height=Math.min(120,t.scrollHeight)+'px'};
  $('#botQ').addEventListener('input',fit);
  $('#botQ').addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();ask()}});
  $('#botForm').addEventListener('submit',e=>{e.preventDefault();if(busy){ctl&&ctl.abort();return}ask()});
- $('#botFab').addEventListener('click',()=>{$('#bot').hidden=false;$('#botFab').hidden=true;if(!box.children.length)welcome();setTimeout(()=>$('#botQ').focus(),50)});
- $('#botX').addEventListener('click',()=>{$('#bot').hidden=true;$('#botFab').hidden=false});
+ $('#botFab').addEventListener('click',()=>{$('#bot').hidden=false;botFabUpd();if(!box.children.length)welcome();setTimeout(()=>$('#botQ').focus(),50)});
+ $('#botX').addEventListener('click',()=>{$('#bot').hidden=true;botFabUpd()});
+ $('#botFabX').addEventListener('click',()=>{try{localStorage.setItem('dep_botoff','1')}catch(x){}$('#prmBot').checked=false;botFabUpd();toast('Assistant masqué : réactivez-le dans Paramètres')});
+ {let off=false;try{off=localStorage.getItem('dep_botoff')==='1'}catch(e){}$('#prmBot').checked=!off}
+ $('#prmBot').addEventListener('change',e=>{try{e.target.checked?localStorage.removeItem('dep_botoff'):localStorage.setItem('dep_botoff','1')}catch(x){}botFabUpd();toast(e.target.checked?'Assistant affiché sur l\'accueil':'Assistant masqué')});
+ const offUi=()=>{if(!sample)document.querySelector('.bothd small').textContent='Hors ligne : fiches, magasin, mémo, heures, OT'};
  $('#botNew').addEventListener('click',()=>{ctl&&ctl.abort();turns=[];welcome()});
- (async()=>{try{if(!window.claude||!claude.use)return;sample=await claude.use('sample');if(sample)$('#botFab').hidden=false}catch(e){}})();
+ offUi();botFabUpd();
+ (async()=>{try{if(!window.claude||!claude.use)return;sample=await claude.use('sample');if(sample)document.querySelector('.bothd small').textContent='Dépannage, pièces, forages, heures, OT'}catch(e){sample=null}offUi()})();
 }
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.7 bêta',APP_CODE=22,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.8.8',APP_CODE=40,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
@@ -1628,7 +2091,7 @@ const apkOf=(R,beta)=>`https://github.com/${R}/releases/download/${beta?(R===DIS
  // sauvegarde
  const KEYS=['memo','mes','notes','pointage','forages','magasin','docs','photos'];
  $('#bkExp').addEventListener('click',async()=>{const data={app:'verhaeghe-irrigation',version:APP_VERSION,date:new Date().toISOString(),data:{}};
-  KEYS.forEach(k=>data.data[k]=(S[k]||[]).filter(x=>k!=='photos'||!x.u||x.u.length<400000));
+  KEYS.forEach(k=>data.data[k]=(S[k]||[]).filter(x=>k!=='photos'||!x.u||x.u.length<400000));data.techs=TECHS;
   const txt=JSON.stringify(data),name='sauvegarde-verhaeghe-'+dKey(Date.now())+'.json';
   if(IS_APK){const r=AndroidApp.saveFile(btoa(unescape(encodeURIComponent(txt))),name,'application/json');$('#bkSt').textContent=r==='ok'?'✓ Sauvegarde enregistrée dans Téléchargements.':'Erreur : '+r;return}
   if(dl){try{await dl.save({filename:name,data:txt});$('#bkSt').textContent='✓ Sauvegarde enregistrée.'}catch(e){$('#bkSt').textContent=e&&e.code==='declined'?'Enregistrement annulé.':'Enregistrement impossible.'}}
@@ -1636,6 +2099,7 @@ const apkOf=(R,beta)=>`https://github.com/${R}/releases/download/${beta?(R===DIS
  $('#bkImp').addEventListener('change',async e=>{const f=e.target.files[0];if(!f)return;e.target.value='';
   try{const d=JSON.parse(await f.text());if(d.app!=='verhaeghe-irrigation'||!d.data)throw 0;let n=0;
    for(const k of KEYS){for(const it of (d.data[k]||[])){if(it&&it.id&&!S[k].some(x=>x.id===it.id)){await put(k,it);n++}}}
+   if(Array.isArray(d.techs)){d.techs.forEach(t=>{if(t&&!TECHS.includes(t))TECHS.push(t)});TECHS.sort((a,b)=>a.localeCompare(b,'fr'));saveTechs();drawTechs()}
    $('#bkSt').textContent=`✓ ${n} élément(s) importé(s). Les éléments déjà présents n'ont pas été dupliqués.`}
   catch(x){$('#bkSt').textContent='Fichier de sauvegarde non reconnu.'}});
 }
