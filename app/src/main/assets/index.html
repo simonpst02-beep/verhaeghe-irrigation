@@ -1449,8 +1449,10 @@ const tOf=ms=>new Date(ms).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-
 let ptDay=dKey(Date.now()),ptOldOpen=false,rOldOpen=false;
 const running=()=>S.pointage.find(x=>!x.end);
 const durOf=x=>x.end?Math.max(0,x.end-x.start):0;
+// Durée de travail nette : les pauses du même jour sont déduites, même quand elles tombent pendant un trajet ou une intervention
+const netOf=x=>{let v=durOf(x);if(x.type==='pause'||!x.end)return v;(S.pointage||[]).forEach(p=>{if(p.type==='pause'&&p.end&&p.day===x.day)v-=Math.max(0,Math.min(x.end,p.end)-Math.max(x.start,p.start))});return Math.max(0,v)};
 const daySegs=d=>S.pointage.filter(x=>x.day===d).sort((a,b)=>a.start-b.start);
-function totals(d){const o={prep:0,trajet:0,inter:0,pause:0};daySegs(d).forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));o.tot=o.prep+o.trajet+o.inter;return o}
+function totals(d){const o={prep:0,trajet:0,inter:0,pause:0};daySegs(d).forEach(x=>o[x.type]=(o[x.type]||0)+netOf(x));o.tot=o.prep+o.trajet+o.inter;return o}
 
 const toMs=(d,v)=>new Date(d+'T'+v).getTime();
 /* Techniciens (liste gardée sur cet appareil) */
@@ -1558,7 +1560,7 @@ function wSync(){try{if(!window.AndroidApp||!AndroidApp.setWidget)return;
   const hs=MD.reduce((a,d)=>a+supDay(d).s,0),mo=MD.reduce((a,d)=>a+totals(d).tot,0),wk=weekDays(t).reduce((a,d)=>a+totals(d).tot,0);
   const E=S.pointage.filter(x=>x.end).sort((a,b)=>b.end-a.end),l=E[0];let last='–';
   if(l){const key=x=>otKey(x.ot)||('CL:'+(x.cl||'').trim().toUpperCase());const G=E.filter(x=>x.day===l.day&&key(x)===key(l)&&x.type!=='pause');
-   last=[l.ot&&'OT '+l.ot.trim(),l.cl||l.c,hm(G.reduce((a,x)=>a+durOf(x),0))].filter(Boolean).join(' · ')}
+   last=[l.ot&&'OT '+l.ot.trim(),l.cl||l.c,hm(G.reduce((a,x)=>a+(x.type==='pause'?0:netOf(x)),0))].filter(Boolean).join(' · ')}
   AndroidApp.setWidgetInfo(hs?'+ '+hm(hs):'0 h 00',hm(wk),hm(mo),last)}}catch(e){}}
 window.__openStep=k=>{if(navOff.includes('heures'))return;if(location.hash!=='#heures')location.hash='heures';
  if(ptDay!==dKey(Date.now())){ptDay=dKey(Date.now());drawPt()}
@@ -1582,7 +1584,7 @@ $('#supBox').addEventListener('click',e=>{const b=e.target.closest('[data-day]')
 
 /* Historique des OT */
 function otGroups(){const G={};S.pointage.forEach(x=>{const k=otKey(x.ot);if(!k)return;(G[k]=G[k]||{k,n:x.ot.trim(),L:[]}).L.push(x)});
- return Object.values(G).map(g=>{g.L.sort((a,b)=>a.start-b.start);const o={prep:0,trajet:0,inter:0,pause:0};g.L.forEach(x=>o[x.type]=(o[x.type]||0)+durOf(x));g.o=o;
+ return Object.values(G).map(g=>{g.L.sort((a,b)=>a.start-b.start);const o={prep:0,trajet:0,inter:0,pause:0};g.L.forEach(x=>o[x.type]=(o[x.type]||0)+netOf(x));g.o=o;
   const last=k=>[...g.L].reverse().find(x=>x[k])?.[k]||'';g.ch=last('ch');g.cl=last('cl');if(!g.ch&&!g.cl)g.ch=last('c');
   g.rq=[...new Set(g.L.map(x=>x.rq).filter(Boolean))];g.techs=[...new Set(g.L.flatMap(x=>x.techs||[]))];g.days=[...new Set(g.L.map(x=>x.day))];g.lastT=g.L[g.L.length-1].start;return g})
   .sort((a,b)=>b.lastT-a.lastT)}
@@ -1934,7 +1936,7 @@ async function dayPdf(d){const L=daySegs(d);if(!L.length)return toast('Aucune he
  // récap par OT
  const G=[...new Set(L.map(x=>otKey(x.ot)).filter(Boolean))];
  if(G.length){y+=8;need(14);txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(12);doc.text('Par OT',M,y);y+=6;
-  G.forEach(k=>{const S=L.filter(x=>otKey(x.ot)===k),t={};S.forEach(x=>t[x.type]=(t[x.type]||0)+durOf(x));const f=S[0];
+  G.forEach(k=>{const S=L.filter(x=>otKey(x.ot)===k),t={};S.forEach(x=>t[x.type]=(t[x.type]||0)+netOf(x));const f=S[0];
    const line=`OT ${f.ot}${f.cl?' · '+f.cl:''}${f.ch?' · '+f.ch:''}`,det=['prep','trajet','inter','pause'].filter(z=>t[z]).map(z=>(z==='inter'?'Sur place':PT[z])+' '+hm(t[z])).join(' · ');
    need(12);txt(C.ink);doc.setFont('helvetica','bold');doc.setFontSize(10);doc.text(doc.splitTextToSize(line,CW)[0],M,y);txt(C.mute);doc.setFont('helvetica','normal');doc.setFontSize(9);doc.text(det,M,y+4.6);y+=11})}
  // signature
@@ -2035,7 +2037,7 @@ Fiches pannes pompage : ${PPANNES.map((p,i)=>i+': '+p.t).join(' ; ')}.`;
 
 
 /* ---------- Paramètres : mise à jour, affichage, sauvegarde ---------- */
-const APP_VERSION='2.8.8',APP_CODE=40,REPO='simonpst02-beep/verhaeghe-irrigation';
+const APP_VERSION='2.8.9',APP_CODE=41,REPO='simonpst02-beep/verhaeghe-irrigation';
 const IS_APK=!!window.AndroidApp;
 const APK_URL=`https://github.com/simonpst02-beep/verhaeghe-irrigation-maj/releases/download/derniere-version/Verhaeghe-Irrigation.apk`;
 const VER_URL=`https://raw.githubusercontent.com/${REPO}/main/version.json`;
