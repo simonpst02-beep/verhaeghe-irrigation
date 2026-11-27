@@ -1,5 +1,5 @@
 {
-  "version": "2.8.9",
-  "code": 41,
-  "notes": "Version bêta : dans Heures, les pauses sont déduites du temps de travail, même quand elles tombent pendant une intervention ou un trajet (totaux du jour, de la semaine, du mois, heures sup, widget et rapports par OT)."
+  "version": "2.9.1",
+  "code": 43,
+  "notes": "Version bêta : bouton « Dicter mes heures » dans Heures (OT, client, préparation, trajets, sur place, pause remplis à la voix, à vérifier avant de valider). Bulle de l'assistant de retour, à droite."
 }
